@@ -7,7 +7,7 @@ const database = new Sequelize({
 })
 
 const Dish = database.define('dish', {
-    id: { type: Sequelize.STRING, primaryKey: true },
+    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: Sequelize.STRING, allowNull: false }  
 })
 

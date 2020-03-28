@@ -1,5 +1,5 @@
 {
-  "name": "nomi backend API",
+  "name": "nomi-menu-service",
   "version": "1.0.0",
   "description": "Backend API for nomi",
   "main": "index.js",

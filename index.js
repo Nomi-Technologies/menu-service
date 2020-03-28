@@ -2,17 +2,18 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
-const { database } = require('./database')
+const { database } = require('./models')
 
 const port = process.env.SERVER_PORT || 3000
 
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', (req, res, next) => {
-    next()
-  })
+app.get("/", (req, res) => {
+  res.json({ message: "Nomi API!" });
+});
   
 
 database.sync().then(() => {
@@ -20,3 +21,5 @@ database.sync().then(() => {
       console.log(`Listening on port ${port}`)
     })
   })
+
+require("./routes")(app);
