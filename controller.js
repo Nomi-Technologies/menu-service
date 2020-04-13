@@ -74,10 +74,15 @@ const deleteDish = (req, res) => {
   });
 };
 
+const getDishForMobile = (req, res) => {
+
+};
+
 module.exports = {
   createDish,
   dishesList,
   getDish,
   updateDish,
-  deleteDish
+  deleteDish,
+  getDishForMobile,
 }

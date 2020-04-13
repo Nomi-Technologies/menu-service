@@ -1,8 +1,10 @@
+const express = require('express');
+
 module.exports = app => {
   const controller = require('./controller');
 
-  var router = require('express').Router();
-
+  var router = express.Router();
+  var mobileRouter = express.Router();
 
   router.post('/dishes', controller.createDish);
   router.get('/dishes', controller.dishesList);
@@ -10,5 +12,8 @@ module.exports = app => {
   router.put('/dishes/:id', controller.updateDish);
   router.delete('/dishes/:id', controller.deleteDish);
 
-  app.use('/api', router)
+  mobileRouter.get('/dishes', controller.getDishForMobile);
+
+  app.use('/api', router);
+  app.use('/mobileapi', mobileRouter);
 };
