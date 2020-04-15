@@ -2,8 +2,8 @@
 REST API built with `node`, `express`, and `sequelize` for ORM. 
 
 ## To Run
-```$ npm install package.json```
-```$ node .```
+```$ npm install```
+```$ npm run develop```
 
 ## TODO:
 [x] Basic DB
