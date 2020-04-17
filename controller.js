@@ -1,5 +1,62 @@
 const db = require("./models");
 const Dish = db.Dish;
+const User= db.User;
+
+const jwt = require('jsonwebtoken');
+
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+
+let ExtractJwt = passportJWT.ExtractJwt;
+
+let JwtStrategy = passportJWT.Strategy;
+let jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'wowwow';
+passReqToCallback: true;
+
+// auth strategy
+let strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
+  User.getUser({ email: jwt_payload.id })
+    .then(user => {
+    if (user) {
+      next(null, user);
+    } else {
+      next(null, false);
+    }
+  });
+});
+
+passport.use(strategy)
+
+
+
+// users
+const registerUser = (req, res) => {
+  try {
+    let newUser = User.register(req.body.email, req.body.password);
+    res.send("User " + req.body.email + " was successfully created!");
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+// TODO:
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  if (email && password) {
+    let user = await User.authenticate(email, password);
+    if(user) {
+        let payload = { email: user.email }
+        let token = jwt.sign(payload, jwtOptions.secretOrKey);
+        res.json({msg: 'successfully logged in', token: token});
+    } else {
+      res.status(401).json({msg: "Could not authentiate user"});
+    }
+  }
+
+}
+
 
 const createDish = (req, res) => {
   const dish = {
@@ -85,4 +142,7 @@ module.exports = {
   updateDish,
   deleteDish,
   getDishForMobile,
+  registerUser,
+  loginUser,
+  passport
 }
