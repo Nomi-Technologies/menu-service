@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const bcrypt = require('bcrypt')
 
 const database = new Sequelize({
   database: 'mise',
@@ -11,15 +12,67 @@ const Dish = database.define('dish', {
   name: { type: Sequelize.STRING, allowNull: false },
   description: {type: Sequelize.STRING},
   addons: {type: Sequelize.STRING},
-  allergens: {type: Sequelize.STRING},
-  glutenFreePossible: {type: Sequelize.BOOLEAN, defaultValue: false},
-  veganPossible: {type: Sequelize.BOOLEAN, defaultValue: false},
   canRemove: {type: Sequelize.STRING},
   notes: {type: Sequelize.STRING},
   tableTalkPoints: {type: Sequelize.STRING}
 })
 
+const Tag = database.define('tag', {
+  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: Sequelize.STRING, allowNull: false },
+  type: { type: Sequelize.STRING, allowNull: false }, // 'Allergen, Diet, etc.'
+  excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
+})
+
+const DishTag = database.define('dishTag', {});
+
+Dish.hasMany(DishTag);
+Tag.hasMany(DishTag);
+
+const User = database.define('user', {
+  email: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+});
+
+// TODO: Make sure user doesn't already exist and throw error
+User.register = async (email, password) => {
+  const passwordHash = bcrypt.hashSync(password, 10);
+  let user = {
+    email: email,
+    password: passwordHash
+  }
+
+  let created_user = await User.create(user)
+  return User.authenticate(email, password);
+}
+
+User.getUser = async (obj) => {
+  return await User.findOne({
+    where: obj
+  });
+}
+
+// used to validate the user
+User.authenticate = async (email, password) => {
+  let user = await User.findOne({where: {email: email}})
+  if (bcrypt.compareSync(password, user.password)) {
+    return user;
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
   Dish,
-  database
+  User,
+  database,
+  Tag,
+  DishTag
 }
