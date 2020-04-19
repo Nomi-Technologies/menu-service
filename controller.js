@@ -1,6 +1,9 @@
-const db = require("./models");
-const Dish = db.Dish;
-const User= db.User;
+const {
+  Dish,
+  DishTag,
+  Tag,
+  User
+} = require("./models");
 
 const jwt = require('jsonwebtoken');
 
@@ -75,8 +78,13 @@ const createDish = (req, res) => {
 };
 
 const dishesList = (req, res) => {
-  Dish.findAll()
-    .then(data => {
+  // Maybe it's better to clean up the query result?
+  Dish.findAll({
+    include: [{
+      model: DishTag,
+      include: { model: Tag }
+    }]
+  }).then(data => {
       res.send(data);
     })
     .catch(err => {
@@ -89,8 +97,12 @@ const dishesList = (req, res) => {
 const getDish = (req, res) => {
   const id = req.params.id;
 
-  Dish.findByPk(id)
-    .then(data => {
+  Dish.findByPk(id, {
+    include: [{
+      model: DishTag,
+      include: { model: Tag }
+    }]
+  }).then(data => {
       res.send(data);
     })
     .catch(err => {

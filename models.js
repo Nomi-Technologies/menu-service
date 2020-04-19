@@ -10,6 +10,7 @@ const database = new Sequelize({
 const Dish = database.define('dish', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
+  category: {type: Sequelize.STRING},
   description: {type: Sequelize.STRING},
   addons: {type: Sequelize.STRING},
   canRemove: {type: Sequelize.STRING},
@@ -26,8 +27,10 @@ const Tag = database.define('tag', {
 
 const DishTag = database.define('dishTag', {});
 
-Dish.hasMany(DishTag);
-Tag.hasMany(DishTag);
+Dish.hasMany(DishTag, { onDelete: 'cascade' });
+DishTag.belongsTo(Dish);
+Tag.hasMany(DishTag, { onDelete: 'cascade' });
+DishTag.belongsTo(Tag);
 
 const User = database.define('user', {
   email: {
