@@ -25,12 +25,8 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-const DishTag = database.define('dishTag', {});
-
-Dish.hasMany(DishTag, { onDelete: 'cascade' });
-DishTag.belongsTo(Dish);
-Tag.hasMany(DishTag, { onDelete: 'cascade' });
-DishTag.belongsTo(Tag);
+Dish.belongsToMany(Tag, { through: 'DishTag' });
+Tag.belongsToMany(Dish, { through: 'DishTag' });
 
 const User = database.define('user', {
   email: {
@@ -77,5 +73,4 @@ module.exports = {
   User,
   database,
   Tag,
-  DishTag
 }

@@ -1,6 +1,5 @@
 const {
   Dish,
-  DishTag,
   Tag,
   User
 } = require("./models");
@@ -80,10 +79,7 @@ const createDish = (req, res) => {
 const dishesList = (req, res) => {
   // Maybe it's better to clean up the query result?
   Dish.findAll({
-    include: [{
-      model: DishTag,
-      include: { model: Tag }
-    }]
+    include: [{ model: Tag }]
   }).then(data => {
       res.send(data);
     })
@@ -98,10 +94,7 @@ const getDish = (req, res) => {
   const id = req.params.id;
 
   Dish.findByPk(id, {
-    include: [{
-      model: DishTag,
-      include: { model: Tag }
-    }]
+    include: [{ model: Tag }]
   }).then(data => {
       res.send(data);
     })
