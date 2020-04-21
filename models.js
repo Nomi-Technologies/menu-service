@@ -25,8 +25,8 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-Dish.belongsToMany(Tag, { through: 'DishTag' });
-Tag.belongsToMany(Dish, { through: 'DishTag' });
+Dish.belongsToMany(Tag, { through: 'dishTag' });
+Tag.belongsToMany(Dish, { through: 'dishTag' });
 
 const User = database.define('user', {
   email: {
