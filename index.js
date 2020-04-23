@@ -38,15 +38,31 @@ const populateDB = async () => {
 
   let dish = await db.Dish.create({
     name: 'Dish1',
+    category: 'Cold',
     tableTalkPoints: 'Talk points...',
   });
-  let tag = await db.Tag.create({
-    name: 'gluten',
+  let dish2 = await db.Dish.create({
+    name: 'Dish2',
+    category: 'Cold',
+    tableTalkPoints: 'Talk points...',
+  });
+  let dish3 = await db.Dish.create({
+    name: 'Dish3',
+    category: 'Brunch',
+    tableTalkPoints: 'Talk points...',
+  });
+  let gluten = await db.Tag.create({
+    name: 'Gluten',
     type: 'allergen',
     excludeForFilter: true,
   });
-  dish.addTag(tag);
-
+  let peanut = await db.Tag.create({
+    name: 'Peanut',
+    type: 'allergen',
+    excludeForFilter: true,
+  }); 
+  dish.addTag(gluten);
+  dish2.setTags([gluten, peanut]);
 };
 
 
