@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
-const { database } = require('./models')
+const { database, Dish, Tag } = require('./models')
 const { passport } = require('./controller')
 
 const port = process.env.SERVER_PORT || 3000
@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
-    populateDB();
+    // populateDB();
     app.listen(port, () => {
       console.log(`Listening on port ${port}`)
     })
@@ -31,27 +31,27 @@ const populateDB = async () => {
   await database.Dish.destroy({ where: {} });
   await database.Tag.destroy({ where: {} });
 
-  let dish = await database.Dish.create({
+  let dish = await Dish.create({
     name: 'Dish1',
     category: 'Cold',
     tableTalkPoints: 'Talk points...',
   });
-  let dish2 = await database.Dish.create({
+  let dish2 = await Dish.create({
     name: 'Dish2',
     category: 'Cold',
     tableTalkPoints: 'Talk points...',
   });
-  let dish3 = await database.Dish.create({
+  let dish3 = await Dish.create({
     name: 'Dish3',
     category: 'Brunch',
     tableTalkPoints: 'Talk points...',
   });
-  let gluten = await database.Tag.create({
+  let gluten = await Tag.create({
     name: 'Gluten',
     type: 'allergen',
     excludeForFilter: true,
   });
-  let peanut = await database.Tag.create({
+  let peanut = await Tag.create({
     name: 'Peanut',
     type: 'allergen',
     excludeForFilter: true,

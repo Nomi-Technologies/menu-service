@@ -5,7 +5,7 @@ const { DB_NAME, PROD, DATABASE_URL} = require('./config.js')
 let database = null
 
 // check if prod, setup heroku version of sequelize
-if(PROD) {
+if(PROD === true) {
   database = new Sequelize(DATABASE_URL, {
     database: DB_NAME,
     dialect: 'postgres',
@@ -19,7 +19,6 @@ if(PROD) {
   })
   
 }
-
 
 const User = database.define('user', {
   email: {
@@ -143,9 +142,9 @@ Restaurant.hasMany(User);
 
 
 module.exports = {
+  database,
   Dish,
   User,
-  database,
   Tag,
   Restaurant
 }
