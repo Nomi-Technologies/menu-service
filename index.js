@@ -10,6 +10,7 @@ const db = require('./models');
 const port = process.env.SERVER_PORT || 3000
 
 const app = express()
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,10 +20,6 @@ app.use(passport.initialize());
 app.get("/", (req, res) => {
   res.json({ message: "Nomi API!" });
 });
-
-
-
-  
 
 database.sync().then(() => {
     populateDB();

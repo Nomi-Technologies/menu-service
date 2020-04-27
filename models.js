@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
+const { DB_NAME } = require('./config.js')
 
 const database = new Sequelize({
-  database: 'mise',
+  database: DB_NAME,
   dialect: 'postgres',
   operatorsAliases: Sequelize.op
 })
@@ -37,15 +38,26 @@ const User = database.define('user', {
   password: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  phone: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  role: {
+    type: Sequelize.ENUM('admin', 'staff'),
+    defaultValue: 'staff',
   }
 });
 
 // TODO: Make sure user doesn't already exist and throw error
-User.register = async (email, password) => {
+User.register = async (email, password, phone, role, restaurant) => {
   const passwordHash = bcrypt.hashSync(password, 10);
   let user = {
     email: email,
-    password: passwordHash
+    password: passwordHash,
+    phone: phone,
+    role: role,
+    restaurantId: restaurant
   }
 
   let created_user = await User.create(user)
@@ -68,9 +80,80 @@ User.authenticate = async (email, password) => {
   }
 }
 
+const Dish = database.define('dish', {
+  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: Sequelize.STRING, allowNull: false },
+  description: {type: Sequelize.STRING},
+  addons: {type: Sequelize.STRING},
+  canRemove: {type: Sequelize.STRING},
+  notes: {type: Sequelize.STRING},
+  tableTalkPoints: {type: Sequelize.STRING},
+  veganPossible: {type: Sequelize.BOOLEAN, defaultValue: false},
+  glutenFreePossible: {type: Sequelize.BOOLEAN, defaultValue: false}
+})
+
+const Category = database.define('category', {
+  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: Sequelize.STRING, allowNull: false }
+})
+
+Dish.hasOne(Category)
+
+const Tag = database.define('tag', {
+  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: Sequelize.STRING, allowNull: false },
+  type: { type: Sequelize.STRING, allowNull: false }, // 'Allergen, Diet, etc.'
+  excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
+})
+
+Dish.belongsToMany(Tag, { through: "DishTags" });
+Tag.belongsToMany(Dish, { through: "DishTags" });
+
+
+// restaurant model
+const Restaurant = database.define('restaurant', {
+  id: {
+    type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  streetAddress: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  city: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  state: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  zip: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  phone: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  url: {
+    type: Sequelize.STRING,
+    allowNull: true
+  }
+})
+
+// One to many for restaurants
+Restaurant.hasMany(Dish);
+Restaurant.hasMany(User);
+
+
 module.exports = {
   Dish,
   User,
   database,
   Tag,
+  Restaurant
 }
