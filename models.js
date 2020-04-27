@@ -8,27 +8,6 @@ const database = new Sequelize({
   operatorsAliases: Sequelize.op
 })
 
-const Dish = database.define('dish', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: Sequelize.STRING, allowNull: false },
-  category: {type: Sequelize.STRING},
-  description: {type: Sequelize.STRING},
-  addons: {type: Sequelize.STRING},
-  canRemove: {type: Sequelize.STRING},
-  notes: {type: Sequelize.STRING},
-  tableTalkPoints: {type: Sequelize.STRING}
-})
-
-const Tag = database.define('tag', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: Sequelize.STRING, allowNull: false },
-  type: { type: Sequelize.STRING, allowNull: false }, // 'Allergen, Diet, etc.'
-  excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
-})
-
-Dish.belongsToMany(Tag, { through: 'dishTag' });
-Tag.belongsToMany(Dish, { through: 'dishTag' });
-
 const User = database.define('user', {
   email: {
     type: Sequelize.STRING,
