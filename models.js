@@ -1,12 +1,25 @@
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
-const { DB_NAME } = require('./config.js')
+const { DB_NAME, PROD, DATABASE_URL} = require('./config.js')
 
-const database = new Sequelize({
-  database: DB_NAME,
-  dialect: 'postgres',
-  operatorsAliases: Sequelize.op
-})
+let database = null
+
+// check if prod, setup heroku version of sequelize
+if(PROD) {
+  database = new Sequelize(DATABASE_URL, {
+    database: DB_NAME,
+    dialect: 'postgres',
+    operatorsAliases: Sequelize.op
+  })
+} else {
+  database = new Sequelize({
+    database: DB_NAME,
+    dialect: 'postgres',
+    operatorsAliases: Sequelize.op
+  })
+  
+}
+
 
 const User = database.define('user', {
   email: {
