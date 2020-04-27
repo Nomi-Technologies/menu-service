@@ -10,6 +10,7 @@ const database = new Sequelize({
 const Dish = database.define('dish', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
+  category: {type: Sequelize.STRING},
   description: {type: Sequelize.STRING},
   addons: {type: Sequelize.STRING},
   canRemove: {type: Sequelize.STRING},
@@ -24,10 +25,8 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-const DishTag = database.define('dishTag', {});
-
-Dish.hasMany(DishTag);
-Tag.hasMany(DishTag);
+Dish.belongsToMany(Tag, { through: 'dishTag' });
+Tag.belongsToMany(Dish, { through: 'dishTag' });
 
 const User = database.define('user', {
   email: {
@@ -74,5 +73,4 @@ module.exports = {
   User,
   database,
   Tag,
-  DishTag
 }
