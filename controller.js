@@ -1,7 +1,8 @@
-const db = require("./models");
-const Dish = db.Dish;
-const User = db.User;
-const Restaurant = db.Restaurant;
+const {
+  Dish,
+  Tag,
+  User
+} = require("./models");
 
 const jwt = require('jsonwebtoken');
 
@@ -119,7 +120,8 @@ const createDish = (req, res) => {
 const dishesList = (req, res) => {
   userRestaurantId = req.user.restaurantId
   Dish.findAll({
-    where: {restaurantId: userRestaurantId}
+    where: {restaurantId: userRestaurantId},
+    include: [{ model: Tag }]
   })
     .then(data => {
       res.send(data);
@@ -135,7 +137,9 @@ const getDish = (req, res) => {
   const id = req.params.id;
 
   userRestaurantId = req.user.restaurantId
-  Dish.findByPk(id)
+  Dish.findByPk(id, {
+      include: [{ model: Tag }]
+  })
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
       if(dish && dish.restaurantId == userRestaurantId) {
