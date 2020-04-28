@@ -8,7 +8,6 @@ let database = null
 if(PROD === "true") {
   console.log("Production mode is activated")
   database = new Sequelize(DATABASE_URL, {
-    database: DB_NAME,
     dialect: 'postgres',
     operatorsAliases: Sequelize.op
   })
