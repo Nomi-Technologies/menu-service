@@ -9,14 +9,16 @@ const port = process.env.SERVER_PORT || 3000
 
 const app = express()
 
-app.use(cors())
+// app.use(cors())
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use(passport.initialize());
+app.use(express.logger('dev'))
+
+app.use(passport.initialize())
 
 app.get("/", (req, res) => {
-  res.json({ message: "Nomi API!" });
+  res.json({ message: "Nomi API!" })
 });
 
 database.sync().then(() => {
@@ -30,8 +32,8 @@ database.sync().then(() => {
 const populateDB = async () => {
   console.log("Populating DB")
 
-  await database.Dish.destroy({ where: {} });
-  await database.Tag.destroy({ where: {} });
+  await database.Dish.destroy({ where: {} })
+  await database.Tag.destroy({ where: {} })
 
   let dish = await Dish.create({
     name: 'Dish1',
