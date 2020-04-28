@@ -28,6 +28,8 @@ database.sync().then(() => {
 
 // Placeholder db data
 const populateDB = async () => {
+  console.log("Populating DB")
+
   await database.Dish.destroy({ where: {} });
   await database.Tag.destroy({ where: {} });
 

@@ -16,8 +16,6 @@ if(PROD === "true") {
     database: DB_NAME,
     dialect: 'postgres',
     operatorsAliases: Sequelize.op,
-    port:     match[4],
-    host:     match[3],
     logging:  true //false
   })
   
