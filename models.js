@@ -6,12 +6,14 @@ let database = null
 
 // check if prod, setup heroku version of sequelize
 if(PROD === "true") {
+  console.log("Production mode is activated")
   database = new Sequelize(DATABASE_URL, {
     database: DB_NAME,
     dialect: 'postgres',
     operatorsAliases: Sequelize.op
   })
 } else {
+  console.log("Debug mode is activated");
   database = new Sequelize({
     database: DB_NAME,
     dialect: 'postgres',
