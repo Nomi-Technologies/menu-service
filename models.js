@@ -79,9 +79,7 @@ const Dish = database.define('dish', {
   addons: {type: Sequelize.STRING},
   canRemove: {type: Sequelize.STRING},
   notes: {type: Sequelize.STRING},
-  tableTalkPoints: {type: Sequelize.STRING},
-  veganPossible: {type: Sequelize.BOOLEAN, defaultValue: false},
-  glutenFreePossible: {type: Sequelize.BOOLEAN, defaultValue: false}
+  tableTalkPoints: {type: Sequelize.STRING}
 })
 
 const Category = database.define('category', {
