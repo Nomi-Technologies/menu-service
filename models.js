@@ -5,7 +5,7 @@ const { DB_NAME, PROD, DATABASE_URL} = require('./config.js')
 let database = null
 
 // check if prod, setup heroku version of sequelize
-if(PROD === true) {
+if(PROD === "true") {
   database = new Sequelize(DATABASE_URL, {
     database: DB_NAME,
     dialect: 'postgres',
@@ -15,7 +15,10 @@ if(PROD === true) {
   database = new Sequelize({
     database: DB_NAME,
     dialect: 'postgres',
-    operatorsAliases: Sequelize.op
+    operatorsAliases: Sequelize.op,
+    port:     match[4],
+    host:     match[3],
+    logging:  true //false
   })
   
 }
