@@ -65,8 +65,8 @@ User.getUser = async (obj) => {
 
 // used to validate the user
 User.authenticate = async (email, password) => {
-  let user = await User.findOne({where: {email: email}})
-  if (bcrypt.compareSync(password, user.password)) {
+  let user = await User.findOne({where: {email: email}});
+  if (user && bcrypt.compareSync(password, user.password)) {
     return user;
   } else {
     return null;
