@@ -17,7 +17,6 @@ module.exports = app => {
   router.get('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.getDish);
   router.put('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.updateDish);
   router.delete('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.deleteDish);
-  router.use(passport.authenticate('jwt', {session: false}));
   router.post('/restaurants/register', controller.createRestaurant);
 
   mobileRouter.get('/dishes', controller.getDishForMobile);

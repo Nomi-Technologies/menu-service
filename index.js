@@ -28,26 +28,8 @@ database.sync().then(() => {
 
 // Placeholder db data
 const populateDB = async () => {
-  console.log("Populating DB")
-
-  await database.Dish.destroy({ where: {} })
   await database.Tag.destroy({ where: {} })
 
-  let dish = await Dish.create({
-    name: 'Dish1',
-    category: 'Cold',
-    tableTalkPoints: 'Talk points...',
-  });
-  let dish2 = await Dish.create({
-    name: 'Dish2',
-    category: 'Cold',
-    tableTalkPoints: 'Talk points...',
-  });
-  let dish3 = await Dish.create({
-    name: 'Dish3',
-    category: 'Brunch',
-    tableTalkPoints: 'Talk points...',
-  });
   let gluten = await Tag.create({
     name: 'Gluten',
     type: 'allergen',
@@ -57,9 +39,7 @@ const populateDB = async () => {
     name: 'Peanut',
     type: 'allergen',
     excludeForFilter: true,
-  }); 
-  dish.addTag(gluten);
-  dish2.setTags([gluten, peanut]);
+  });
 };
 
 
