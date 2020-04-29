@@ -1,7 +1,8 @@
 const {
   Dish,
   Tag,
-  User
+  User,
+  Restaurant
 } = require("./models");
 
 const jwt = require('jsonwebtoken');
