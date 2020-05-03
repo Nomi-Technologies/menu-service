@@ -39,7 +39,7 @@ passport.use(strategy)
 const registerUser = (req, res) => {
   try {
     let newUser;
-    User.register(req.body.email, req.body.password, req.body.phone, req.body.role)
+    User.register(req.body.email, req.body.password, req.body.phone, req.body.role, req.body.restaurantId)
       .then((user) => {
           res.send("User " + user.email + " was successfully created!");
       });
