@@ -97,8 +97,8 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-Dish.belongsToMany(Tag, { through: "DishTags" });
-Tag.belongsToMany(Dish, { through: "DishTags" });
+Dish.belongsToMany(Tag, { through: "dish_tags" });
+Tag.belongsToMany(Dish, { through: "dish_tags" });
 
 
 // restaurant model
@@ -140,11 +140,13 @@ const Restaurant = database.define('restaurant', {
 Restaurant.hasMany(Dish);
 Restaurant.hasMany(User);
 
+Restaurant.hasMany(Category);
 
 module.exports = {
   database,
   Dish,
   User,
   Tag,
-  Restaurant
+  Restaurant,
+  Category,
 }
