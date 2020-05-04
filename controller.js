@@ -2,7 +2,8 @@ const {
   Dish,
   Tag,
   User,
-  Restaurant
+  Restaurant,
+  Category
 } = require("./models");
 
 const jwt = require('jsonwebtoken');
@@ -39,7 +40,7 @@ passport.use(strategy)
 const registerUser = (req, res) => {
   try {
     let newUser;
-    User.register(req.body.email, req.body.password, req.body.phone, req.body.role)
+    User.register(req.body.email, req.body.password, req.body.phone, req.body.role, req.body.restaurantId)
       .then((user) => {
           res.send("User " + user.email + " was successfully created!");
       });
@@ -122,7 +123,7 @@ const dishesList = (req, res) => {
   userRestaurantId = req.user.restaurantId
   Dish.findAll({
     where: {restaurantId: userRestaurantId},
-    include: [{ model: Tag }]
+    include: [{ model: Tag }, { model: Category }]
   })
     .then(data => {
       res.send(data);
@@ -139,7 +140,7 @@ const getDish = (req, res) => {
 
   userRestaurantId = req.user.restaurantId
   Dish.findByPk(id, {
-      include: [{ model: Tag }]
+      include: [{ model: Tag }, { model: Category }]
   })
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
