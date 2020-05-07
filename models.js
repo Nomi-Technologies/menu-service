@@ -80,7 +80,7 @@ const Dish = database.define('dish', {
   addons: {type: Sequelize.STRING},
   canRemove: {type: Sequelize.STRING},
   notes: {type: Sequelize.STRING},
-  tableTalkPoints: {type: Sequelize.STRING}
+  tableTalkPoints: {type: Sequelize.TEXT}
 })
 
 const Category = database.define('category', {
@@ -88,7 +88,7 @@ const Category = database.define('category', {
   name: { type: Sequelize.STRING, allowNull: false }
 })
 
-Dish.hasOne(Category)
+Dish.belongsTo(Category, { onDelete: 'cascade' });
 
 const Tag = database.define('tag', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -137,10 +137,11 @@ const Restaurant = database.define('restaurant', {
 })
 
 // One to many for restaurants
-Restaurant.hasMany(Dish);
-Restaurant.hasMany(User);
-
-Restaurant.hasMany(Category);
+Restaurant.hasMany(Dish, { onDelete: 'cascade' });
+Dish.belongsTo(Restaurant);
+Restaurant.hasMany(User, { onDelete: 'cascade' });
+Restaurant.hasMany(Category, { onDelete: 'cascade' });
+Category.belongsTo(Restaurant);
 
 module.exports = {
   database,

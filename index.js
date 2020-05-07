@@ -2,8 +2,16 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
-const { database, Dish, Tag } = require('./models')
+const { database } = require('./models')
 const { passport } = require('./controller')
+
+let populateDB;
+try {
+  populateDB = require('./data/db-filler');
+} catch (err) {
+  console.log(err);
+  populateDB = null;
+}
 
 const port = process.env.PORT || 3000
 
@@ -20,27 +28,12 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
-    // populateDB();
-    app.listen(port, () => {
-      console.log(`Listening on port ${port}`)
-    })
-  })
-
-// Placeholder db data
-const populateDB = async () => {
-  await database.Tag.destroy({ where: {} })
-
-  let gluten = await Tag.create({
-    name: 'Gluten',
-    type: 'allergen',
-    excludeForFilter: true,
+  if (populateDB) {
+    populateDB();
+  }
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
   });
-  let peanut = await Tag.create({
-    name: 'Peanut',
-    type: 'allergen',
-    excludeForFilter: true,
-  });
-};
-
+})
 
 require("./routes")(app);
