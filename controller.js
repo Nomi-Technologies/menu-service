@@ -6,13 +6,24 @@ const {
   Category
 } = require("./models");
 
+const {
+  JWT_SECRET,
+  BUCKET_NAME,
+  ACCESS_KEY_ID,
+  SECRET_ACCESS_KEY
+} = require('./config.js');
 const jwt = require('jsonwebtoken');
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
 
-const { JWT_SECRET } = require('./config.js')
-// import { JWT_SECRET } from './config.js';
+const aws = require('aws-sdk');
+aws.config.update({
+  region: 'us-west-1',
+  accessKeyId: ACCESS_KEY_ID,
+  secretAccessKey: SECRET_ACCESS_KEY
+});
+const s3 = new aws.S3();
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -215,8 +226,19 @@ const deleteDish = (req, res) => {
 
 };
 
-const getDishForMobile = (req, res) => {
-
+const fetchAsset = async (req, res) => {
+  let path = req.params[0];
+  s3.getObject({
+    Bucket: BUCKET_NAME,
+    Key: `assets/${path}`
+  }, (err, data) => {
+    if (err) {
+      res.status(err.statusCode).send(err.message);
+    } else {
+      res.setHeader('Content-Type', 'image/png');
+      res.send(data.Body);
+    }
+  });
 };
 
 module.exports = {
@@ -225,9 +247,9 @@ module.exports = {
   getDish,
   updateDish,
   deleteDish,
-  getDishForMobile,
   registerUser,
   loginUser,
   passport,
-  createRestaurant
+  createRestaurant,
+  fetchAsset
 }
