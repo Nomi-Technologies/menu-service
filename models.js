@@ -19,7 +19,6 @@ if(PROD === "true") {
     operatorsAliases: Sequelize.op,
     logging:  true //false
   })
-  
 }
 
 const User = database.define('user', {
