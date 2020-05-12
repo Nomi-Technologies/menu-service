@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 module.exports = app => {
   const controller = require('./controller');
@@ -6,19 +7,28 @@ module.exports = app => {
 
 
   var router = express.Router();
-  var mobileRouter = express.Router();
-
-
+  
   router.post('/user/register', controller.registerUser);
   router.post('/user/login', controller.loginUser);
-
-  router.post('/dishes', passport.authenticate('jwt', {session: false}), controller.createDish);
-  router.get('/dishes', passport.authenticate('jwt', {session: false}), controller.dishesList);
-  router.get('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.getDish);
-  router.put('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.updateDish);
-  router.delete('/dishes/:id', passport.authenticate('jwt', {session: false}), controller.deleteDish);
   router.post('/restaurants/register', controller.createRestaurant);
   router.get('/assets/*', controller.fetchAsset);
 
+  router.use(passport.authenticate('jwt', {session: false}));
+
+  router.post('/dishes', controller.createDish);
+  router.get('/dishes', controller.dishesList);
+  router.get('/dishes/:id', controller.getDish);
+  router.put('/dishes/:id', controller.updateDish);
+  router.delete('/dishes/:id', controller.deleteDish);
+
   app.use('/api', router);
+
+  var webApiRouter = express.Router();
+  webApiRouter.get('/dishes/:restaurantId', controller.publicDishList);
+  app.use('/webApi', cors({
+      origin: 'https://nomi-technologies.github.io',
+      optionsSuccessStatus: 200,
+    }), 
+    webApiRouter
+  );
 };

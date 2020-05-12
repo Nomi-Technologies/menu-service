@@ -241,6 +241,19 @@ const fetchAsset = async (req, res) => {
   });
 };
 
+const publicDishList = (req, res) => {
+  let restaurantId = req.params.restaurantId;
+  Dish.findAll({
+    attributes: ['id', 'name', 'description', 'addons', 'canRemove'],
+    where: { restaurantId: restaurantId },
+    include: [{ model: Tag }, { model: Category }],
+  })
+    .then(data => res.send(data))
+    .catch(err => res.status(500).send({
+      message: err.message || "An error occured while getting dishes list"
+    }));
+};
+
 module.exports = {
   createDish,
   dishesList,
@@ -251,5 +264,6 @@ module.exports = {
   loginUser,
   passport,
   createRestaurant,
-  fetchAsset
+  fetchAsset,
+  publicDishList,
 }
