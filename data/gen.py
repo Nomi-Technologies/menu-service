@@ -106,11 +106,12 @@ for key in all_dishes:
     f.writelines('''
   dish = await db.Dish.create({
     name: '%s',
+    description: '%s',
     tableTalkPoints: '%s',
   });
   dish.setCategory(%s);
   dish.setRestaurant(restaurant);
-''' % (escape_character(dish[0]), escape_character(dish[4]), key.replace(' ', '_')))
+''' % (escape_character(dish[0]), escape_character(dish[1]), escape_character(dish[4]), key.replace(' ', '_')))
     for a in dish[3]:
       f.write('  dish.addTag({});\n'.format(a.lower()))
 

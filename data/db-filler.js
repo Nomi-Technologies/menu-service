@@ -102,62 +102,8 @@ const populateDB = async () => {
   });
   let dish;
   dish = await db.Dish.create({
-    name: 'double chocolate cake',
-    tableTalkPoints: 'Phasellus sit amet diam ut ante dapibus tristique.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(treenuts);
-  dish.addTag(gluten);
-
-  dish = await db.Dish.create({
-    name: 'bread pudding',
-    tableTalkPoints: 'Vivamus dignissim enim a magna hendrerit rhoncus.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-
-  dish = await db.Dish.create({
-    name: 'cardamom chocolate ganache',
-    tableTalkPoints: 'Nunc sed nulla faucibus, lacinia tortor a, auctor orci.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-  dish.addTag(treenuts);
-
-  dish = await db.Dish.create({
-    name: 'malabi',
-    tableTalkPoints: 'Praesent sed ante et nunc faucibus scelerisque.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(treenuts);
-
-  dish = await db.Dish.create({
-    name: 'bacari ice cream',
-    tableTalkPoints: 'Proin vitae odio dictum, aliquet augue eu, hendrerit turpis.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(treenuts);
-
-  dish = await db.Dish.create({
-    name: 'the best cake you\'ve ever had',
-    tableTalkPoints: 'Duis laoreet est quis vestibulum sagittis.',
-  });
-  dish.setCategory(Sweet);
-  dish.setRestaurant(restaurant);
-  dish.addTag(egg);
-  dish.addTag(dairy);
-
-  dish = await db.Dish.create({
     name: 'cheese & salumi',
+    description: 'saint-andrè, gorgonzola dulce, midnight moon, mahon, salame varzi, salame calabrese served with: whole grain mustard, cornichon, caper berry, dried apricot, baguette',
     tableTalkPoints: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   });
   dish.setCategory(Cold);
@@ -167,6 +113,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'asian pear salad',
+    description: 'grilled shiitake mushroom, wild arugula, hard boiled egg, winter citrus vinaigrette',
     tableTalkPoints: 'Phasellus feugiat velit nec egestas faucibus.',
   });
   dish.setCategory(Cold);
@@ -177,6 +124,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'shrimp ceviche',
+    description: 'pickled fennel, heirloom cherry tomato, cucumber, za\'atar, sumac, lime chili chips',
     tableTalkPoints: 'Maecenas ornare tortor et eros pretium, a condimentum odio varius.',
   });
   dish.setCategory(Cold);
@@ -189,6 +137,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'poached shrimp',
+    description: 'citrus chili sauce, shaved radish, parsley, basil',
     tableTalkPoints: 'In quis augue mollis, cursus tortor sed, scelerisque velit.',
   });
   dish.setCategory(Cold);
@@ -198,6 +147,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'burrata caprese',
+    description: 'burrata di gioia, fresh basil, heirloom cherry tomato, basil walnut pesto, grey salt',
     tableTalkPoints: 'Morbi ultrices massa ut sapien volutpat venenatis.',
   });
   dish.setCategory(Cold);
@@ -207,6 +157,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'rainbow beet salad',
+    description: 'oven roasted beets, chèvre, tarragon, frantoia olive oil, black peppercorn, grey salt',
     tableTalkPoints: 'Suspendisse sit amet metus ultrices, scelerisque ante sit amet, posuere libero.',
   });
   dish.setCategory(Cold);
@@ -215,6 +166,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bruschetta with tomato & basil',
+    description: 'local heirloom tomato & basil',
     tableTalkPoints: 'In sed tellus et dolor rhoncus luctus.',
   });
   dish.setCategory(Cold);
@@ -224,6 +176,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bruschetta with eggplant',
+    description: 'roasted market eggplant salad & persian cucumber',
     tableTalkPoints: 'Donec facilisis magna at nisl auctor viverra.',
   });
   dish.setCategory(Cold);
@@ -233,6 +186,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bruschetta with bell pepper',
+    description: 'dalia\'s open fire roasted bell peppers',
     tableTalkPoints: 'Nulla ornare orci sed vestibulum malesuada.',
   });
   dish.setCategory(Cold);
@@ -242,6 +196,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bruschetta with basil walnut pesto',
+    description: 'balsamic roasted garlic with basil walnut pesto',
     tableTalkPoints: 'Mauris sed ex at elit aliquet tristique.',
   });
   dish.setCategory(Cold);
@@ -253,6 +208,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'tuscan kale salad',
+    description: 'crispy black kale & chopped rainbow kale, persian cucumber, heirloom cherry tomato, green onion, crumbled feta, za\'atar, sumac, kale tahini',
     tableTalkPoints: 'Donec congue elit accumsan, condimentum ligula eu, tempor leo.',
   });
   dish.setCategory(Cold);
@@ -263,76 +219,8 @@ const populateDB = async () => {
   dish.addTag(soy);
 
   dish = await db.Dish.create({
-    name: 'asian pear & brie',
-    tableTalkPoints: 'Nulla at nisi sed libero commodo elementum.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-
-  dish = await db.Dish.create({
-    name: 'chorizo',
-    tableTalkPoints: 'Etiam pulvinar justo a lobortis fermentum.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-  dish.addTag(onion);
-  dish.addTag(garlic);
-
-  dish = await db.Dish.create({
-    name: 'margherita',
-    tableTalkPoints: 'Maecenas nec nunc vulputate, interdum nisi a, aliquam lorem.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-  dish.addTag(onion);
-  dish.addTag(garlic);
-
-  dish = await db.Dish.create({
-    name: 'smoked mushroom',
-    tableTalkPoints: 'Donec ultrices libero et leo consequat, ut lobortis erat tincidunt.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-  dish.addTag(garlic);
-
-  dish = await db.Dish.create({
-    name: 'white',
-    tableTalkPoints: 'Praesent a sapien suscipit, iaculis elit sit amet, convallis nisl.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-
-  dish = await db.Dish.create({
-    name: 'bacon & double cream brie',
-    tableTalkPoints: 'Proin vitae odio dictum, aliquet augue eu, hendrerit turpis.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(dairy);
-  dish.addTag(gluten);
-  dish.addTag(onion);
-  dish.addTag(garlic);
-
-  dish = await db.Dish.create({
-    name: 'vegan pizza',
-    tableTalkPoints: 'Nullam consectetur elit consequat, placerat arcu et, condimentum dui.',
-  });
-  dish.setCategory(Grilled_Pizza);
-  dish.setRestaurant(restaurant);
-  dish.addTag(gluten);
-
-  dish = await db.Dish.create({
     name: 'fried chicken sliders',
+    description: 'cornbread crusted, hawaiian roll, pickled cucumber, cabbage, lemon kalamata olive caper aioli',
     tableTalkPoints: 'Sed gravida enim a felis congue, ac consectetur orci varius.',
   });
   dish.setCategory(Hot);
@@ -342,6 +230,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'frog legs',
+    description: 'coconut crusted, roasted garlic cauliflower puree, gremolata',
     tableTalkPoints: 'Morbi quis justo nec sapien fringilla scelerisque et eget massa.',
   });
   dish.setCategory(Hot);
@@ -351,6 +240,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'oaxacan pasta',
+    description: 'handmade pasta, oaxacan cream, romesco, toasted almond, cilantro',
     tableTalkPoints: 'Fusce eget quam eu dolor rhoncus venenatis quis ac lacus.',
   });
   dish.setCategory(Hot);
@@ -362,6 +252,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'shishito peppers',
+    description: 'ricotta salata, pickled onion, black beans, za\'atar vinaigrette',
     tableTalkPoints: 'Nam volutpat est sit amet diam volutpat, ut suscipit orci tincidunt.',
   });
   dish.setCategory(Hot);
@@ -371,6 +262,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'sea bass balik',
+    description: 'pan seared, charred shishito pepper & black beans, tarragon aioli, pomegranate molasses, grilled lemon',
     tableTalkPoints: 'Cras pretium dui sed mauris ullamcorper mollis.',
   });
   dish.setCategory(Hot);
@@ -382,6 +274,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'feta filo',
+    description: 'clover honey, toasted sesame, black caraway, flaxseed',
     tableTalkPoints: 'Vestibulum et orci pharetra, dignissim libero sed, luctus nunc.',
   });
   dish.setCategory(Hot);
@@ -392,6 +285,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'shawarma tacos',
+    description: 'mary\'s air chilled chicken, israeli spice mix, cabbage, pickled red onion, lemon garlic tahini',
     tableTalkPoints: 'Maecenas rhoncus elit sed leo feugiat convallis.',
   });
   dish.setCategory(Hot);
@@ -403,6 +297,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'grilled pistachio lamb kebab',
+    description: 'kale, turmeric, and beet tahini; cucumber, heirloom cherry tomato',
     tableTalkPoints: 'Donec id tellus ac eros maximus laoreet.',
   });
   dish.setCategory(Hot);
@@ -415,6 +310,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'stuffed mushroom',
+    description: 'five cheese blend, toasted pecan, basil walnut pesto, parmesan, parsley',
     tableTalkPoints: 'Praesent aliquam urna nec justo blandit tincidunt.',
   });
   dish.setCategory(Hot);
@@ -426,6 +322,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'chipotle chicken wings',
+    description: 'buttermilk batter, smoked pepper sauce, blue cheese creme fraiche, scallion',
     tableTalkPoints: 'Nulla nec ligula sit amet metus aliquet mattis.',
   });
   dish.setCategory(Hot);
@@ -437,6 +334,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'oven roasted bone marrow',
+    description: 'caper panko, sea salt, black pepper, crostini',
     tableTalkPoints: 'Sed dictum augue at tellus facilisis, maximus ullamcorper tellus euismod.',
   });
   dish.setCategory(Hot);
@@ -446,6 +344,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bacari fries',
+    description: 'chef\'s "bcn" sauce, fried egg',
     tableTalkPoints: 'Vivamus dignissim enim a magna hendrerit rhoncus.',
   });
   dish.setCategory(Hot);
@@ -457,6 +356,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'ricotta & beet gnocchi',
+    description: 'hand-made, chèvre fondue, chimichurri',
     tableTalkPoints: 'Nunc efficitur nulla non aliquam lacinia.',
   });
   dish.setCategory(Hot);
@@ -468,6 +368,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'gorgonzola pasta',
+    description: 'gorgonzola dulcelatte cream sauce, hand-made tripoline, zucchini, calabrese pepper, crushes pistachio',
     tableTalkPoints: 'Duis pharetra nisl eu risus tempus, vel feugiat augue interdum.',
   });
   dish.setCategory(Hot);
@@ -479,6 +380,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'lamb stuffed eggplant',
+    description: 'seasoned ground leg of lamb, lemon garlic emulsion, lemon chip, scallion',
     tableTalkPoints: 'Cras ut ligula euismod, placerat turpis nec, euismod ante.',
   });
   dish.setCategory(Hot);
@@ -491,6 +393,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'noa\'s cauliflower',
+    description: 'caramelized, chipotle sauce, mixed greens',
     tableTalkPoints: 'Donec tempus sem at leo finibus aliquam.',
   });
   dish.setCategory(Hot);
@@ -500,6 +403,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'seared scallops',
+    description: 'carrot parsnip puree, melted leeks, crispy capers, white truffle oil',
     tableTalkPoints: 'Integer sollicitudin nisl non sem laoreet facilisis.',
   });
   dish.setCategory(Hot);
@@ -511,6 +415,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'grilled chicken breast',
+    description: 'mary\'s air chilled chicken, crispy parmesan risotto cake, lemon jalapeño caper sauce',
     tableTalkPoints: 'Nulla et tellus vehicula, lacinia ante at, consectetur risus.',
   });
   dish.setCategory(Hot);
@@ -521,6 +426,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bacari burger',
+    description: 'all natural beef, open faced, fresh tomato, carmelized onion, worcestershire aioli, telera roll',
     tableTalkPoints: 'Aenean sagittis ex sit amet tristique dignissim.',
   });
   dish.setCategory(Hot);
@@ -534,6 +440,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'chef\'s salmon',
+    description: 'crispy skin, walnut crust, garlic herb bulgar, parsley',
     tableTalkPoints: 'Nunc eu dolor vehicula, dignissim diam eu, dapibus est.',
   });
   dish.setCategory(Hot);
@@ -546,6 +453,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'hunter\'s mac & cheese',
+    description: '5 cheese fondue, toasted panko, white truffle oil, scallion',
     tableTalkPoints: 'Maecenas nec nunc vulputate, interdum nisi a, aliquam lorem.',
   });
   dish.setCategory(Hot);
@@ -558,6 +466,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'brussels sprouts',
+    description: 'caramelized, pomegranate molasses, creme fraiche, red beet',
     tableTalkPoints: 'Integer a orci venenatis, viverra diam et, hendrerit arcu.',
   });
   dish.setCategory(Hot);
@@ -567,6 +476,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'seared petit filet',
+    description: 'grilled zucchini, house-made bernaise',
     tableTalkPoints: 'Nulla elementum lorem a elit placerat, sed ullamcorper augue pulvinar.',
   });
   dish.setCategory(Hot);
@@ -577,6 +487,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'glazed pork belly',
+    description: 'sweet umami mulling glaze, toasted sesame seed, lemon, scallion, cilantro',
     tableTalkPoints: 'Morbi non neque tempor, cursus tellus vitae, faucibus mauris.',
   });
   dish.setCategory(Hot);
@@ -589,6 +500,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'bacon wrapped medjool dates',
+    description: 'parmagiano-reggiano stuffed',
     tableTalkPoints: 'Etiam vitae odio commodo, elementum lorem eget, imperdiet justo.',
   });
   dish.setCategory(Hot);
@@ -597,6 +509,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'wild mushroom polenta',
+    description: 'chanterelle, wood ear, shiitake, cremini, scallion, cucumber',
     tableTalkPoints: 'Vestibulum pulvinar lectus eu leo sodales venenatis.',
   });
   dish.setCategory(Hot);
@@ -605,7 +518,145 @@ const populateDB = async () => {
   dish.addTag(onion);
 
   dish = await db.Dish.create({
+    name: 'asian pear & brie',
+    description: 'guava fromage blanc, wild arugula, grey salt, frantoia olive oil',
+    tableTalkPoints: 'Nulla at nisi sed libero commodo elementum.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+
+  dish = await db.Dish.create({
+    name: 'chorizo',
+    description: 'tomatillo salsa, queso fresco',
+    tableTalkPoints: 'Etiam pulvinar justo a lobortis fermentum.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+  dish.addTag(onion);
+  dish.addTag(garlic);
+
+  dish = await db.Dish.create({
+    name: 'margherita',
+    description: 'organic tomato sauce, mozzarella di gioia, fresh basil, olive oil',
+    tableTalkPoints: 'Maecenas nec nunc vulputate, interdum nisi a, aliquam lorem.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+  dish.addTag(onion);
+  dish.addTag(garlic);
+
+  dish = await db.Dish.create({
+    name: 'smoked mushroom',
+    description: 'fromage blanc, 2yr white cheddar, parsley',
+    tableTalkPoints: 'Donec ultrices libero et leo consequat, ut lobortis erat tincidunt.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+  dish.addTag(garlic);
+
+  dish = await db.Dish.create({
+    name: 'white',
+    description: 'fromage blanc, bacon, scallion, mozzarella',
+    tableTalkPoints: 'Praesent a sapien suscipit, iaculis elit sit amet, convallis nisl.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+
+  dish = await db.Dish.create({
+    name: 'bacon & double cream brie',
+    description: 'organic tomato sauce, fresh jalapeño',
+    tableTalkPoints: 'Proin vitae odio dictum, aliquet augue eu, hendrerit turpis.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+  dish.addTag(onion);
+  dish.addTag(garlic);
+
+  dish = await db.Dish.create({
+    name: 'vegan pizza',
+    description: 'organix tomato sauce, mixed greens, roasted garlic, caramelized onion, fresh tomato',
+    tableTalkPoints: 'Nullam consectetur elit consequat, placerat arcu et, condimentum dui.',
+  });
+  dish.setCategory(Grilled_Pizza);
+  dish.setRestaurant(restaurant);
+  dish.addTag(gluten);
+
+  dish = await db.Dish.create({
+    name: 'double chocolate cake',
+    description: 'chocolate pudding, hazelnut brittle',
+    tableTalkPoints: 'Phasellus sit amet diam ut ante dapibus tristique.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(treenuts);
+  dish.addTag(gluten);
+
+  dish = await db.Dish.create({
+    name: 'bread pudding',
+    description: 'clover honey custard, vanilla bean ice cream',
+    tableTalkPoints: 'Vivamus dignissim enim a magna hendrerit rhoncus.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+
+  dish = await db.Dish.create({
+    name: 'cardamom chocolate ganache',
+    description: 'brown butter cookie dough, banana brulee, candied walnut, chantilly cream',
+    tableTalkPoints: 'Nunc sed nulla faucibus, lacinia tortor a, auctor orci.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(gluten);
+  dish.addTag(treenuts);
+
+  dish = await db.Dish.create({
+    name: 'malabi',
+    description: 'rosewater custard, shaved coconut, hibiscus flower syrup, candied pistachio',
+    tableTalkPoints: 'Praesent sed ante et nunc faucibus scelerisque.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(treenuts);
+
+  dish = await db.Dish.create({
+    name: 'bacari ice cream',
+    description: 'vanilla bean, walnut, clover honey',
+    tableTalkPoints: 'Proin vitae odio dictum, aliquet augue eu, hendrerit turpis.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(dairy);
+  dish.addTag(treenuts);
+
+  dish = await db.Dish.create({
+    name: 'the best cake you\'ve ever had',
+    description: 'medjool dates, brown sugar caramel, crispy bacon',
+    tableTalkPoints: 'Duis laoreet est quis vestibulum sagittis.',
+  });
+  dish.setCategory(Sweet);
+  dish.setRestaurant(restaurant);
+  dish.addTag(egg);
+  dish.addTag(dairy);
+
+  dish = await db.Dish.create({
     name: 'avocado toast',
+    description: 'house-baked superfood bread (gluten free), watermelon radish, olive oil, grey salt',
     tableTalkPoints: 'Etiam lacinia nunc pellentesque libero imperdiet, in cursus ipsum fringilla.',
   });
   dish.setCategory(Brunch);
@@ -616,6 +667,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'housemade granola bowl',
+    description: 'fresh fruit, greek yogurt, clover honey, fresh mint',
     tableTalkPoints: 'Sed dictum magna sit amet nunc luctus, eu tempor dolor viverra.',
   });
   dish.setCategory(Brunch);
@@ -624,6 +676,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'free-range egg pizza',
+    description: 'fromage blanc, caramalized onion, mixed greens, mozzerella',
     tableTalkPoints: 'Vestibulum facilisis ante sed rhoncus gravida.',
   });
   dish.setCategory(Brunch);
@@ -635,6 +688,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'pancakes',
+    description: 'whole wheat, flax seed, hemp seed, cardamom butter, fresh fruit',
     tableTalkPoints: 'Maecenas luctus urna a lorem consectetur tempus.',
   });
   dish.setCategory(Brunch);
@@ -646,6 +700,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'potato hash',
+    description: 'chorizo, bell pepper, caramelized onion, mornay sauce, fried egg',
     tableTalkPoints: 'Donec aliquam orci ac urna varius pellentesque.',
   });
   dish.setCategory(Brunch);
@@ -657,6 +712,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'croque madame',
+    description: 'pastrami and onion ragu, five-cheese, fried egg, telera roll',
     tableTalkPoints: 'Proin sed arcu accumsan, pulvinar magna vitae, accumsan risus.',
   });
   dish.setCategory(Brunch);
@@ -668,6 +724,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'shrimp & grits',
+    description: 'slow poached, harissa butter, yellow corn grits, cucumber, scallion, grey salt',
     tableTalkPoints: 'Curabitur pellentesque risus non nisi pellentesque, eu finibus tellus pellentesque.',
   });
   dish.setCategory(Brunch);
@@ -679,6 +736,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'crab cake benedict',
+    description: 'panko rusted claw meat, freshly made grapefruit hollandaise, sous vide egg',
     tableTalkPoints: 'Maecenas placerat tortor et viverra interdum.',
   });
   dish.setCategory(Brunch);
@@ -691,6 +749,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'tofu scramble',
+    description: 'roasted bell pepper, kale, spanish onion, pomegranate sweet chili sauce, grilled baguette',
     tableTalkPoints: 'Aenean aliquam diam fermentum justo cursus, vel vehicula massa fringilla.',
   });
   dish.setCategory(Brunch);
@@ -701,6 +760,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'goat cheese polenta',
+    description: 'ground leg of lamb ragu, smoked pepper sauce, fried egg',
     tableTalkPoints: 'Cras non odio non risus lobortis eleifend quis nec dolor.',
   });
   dish.setCategory(Brunch);
@@ -712,6 +772,7 @@ const populateDB = async () => {
 
   dish = await db.Dish.create({
     name: 'chai tea custard',
+    description: 'chia seed, coconut mild, elderflower macerated berries, crushed marcona almond',
     tableTalkPoints: 'In sodales dolor quis nisl faucibus, ut euismod nisi aliquet.',
   });
   dish.setCategory(Brunch);
