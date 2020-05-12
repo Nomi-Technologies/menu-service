@@ -25,6 +25,7 @@ module.exports = app => {
 
   var webApiRouter = express.Router();
   webApiRouter.get('/dishes/:restaurantId', controller.publicDishList);
+  webApiRouter.get('/restaurants', controller.publicRestaurantList);
   app.use('/webApi', cors({
       origin: 'https://nomi-technologies.github.io',
       optionsSuccessStatus: 200,
