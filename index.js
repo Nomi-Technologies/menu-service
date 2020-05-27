@@ -5,14 +5,6 @@ const bodyParser = require('body-parser')
 const { database } = require('./models')
 const { passport } = require('./controller')
 
-let populateDB;
-try {
-  populateDB = require('./data/db-filler');
-} catch (err) {
-  console.log(err);
-  populateDB = null;
-}
-
 const port = process.env.PORT || 3000
 
 const app = express()
@@ -28,9 +20,6 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
-  if (populateDB) {
-    populateDB();
-  }
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   });
