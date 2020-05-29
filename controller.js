@@ -255,11 +255,7 @@ const publicDishList = (req, res) => {
 };
 
 const publicRestaurantList = (req, res) => {
-  Restaurant.findAll()
-    .then(data => res.send(data))
-    .catch(err => res.status(500).send({
-      message: err.message || "An error occured while getting restaurant list"
-    }));
+  res.send('[]');
 };
 
 module.exports = {
