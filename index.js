@@ -9,10 +9,20 @@ const port = process.env.PORT || 3000
 
 const app = express()
 
-app.use(cors({
-  origin: 'https://nomi-technologies.github.io',
-  optionsSuccessStatus: 200,
-}));
+
+var whitelist = ['https://nomi-technologies.github.io', 'localhost:8000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
