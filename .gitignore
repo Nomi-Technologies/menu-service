@@ -109,3 +109,4 @@ dist
 data/menu.csv
 
 .DS_Store
+data/db-filler.js
