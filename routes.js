@@ -17,7 +17,7 @@ module.exports = app => {
   var whitelist = [
     'https://nomi-technologies.github.io',
     'https://nomi-smart-menu.netlify.app',
-    'http://localhost'
+    'http://localhost:8000'
   ];
   var corsOptions = {
     origin: function (origin, callback) {
