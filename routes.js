@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const proxy = require('express-http-proxy');
 
 module.exports = app => {
   const controller = require('./controller');
   const { passport } = require('./controller')
 
+  var revProxy = express.Router();
+  revProxy.all('/smart-menu/*', proxy('https://nomi-smart-menu.netlify.app', {
+    proxyReqPathResolver: req => `/${req.params[0]}`
+  }));
+  app.use('/app', revProxy);
 
   var router = express.Router();
   
