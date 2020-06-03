@@ -22,7 +22,7 @@ module.exports = app => {
   var corsOptions = {
     origin: function (origin, callback) {
       console.log(origin);
-      if (whitelist.indexOf(origin) !== -1) {
+      if (whitelist.indexOf(origin) !== -1 || origin === undefined) {
         callback(null, true)
       } else {
         callback(new Error('Not allowed by CORS'))
