@@ -96,8 +96,12 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-Dish.belongsToMany(Tag, { through: "dish_tags" });
-Tag.belongsToMany(Dish, { through: "dish_tags" });
+const DishTags = database.define('dish_tags', {
+  removable: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false }
+});
+
+Dish.belongsToMany(Tag, { through: DishTags });
+Tag.belongsToMany(Dish, { through: DishTags });
 
 
 // restaurant model
