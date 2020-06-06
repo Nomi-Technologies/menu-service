@@ -87,7 +87,8 @@ const Category = database.define('category', {
   name: { type: Sequelize.STRING, allowNull: false }
 })
 
-Dish.belongsTo(Category, { onDelete: 'cascade' });
+Category.hasMany(Dish, {onDelete: 'cascade'})
+Dish.belongsTo(Category)
 
 const Tag = database.define('tag', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },

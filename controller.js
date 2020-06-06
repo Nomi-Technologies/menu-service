@@ -146,15 +146,32 @@ const dishesList = (req, res) => {
     });
 };
 
+const dishesByCategory = (req, res) => {
+  userRestaurantId = req.user.restaurantId
+  Category.findAll({
+    where: {restaurantId: userRestaurantId},
+    include: [{model: Dish, include: [{model: Tag}]}]
+  })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "An error occured while getting categories list"
+      });
+    });
+}
+
 const getDish = (req, res) => {
   const id = req.params.id;
 
   userRestaurantId = req.user.restaurantId
   Dish.findByPk(id, {
-      include: [{ model: Tag }, { model: Category }]
+      include: [{ model: Tag }, { model: Category }, { model: Restaurant }]
   })
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
+      console.log(dish)
       if(dish && dish.restaurantId == userRestaurantId) {
         res.send(dish);
       }
@@ -261,6 +278,7 @@ const publicRestaurantList = (req, res) => {
 module.exports = {
   createDish,
   dishesList,
+  dishesByCategory,
   getDish,
   updateDish,
   deleteDish,

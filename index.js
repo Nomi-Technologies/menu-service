@@ -1,6 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
+const populateDB = require('./data/db-filler')
+
 const { database } = require('./models')
 const { passport } = require('./controller')
 
@@ -18,6 +20,7 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
+  populateDB()
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   });

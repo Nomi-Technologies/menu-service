@@ -46,6 +46,7 @@ module.exports = app => {
   router.get('/dishes/:id', controller.getDish);
   router.put('/dishes/:id', controller.updateDish);
   router.delete('/dishes/:id', controller.deleteDish);
+  router.get('/dishes-by-category', controller.dishesByCategory);
 
   app.use('/api', router);
 
