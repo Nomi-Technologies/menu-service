@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
-  populateDB()
+  // populateDB()
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   });

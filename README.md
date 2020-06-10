@@ -25,10 +25,3 @@ AWS_S3_ACCESS_KEY_ID=<your access key>
 AWS_S3_SECRET_ACCESS_KEY=<your secret key>
 ```
 
-## TODO:
-[x] Basic DB
-[X] Basic Authentication
-[ ] Set up env
-[ ] Validation [here](https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/)
-[ ] Rework db schema to associate Users
-
