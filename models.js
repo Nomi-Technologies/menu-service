@@ -109,6 +109,9 @@ const Restaurant = database.define('restaurant', {
   id: {
     type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true
   },
+  unique_name: {
+    type: Sequelize.STRING, unique: true, allowNull: false
+  },
   name: {
     type: Sequelize.STRING,
     allowNull: false
