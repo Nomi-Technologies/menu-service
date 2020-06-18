@@ -13,12 +13,15 @@ if(PROD === "true") {
   })
 } else {
   console.log("Debug mode is activated");
+  console.log("initializing database")
   database = new Sequelize({
     database: DB_NAME,
     dialect: 'postgres',
     operatorsAliases: Sequelize.op,
-    logging:  true //false
+    logging:  (str) => {console.log(str)} //false
   })
+
+  console.log("intitialize success")
 }
 
 const User = database.define('user', {
