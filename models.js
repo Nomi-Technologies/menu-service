@@ -143,8 +143,17 @@ const Restaurant = database.define('restaurant', {
   url: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  published: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   }
-})
+}, {
+  indexes: [
+    { unique: true, fields: ['unique_name'] }
+  ]
+});
 
 // One to many for restaurants
 Restaurant.hasMany(Dish, { onDelete: 'cascade' });
