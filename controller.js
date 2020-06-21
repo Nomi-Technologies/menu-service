@@ -146,12 +146,29 @@ const dishesList = (req, res) => {
     });
 };
 
+const dishesByCategory = (req, res) => {
+  userRestaurantId = req.user.restaurantId
+  Category.findAll({
+    where: {restaurantId: userRestaurantId},
+    include: [{model: Dish, include: [{model: Tag}]}]
+  })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "An error occured while getting categories list"
+      });
+    });
+}
+
 const getDish = (req, res) => {
   const id = req.params.id;
 
   userRestaurantId = req.user.restaurantId
+
   Dish.findByPk(id, {
-      include: [{ model: Tag }, { model: Category }]
+      include: [{ model: Tag }, { model: Category }, { model: Restaurant }]
   })
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
@@ -173,11 +190,16 @@ const getDish = (req, res) => {
 
 const updateDish = (req, res) => {
   userRestaurantId = req.user.restaurantId
-  Dish.findByPk(req.id)
+  Dish.findByPk(req.params.id)
   .then(dish => {
     // verify user belongs to restauraunt of dish to update
     if(dish && dish.restaurantId == userRestaurantId) {
-      dish.updateDish(req.body);
+      console.log(req)
+      Dish.update(req.body, {where: {id: req.params.id}}).then(() => {
+        res.status(200).send({
+          message: "update sucessful"
+        })
+      });
     }
     else {
       // sends if dish does not exist, or user does not have access
@@ -261,6 +283,7 @@ const publicRestaurantList = (req, res) => {
 module.exports = {
   createDish,
   dishesList,
+  dishesByCategory,
   getDish,
   updateDish,
   deleteDish,

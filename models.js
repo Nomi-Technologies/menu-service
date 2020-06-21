@@ -13,12 +13,15 @@ if(PROD === "true") {
   })
 } else {
   console.log("Debug mode is activated");
+  console.log("initializing database")
   database = new Sequelize({
     database: DB_NAME,
     dialect: 'postgres',
     operatorsAliases: Sequelize.op,
-    logging:  true //false
+    logging:  (str) => {console.log(str)} //false
   })
+
+  console.log("intitialize success")
 }
 
 const User = database.define('user', {
@@ -87,7 +90,8 @@ const Category = database.define('category', {
   name: { type: Sequelize.STRING, allowNull: false }
 })
 
-Dish.belongsTo(Category, { onDelete: 'cascade' });
+Category.hasMany(Dish, {onDelete: 'cascade'})
+Dish.belongsTo(Category)
 
 const Tag = database.define('tag', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
