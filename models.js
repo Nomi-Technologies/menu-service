@@ -113,7 +113,7 @@ const Restaurant = database.define('restaurant', {
   id: {
     type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true
   },
-  unique_name: {
+  uniqueName: {
     type: Sequelize.STRING, unique: true, allowNull: false
   },
   name: {
@@ -151,7 +151,7 @@ const Restaurant = database.define('restaurant', {
   }
 }, {
   indexes: [
-    { unique: true, fields: ['unique_name'] }
+    { unique: true, fields: ['uniqueName'] }
   ]
 });
 
