@@ -55,7 +55,7 @@ const registerUser = (req, res) => {
       .then((user) => {
           res.send("User " + user.email + " was successfully created!");
       });
-    
+
   } catch (err) {
     res.status(500).send(err);
   }
@@ -118,7 +118,7 @@ const createDish = (req, res) => {
     tableTalkPoints: req.body.tableTalkPoints,
     restaurantId: req.user.restaurantId         // register to user's restaurant
   }
-  
+
   Dish.create(dish)
     .then(data => {
       res.send(data);
@@ -128,6 +128,51 @@ const createDish = (req, res) => {
         message: err.message || "An error occured while processing this request"
       });
     });
+};
+
+// reads csv and creates menu
+async function uploadMenuCSV(req, res) {
+  var userRestaurantId = req.user.restaurantId
+  var dataArr = req.body.data;
+  var category, dish;
+  for(let i = 0; i < dataArr.length; i++){
+
+    await Category.findCreateFind({
+      where: {
+        name: dataArr[i][0],
+        restaurantId: userRestaurantId
+      }
+    })
+    .then( (dishcategory) => {
+      Dish.create({
+        name: dataArr[i][1],
+        description: dataArr[i][2],
+        addons: dataArr[i][3],
+        canRemove: dataArr[i][1],
+        notes: dataArr[i][11],
+        tableTalkPoints: dataArr[i][12],
+        restaurantId: userRestaurantId,
+        categoryId: dishcategory[0].id
+      })
+      let allergenlist = dataArr[i][5].split(",");
+      /*
+      for(let j = 0; j < allergenlist.length; j++){
+        Tags.findCreateFind({
+          where: {
+            //capitalize and remove spaces
+            name: allergenlist[j],
+            restaurantId: userRestaurantId
+          }
+        })
+      }
+      */
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "An error occured while processing this request"
+      });
+    });
+  }
 };
 
 const dishesList = (req, res) => {
@@ -161,6 +206,7 @@ const dishesByCategory = (req, res) => {
       });
     });
 }
+
 
 const getDish = (req, res) => {
   const id = req.params.id;
@@ -293,5 +339,6 @@ module.exports = {
   createRestaurant,
   fetchAsset,
   publicDishList,
-  publicRestaurantList
+  publicRestaurantList,
+  uploadMenuCSV
 }
