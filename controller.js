@@ -131,49 +131,59 @@ const createDish = (req, res) => {
 };
 
 // reads csv and creates menu
-async function uploadMenuCSV(req, res) {
+const uploadMenuCSV = (req, res) => {
+  CsvHelper(req)
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while processing this request"
+    });
+  });
+}
+
+async function CsvHelper(req) {
   var userRestaurantId = req.user.restaurantId
   var dataArr = req.body.data;
-  var category, dish;
+  var dish, dishcategory;
   for(let i = 0; i < dataArr.length; i++){
-
-    await Category.findCreateFind({
+    // find or create category with given name and restaurantId
+    dishcategory = await Category.findCreateFind({
       where: {
         name: dataArr[i][0],
         restaurantId: userRestaurantId
       }
     })
-    .then( (dishcategory) => {
-      Dish.create({
-        name: dataArr[i][1],
-        description: dataArr[i][2],
-        addons: dataArr[i][3],
-        canRemove: dataArr[i][1],
-        notes: dataArr[i][11],
-        tableTalkPoints: dataArr[i][12],
-        restaurantId: userRestaurantId,
-        categoryId: dishcategory[0].id
-      })
-      let allergenlist = dataArr[i][5].split(",");
-      /*
-      for(let j = 0; j < allergenlist.length; j++){
-        Tags.findCreateFind({
-          where: {
-            //capitalize and remove spaces
-            name: allergenlist[j],
-            restaurantId: userRestaurantId
-          }
-        })
-      }
-      */
+    dish = await Dish.create({
+      name: dataArr[i][1],
+      description: dataArr[i][2],
+      addons: dataArr[i][3],
+      canRemove: dataArr[i][1],
+      notes: dataArr[i][11],
+      tableTalkPoints: dataArr[i][12],
+      restaurantId: userRestaurantId,
     })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "An error occured while processing this request"
-      });
-    });
+    dish.setCategory(dishcategory[0]);
+    addTags(dish, dataArr[i][5])
   }
 };
+
+async function addTags(dish, allergens){
+  let allergenlist = allergens.split(",");
+  for(let j = 0; j < allergenlist.length; j++){
+    let tag = await Tag.findCreateFind({
+      where: {
+        name: capitalizeFirstLetter(allergenlist[j].trim())
+      }
+    })
+    dish.addTag(tag[0]);
+  }
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const dishesList = (req, res) => {
   userRestaurantId = req.user.restaurantId
