@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-// const populateDB = require('./data/db-filler')
+// const populateDB = require('./data/db-filler');
 
 console.log("Starting menu-service...")
 
@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 });
 
 database.sync().then(() => {
+  // populateDB();
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   });

@@ -10,7 +10,11 @@ If you'd like to reset db with the menu.csv file, go to data/ and run
 ```
 $ python gen.py
 ```
-data/db-filler.js will be generated. This generated script will erase the database and fill in the menu items in the menu.csv file
+data/db-filler.js will be generated. This generated script will erase the database and fill in the menu items in the menu.csv file. Before restarting the server, go to index.js and uncomment line 4 and 26.
+```
+ 4  // const populateDB = require('./data/db-filler');
+26    // populateDB();
+```
 
 ## Getting started
 Install packages
