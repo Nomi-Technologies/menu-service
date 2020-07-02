@@ -1,149 +1,170 @@
-const Sequelize = require('sequelize')
-const bcrypt = require('bcrypt')
-const { DB_NAME, PROD, DATABASE_URL} = require('./config.js')
+const Sequelize = require("sequelize");
+const bcrypt = require("bcrypt");
+const { DB_NAME, PROD, DATABASE_URL } = require("./config.js");
 
-let database = null
+let database = null;
 
 // check if prod, setup heroku version of sequelize
-if(PROD === "true") {
-  console.log("Production mode is activated")
+if (PROD === "true") {
+  console.log("Production mode is activated");
   database = new Sequelize(DATABASE_URL, {
-    dialect: 'postgres',
-    operatorsAliases: Sequelize.op
-  })
+    dialect: "postgres",
+    operatorsAliases: Sequelize.op,
+  });
 } else {
   console.log("Debug mode is activated");
-  console.log("initializing database")
+  console.log("initializing database");
   database = new Sequelize({
     database: DB_NAME,
-    dialect: 'postgres',
+    dialect: "postgres",
     operatorsAliases: Sequelize.op,
-    logging:  (str) => {console.log(str)} //false
-  })
+    logging: (str) => {
+      console.log(str);
+    }, //false
+  });
 
-  console.log("intitialize success")
+  console.log("intitialize success");
 }
 
-const User = database.define('user', {
+const User = database.define("user", {
   email: {
     type: Sequelize.STRING,
     unique: true,
-    allowNull: false
+    allowNull: false,
   },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   phone: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   role: {
-    type: Sequelize.ENUM('admin', 'staff'),
-    defaultValue: 'staff',
-  }
+    type: Sequelize.ENUM("admin", "staff"),
+    defaultValue: "staff",
+  },
+  firtname: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  lastname: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 });
 
 // TODO: Make sure user doesn't already exist and throw error
-User.register = async (email, password, phone, role, restaurant) => {
+User.register = async (
+  email,
+  password,
+  phone,
+  role,
+  restaurant,
+  fname,
+  lname
+) => {
   const passwordHash = bcrypt.hashSync(password, 10);
   let user = {
     email: email,
     password: passwordHash,
     phone: phone,
     role: role,
-    restaurantId: restaurant
-  }
+    restaurantId: restaurant,
+    firstname: fname,
+    lastname: lname,
+  };
 
-  let created_user = await User.create(user)
+  let created_user = await User.create(user);
   return User.authenticate(email, password);
-}
+};
 
 User.getUser = async (obj) => {
   return await User.findOne({
-    where: obj
+    where: obj,
   });
-}
+};
 
 // used to validate the user
 User.authenticate = async (email, password) => {
-  let user = await User.findOne({where: {email: email}});
+  let user = await User.findOne({ where: { email: email } });
   if (user && bcrypt.compareSync(password, user.password)) {
     return user;
   } else {
     return null;
   }
-}
+};
 
-const Dish = database.define('dish', {
+const Dish = database.define("dish", {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
-  description: {type: Sequelize.STRING},
-  addons: {type: Sequelize.STRING},
-  canRemove: {type: Sequelize.STRING},
-  notes: {type: Sequelize.STRING},
-  tableTalkPoints: {type: Sequelize.TEXT}
-})
+  description: { type: Sequelize.STRING },
+  addons: { type: Sequelize.STRING },
+  canRemove: { type: Sequelize.STRING },
+  notes: { type: Sequelize.STRING },
+  tableTalkPoints: { type: Sequelize.TEXT },
+});
 
-const Category = database.define('category', {
+const Category = database.define("category", {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: Sequelize.STRING, allowNull: false }
-})
+  name: { type: Sequelize.STRING, allowNull: false },
+});
 
-Category.hasMany(Dish, {onDelete: 'cascade'})
-Dish.belongsTo(Category)
+Category.hasMany(Dish, { onDelete: "cascade" });
+Dish.belongsTo(Category);
 
-const Tag = database.define('tag', {
+const Tag = database.define("tag", {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
   type: { type: Sequelize.STRING, allowNull: false }, // 'Allergen, Diet, etc.'
-  excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
-})
+  excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false }, // e.g. exclude for peanuts or include for gluten-free possible
+});
 
 Dish.belongsToMany(Tag, { through: "dish_tags" });
 Tag.belongsToMany(Dish, { through: "dish_tags" });
 
-
 // restaurant model
-const Restaurant = database.define('restaurant', {
+const Restaurant = database.define("restaurant", {
   id: {
-    type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   streetAddress: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   city: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   state: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   zip: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   phone: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   url: {
     type: Sequelize.STRING,
-    allowNull: true
-  }
-})
+    allowNull: true,
+  },
+});
 
 // One to many for restaurants
-Restaurant.hasMany(Dish, { onDelete: 'cascade' });
+Restaurant.hasMany(Dish, { onDelete: "cascade" });
 Dish.belongsTo(Restaurant);
-Restaurant.hasMany(User, { onDelete: 'cascade' });
-Restaurant.hasMany(Category, { onDelete: 'cascade' });
+Restaurant.hasMany(User, { onDelete: "cascade" });
+Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
 
 module.exports = {
@@ -153,4 +174,4 @@ module.exports = {
   Tag,
   Restaurant,
   Category,
-}
+};
