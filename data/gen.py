@@ -55,6 +55,7 @@ const populateDB = async () => {
   let restaurant = await db.Restaurant.create({
     id: 1,
     name: "Bacari",
+    unique_name: "bacari",
     streetAddress: "1 Apple Loop",
     city: "San Fransisco",
     state: "CA",

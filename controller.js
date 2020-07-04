@@ -5,6 +5,7 @@ const {
   Restaurant,
   Category
 } = require("./models");
+const slug = require('slug');
 
 const {
   JWT_SECRET,
@@ -78,7 +79,7 @@ const loginUser = async (req, res) => {
 }
 
 // Restaurants
-const createRestaurant = (req, res) => {
+const createRestaurant = async (req, res) => {
   const restaurant = {
     name: req.body.name,
     streetAddress: req.body.streetAddress,
@@ -88,6 +89,18 @@ const createRestaurant = (req, res) => {
     phone: req.body.phone,
     url: req.body.url
   }
+
+  const uniqueNameBase = slug(restaurant.name);
+  let uniqueName = uniqueNameBase;
+  let retries = 0;
+  let collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+  while (collision.length > 0) {
+    // Bacari-1
+    uniqueName = `${uniqueNameBase}-${++retries}`;
+    collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+  }
+
+  restaurant.unique_name = uniqueName;
 
   Restaurant.create(restaurant)
     .then(data => {
