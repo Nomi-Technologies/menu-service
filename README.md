@@ -21,6 +21,10 @@ Install packages
 ```
 $ npm install
 ```
+To make sure that your local database is up-to-date, run
+```
+$ npx sequelize db:migrate
+```
 
 Create a database:
 ```
