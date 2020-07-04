@@ -33,7 +33,7 @@ module.exports = app => {
   app.use(cors(corsOptions));
 
   var router = express.Router();
-  
+
   router.post('/user/register', controller.registerUser);
   router.post('/user/login', controller.loginUser);
   router.post('/restaurants/register', controller.createRestaurant);
@@ -47,6 +47,7 @@ module.exports = app => {
   router.put('/dishes/:id', controller.updateDish);
   router.delete('/dishes/:id', controller.deleteDish);
   router.get('/dishes-by-category', controller.dishesByCategory);
+  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
 
   app.use('/api', router);
 
