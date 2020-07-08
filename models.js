@@ -44,7 +44,7 @@ const User = database.define("user", {
     type: Sequelize.ENUM("admin", "staff"),
     defaultValue: "staff",
   },
-  firtname: {
+  firstname: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -72,7 +72,7 @@ User.register = async (
     role: role,
     restaurantId: restaurant,
     firstname: fname,
-    lastname: lname,
+    lastname: lname
   };
 
   let created_user = await User.create(user);

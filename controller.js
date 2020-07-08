@@ -75,6 +75,41 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUserDetails = async (req, res) => {
+  User.getUser({ email: req.user.email })
+  .then((user) => {
+    res.send(user)
+  })  
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message ||
+        "An error occured creating while processing this request",
+    });
+  });
+}
+
+const updateUserDetails = async (req, res) => {
+  email = req.user.email
+
+  User.findOne({ where: { email: email }})
+  .then((user) => {
+    // verify user belongs to restauraunt of dish to update
+    user.update(req.body, { where: { email: email } }).then(() => {
+      res.status(200).send({
+        message: "update sucessful",
+        user: user
+      });
+    });
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message || "An error occured while updating user with email=" + email,
+    });
+  });  
+}
+
 // Restaurants
 const createRestaurant = (req, res) => {
   const restaurant = {
@@ -100,6 +135,43 @@ const createRestaurant = (req, res) => {
     });
 };
 
+const getRestaurant = (req, res) => {
+  console.log(req.user)
+  userRestaurantId = req.user.restaurantId;
+  
+  Restaurant.findByPk(userRestaurantId)
+    .then((restaurant) => {
+        // verify user belongs to restauraunt of dish requested
+        res.send(restaurant);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "An error occured while getting restaurant with restaurant_id=" + userRestaurantId,
+      });
+    });
+}
+
+const updateRestaurant = (req, res) => {
+  userRestaurantId = req.user.restaurantId;
+
+  Restaurant.findByPk(req.params.id)
+    .then((restaurant) => {
+      // verify user belongs to restauraunt of dish to update
+      Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(() => {
+        res.status(200).send({
+          message: "update sucessful"
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "An error occured while updating restaurant with restaurant_id=" + userRestaurantId,
+      });
+    });
+}
+
 // gets restaurant information based on authentication
 // const getRestaurant = (req, res) => {
 
@@ -115,7 +187,7 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
-    restaurantId: req.user.restaurantId, // register to user's restaurant
+    restaurantId: req.user.restaurantId // register to user's restaurant
   };
 
   Dish.create(dish)
@@ -195,7 +267,6 @@ const updateDish = (req, res) => {
     .then((dish) => {
       // verify user belongs to restauraunt of dish to update
       if (dish && dish.restaurantId == userRestaurantId) {
-        console.log(req);
         Dish.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
             message: "update sucessful",
@@ -298,9 +369,13 @@ module.exports = {
   deleteDish,
   registerUser,
   loginUser,
+  updateUserDetails,
   passport,
   createRestaurant,
+  getRestaurant,
+  updateRestaurant,
+  getUserDetails,
   fetchAsset,
   publicDishList,
-  publicRestaurantList,
+  publicRestaurantList
 };

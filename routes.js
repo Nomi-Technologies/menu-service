@@ -36,10 +36,18 @@ module.exports = app => {
   
   router.post('/user/register', controller.registerUser);
   router.post('/user/login', controller.loginUser);
+  
+
   router.post('/restaurants/register', controller.createRestaurant);
   router.get('/assets/*', controller.fetchAsset);
 
   router.use(passport.authenticate('jwt', {session: false}));
+
+  router.get('/restaurants/me', controller.getRestaurant) // get user's restaurant details
+  router.put('/restaurants/me', controller.updateRestaurant) // get user's restaurant details
+
+  router.get('/user/details', controller.getUserDetails) // retreive user details
+  router.put('/user/details', controller.updateUserDetails) // update user details
 
   router.post('/dishes', controller.createDish);
   router.get('/dishes', controller.dishesList);
