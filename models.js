@@ -44,7 +44,7 @@ const User = database.define("user", {
     type: Sequelize.ENUM("admin", "staff"),
     defaultValue: "staff",
   },
-  firtname: {
+  firstname: {
     type: Sequelize.STRING,
     allowNull: false,
   },
