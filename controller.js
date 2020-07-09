@@ -5,6 +5,7 @@ const {
   Restaurant,
   Category
 } = require("./models");
+const slug = require('slug');
 
 const {
   JWT_SECRET,
@@ -55,7 +56,7 @@ const registerUser = (req, res) => {
       .then((user) => {
           res.send("User " + user.email + " was successfully created!");
       });
-    
+
   } catch (err) {
     res.status(500).send(err);
   }
@@ -78,7 +79,7 @@ const loginUser = async (req, res) => {
 }
 
 // Restaurants
-const createRestaurant = (req, res) => {
+const createRestaurant = async (req, res) => {
   const restaurant = {
     name: req.body.name,
     streetAddress: req.body.streetAddress,
@@ -88,6 +89,18 @@ const createRestaurant = (req, res) => {
     phone: req.body.phone,
     url: req.body.url
   }
+
+  const uniqueNameBase = slug(restaurant.name);
+  let uniqueName = uniqueNameBase;
+  let retries = 0;
+  let collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+  while (collision.length > 0) {
+    // Bacari-1
+    uniqueName = `${uniqueNameBase}-${++retries}`;
+    collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+  }
+
+  restaurant.unique_name = uniqueName;
 
   Restaurant.create(restaurant)
     .then(data => {
@@ -119,8 +132,6 @@ const createDish = (req, res) => {
     restaurantId: req.user.restaurantId,         // register to user's restaurant
     categoryId: req.body.categoryId,
   }
-  console.log(dish)
-  
   Dish.create(dish)
     .then(data => {
       res.send(data);
@@ -131,6 +142,61 @@ const createDish = (req, res) => {
       });
     });
 };
+
+// reads csv and creates menu
+const uploadMenuCSV = (req, res) => {
+  CsvHelper(req)
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while processing this request"
+    });
+  });
+}
+
+async function CsvHelper(req) {
+  var userRestaurantId = req.user.restaurantId
+  var dataArr = req.body.data;
+  var dish, dishcategory;
+  for(let i = 0; i < dataArr.length; i++){
+    // find or create category with given name and restaurantId
+    dishcategory = await Category.findCreateFind({
+      where: {
+        name: dataArr[i][0],
+        restaurantId: userRestaurantId
+      }
+    })
+    dish = await Dish.create({
+      name: dataArr[i][1],
+      description: dataArr[i][2],
+      addons: dataArr[i][3],
+      canRemove: dataArr[i][1],
+      notes: dataArr[i][11],
+      tableTalkPoints: dataArr[i][12],
+      restaurantId: userRestaurantId,
+    })
+    dish.setCategory(dishcategory[0]);
+    addTags(dish, dataArr[i][5])
+  }
+};
+
+async function addTags(dish, allergens){
+  let allergenlist = allergens.split(",");
+  for(let j = 0; j < allergenlist.length; j++){
+    let tag = await Tag.findCreateFind({
+      where: {
+        name: capitalizeFirstLetter(allergenlist[j].trim())
+      }
+    })
+    dish.addTag(tag[0]);
+  }
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const dishesList = (req, res) => {
   userRestaurantId = req.user.restaurantId
@@ -164,6 +230,7 @@ const dishesByCategory = (req, res) => {
       });
     });
 }
+
 
 const getDish = (req, res) => {
   const id = req.params.id
@@ -403,4 +470,8 @@ module.exports = {
   fetchAsset,
   publicDishList,
   publicRestaurantList,
+
+}
+
+  uploadMenuCSV
 }
