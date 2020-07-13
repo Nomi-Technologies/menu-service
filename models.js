@@ -100,14 +100,21 @@ const Tag = database.define('tag', {
   excludeForFilter: { type: Sequelize.BOOLEAN, allowNull: false } // e.g. exclude for peanuts or include for gluten-free possible
 })
 
-Dish.belongsToMany(Tag, { through: "dish_tags" });
-Tag.belongsToMany(Dish, { through: "dish_tags" });
+const DishTags = database.define('dish_tags', {
+  removable: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false }
+});
+
+Dish.belongsToMany(Tag, { through: DishTags });
+Tag.belongsToMany(Dish, { through: DishTags });
 
 
 // restaurant model
 const Restaurant = database.define('restaurant', {
   id: {
     type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true
+  },
+  uniqueName: {
+    type: Sequelize.STRING, unique: true, allowNull: false
   },
   name: {
     type: Sequelize.STRING,
@@ -136,8 +143,17 @@ const Restaurant = database.define('restaurant', {
   url: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  published: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   }
-})
+}, {
+  indexes: [
+    { unique: true, fields: ['uniqueName'] }
+  ]
+});
 
 // One to many for restaurants
 Restaurant.hasMany(Dish, { onDelete: 'cascade' });
