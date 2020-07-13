@@ -192,9 +192,43 @@ const updateRestaurant = (req, res) => {
 }
 
 // gets restaurant information based on authentication
-// const getRestaurant = (req, res) => {
+const getRestaurant = (req, res) => {
+  userRestaurantId = req.params.restaurantId;
+  Restaurant.findOne({ id: userRestaurantId })
+    .then((restaurant) => {
+      res.send(restaurant);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occured while getting restaurant with restaurant_id=" +
+            userRestaurantId,
+      });
+    });
+};
 
-// }
+const updateRestaurant = (req, res) => {
+  userRestaurantId = req.params.id;
+  Restaurant.findByPk(userRestaurantId)
+    .then((restaurant) => {
+      Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(
+        () => {
+          res.status(200).send({
+            message: "update sucessful",
+          });
+        }
+      );
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occured while updating restaurant with restaurant_id=" +
+            userRestaurantId,
+      });
+    });
+};
 
 // Dishes
 // TODO: Get user from auth and get restaurant from user
@@ -340,7 +374,7 @@ const updateDish = (req, res) => {
       if (dish && dish.restaurantId == userRestaurantId) {
         Dish.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
-            message: "update sucessful",
+            message: "dish update successful",
           });
         });
       } else {
@@ -533,12 +567,12 @@ module.exports = {
   getCategory,
   registerUser,
   loginUser,
+  getUserDetails,
   updateUserDetails,
   passport,
   createRestaurant,
   getRestaurant,
   updateRestaurant,
-  getUserDetails,
   fetchAsset,
   publicDishList,
   publicRestaurantList,

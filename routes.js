@@ -1,16 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const proxy = require('express-http-proxy');
+const express = require("express");
+const cors = require("cors");
+const proxy = require("express-http-proxy");
 
-module.exports = app => {
-  const controller = require('./controller');
-  const { passport } = require('./controller')
+module.exports = (app) => {
+  const controller = require("./controller");
+  const { passport } = require("./controller");
 
   var revProxy = express.Router();
-  revProxy.all('/smart-menu/*', proxy('https://nomi-smart-menu.netlify.app', {
-    proxyReqPathResolver: req => `/${req.params[0]}`
-  }));
-  app.use('/app', revProxy);
+  revProxy.all(
+    "/smart-menu/*",
+    proxy("https://nomi-smart-menu.netlify.app", {
+      proxyReqPathResolver: (req) => `/${req.params[0]}`,
+    })
+  );
+  app.use("/app", revProxy);
 
   // use cors only other than reverse proxy, otherwise web browsers won't be able to
   // access the react apps
@@ -25,48 +28,41 @@ module.exports = app => {
       if (found !== undefined) {
         callback(null, true)
       } else {
-        callback(new Error('Not allowed by CORS'))
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
   };
   app.use(cors(corsOptions));
 
-  var router = express.Router();
-
-  router.post('/user/register', controller.registerUser);
-  router.post('/user/login', controller.loginUser);
-  
+  var router = express.Router();  
 
   router.post('/restaurants/register', controller.createRestaurant);
   router.get('/assets/*', controller.fetchAsset);
 
-  router.use(passport.authenticate('jwt', {session: false}));
+  router.post("/user/register", controller.registerUser);
+  router.post("/user/login", controller.loginUser);
+  router.get("/user/details", controller.getUserDetails);
+  router.put("/user/details/:id", controller.updateUserDetails);
 
-  router.get('/restaurants/me', controller.getRestaurant) // get user's restaurant details
-  router.put('/restaurants/me', controller.updateRestaurant) // get user's restaurant details
+  router.get("/assets/*", controller.fetchAsset);
 
-  router.get('/user/details', controller.getUserDetails) // retreive user details
-  router.put('/user/details', controller.updateUserDetails) // update user details
+  router.use(passport.authenticate("jwt", { session: false }));
+  router.get("/restaurants/me", controller.getRestaurant);
+  router.put("/restaurants/me/:id", controller.updateRestaurant);
+  router.post("/restaurants/register", controller.createRestaurant);
 
-  router.post('/dishes', controller.createDish);
-  router.get('/dishes', controller.dishesList);
-  router.get('/dishes/:id', controller.getDish);
-  router.put('/dishes/:id', controller.updateDish);
-  router.delete('/dishes/:id', controller.deleteDish);
-  router.get('/dishes-by-category', controller.dishesByCategory);
+  router.post("/dishes", controller.createDish);
+  router.get("/dishes", controller.dishesList);
+  router.get("/dishes/:id", controller.getDish);
+  router.put("/dishes/:id", controller.updateDish);
+  router.delete("/dishes/:id", controller.deleteDish);
+  router.get("/dishes-by-category", controller.dishesByCategory);
 
-  router.post('/categories/', controller.createCategory);
-  router.put('/categories/:id', controller.updateCategory);
-  router.delete('/categories/:id', controller.deleteCategory);
-  router.get('/categories/:id', controller.getCategory);
-  
-  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
-
-  app.use('/api', router);
+  app.use("/api", router);
 
   var webApiRouter = express.Router();
-  webApiRouter.get('/dishes/:restaurantId', controller.publicDishList);
-  webApiRouter.get('/restaurants', controller.publicRestaurantList);
-  app.use('/webApi', webApiRouter);
+  webApiRouter.get("/dishes/:restaurantId", controller.publicDishList);
+  webApiRouter.get("/restaurants", controller.publicRestaurantList);
+  app.use("/webApi", webApiRouter);
 };
