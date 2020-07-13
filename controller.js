@@ -129,16 +129,16 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
-    restaurantId: req.user.restaurantId         // register to user's restaurant
+    restaurantId: req.user.restaurantId,         // register to user's restaurant
+    categoryId: req.body.categoryId,
   }
-
   Dish.create(dish)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
-        message: err.message || "An error occured while processing this request"
+        message: err.message || "Dish could not be created"
       });
     });
 };
@@ -221,6 +221,7 @@ const dishesByCategory = (req, res) => {
     include: [{model: Dish, include: [{model: Tag}]}]
   })
     .then(data => {
+      console.log(data)
       res.send(data);
     })
     .catch(err => {
@@ -232,13 +233,10 @@ const dishesByCategory = (req, res) => {
 
 
 const getDish = (req, res) => {
-  const id = req.params.id;
-
+  const id = req.params.id
   userRestaurantId = req.user.restaurantId
-
-  Dish.findByPk(id, {
-      include: [{ model: Tag }, { model: Category }, { model: Restaurant }]
-  })
+ 
+  Dish.findByPk(id)
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
       if(dish && dish.restaurantId == userRestaurantId) {
@@ -279,26 +277,28 @@ const updateDish = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: err.message || "An error occured while updating dish with id=" + id
+      message: err.message || "An error occured while updating dish with id=" + req.params.id
     });
   });
 };
 
 const deleteDish = (req, res) => {
+  console.log("in delete dish")
   userRestaurantId = req.user.restaurantId
-  Dish.findByPk(req.id)
+  Dish.findByPk(req.params.id)
   .then(dish => {
     // verify user belongs to restauraunt of dish to update
+    console.log(dish)
     if(dish && dish.restaurantId == userRestaurantId) {
       Dish.destroy({
-        where: {id: id}
+        where: {id: req.params.id}
       })
       .then(res.send({
         message: "Dish was deleted successfully"
       }))
       .catch(err => {
         res.status(500).send({
-          message: err.message || "An error occured while deleting dish with id=" + id
+          message: err.message || "An error occured while deleting dish with id=" + req.params.id
         });
       });
     }
@@ -311,10 +311,113 @@ const deleteDish = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: err.message || "An error occured while updating dish with id=" + id
+      message: err.message || "An error occured while updating dish with id=" + req.params.id
     });
   });
 
+};
+
+//Categories
+const createCategory = (req, res) => {
+  const category = {
+    name: req.body.name,
+    restaurantId: req.user.restaurantId, 
+  }
+
+  Category.create(category)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Category could not be created"
+      });
+    });
+};
+
+const updateCategory = (req, res) => {
+  userRestaurantId = req.user.restaurantId
+  Category.findByPk(req.params.id)
+  .then(category => {
+    // verify category belongs to restauraunt of category to update
+    if(category && category.restaurantId == userRestaurantId) {
+      console.log(req)
+      Category.update(req.body, {where: {id: req.params.id}}).then(() => {
+        res.status(200).send({
+          message: "update sucessful"
+        })
+      });
+    }
+    else {
+      // sends if dish does not exist, or user does not have access
+      res.status(404).send({
+        message: "Could not find category to update"
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while updating category with id=" + req.params.id
+    });
+  });
+};
+
+const deleteCategory = (req, res) => {
+  console.log("in delete category")
+  userRestaurantId = req.user.restaurantId
+  Category.findByPk(req.params.id)
+  .then(category => {
+    // verify user belongs to restauraunt of category to update
+    console.log(category)
+    if(category && category.restaurantId == userRestaurantId) {
+      Category.destroy({
+        where: {id: req.params.id}
+      })
+      .then(res.send({
+        message: "category was deleted successfully"
+      }))
+      .catch(err => {
+        res.status(500).send({
+          message: err.message || "An error occured while deleting category with id=" + req.params.id
+        });
+      });
+    }
+    else {
+      // sends if category does not exist, or user does not have access
+      res.status(404).send({
+        message: "Could not find category to update"
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while updating category with id=" + req.params.id
+    });
+  });
+
+};
+
+const getCategory = (req, res) => {
+  const id = req.params.id
+  userRestaurantId = req.user.restaurantId
+ 
+  Category.findByPk(id)
+    .then(category => {
+      // verify user belongs to restauraunt of category requested
+      if(category && category.restaurantId == userRestaurantId) {
+        res.send(category);
+      }
+      else {
+        res.status(404).send({
+          message: "Could not find category"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "An error occured while getting category with id=" + id
+      });
+    });
 };
 
 const fetchAsset = async (req, res) => {
@@ -356,6 +459,10 @@ module.exports = {
   getDish,
   updateDish,
   deleteDish,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getCategory,
   registerUser,
   loginUser,
   passport,
@@ -363,5 +470,8 @@ module.exports = {
   fetchAsset,
   publicDishList,
   publicRestaurantList,
+
+}
+
   uploadMenuCSV
 }
