@@ -154,43 +154,6 @@ const createRestaurant = async (req, res) => {
     });
 };
 
-const getRestaurant = (req, res) => {
-  console.log(req.user)
-  userRestaurantId = req.user.restaurantId;
-  
-  Restaurant.findByPk(userRestaurantId)
-    .then((restaurant) => {
-        // verify user belongs to restauraunt of dish requested
-        res.send(restaurant);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "An error occured while getting restaurant with restaurant_id=" + userRestaurantId,
-      });
-    });
-}
-
-const updateRestaurant = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-
-  Restaurant.findByPk(req.params.id)
-    .then((restaurant) => {
-      // verify user belongs to restauraunt of dish to update
-      Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(() => {
-        res.status(200).send({
-          message: "update sucessful"
-        });
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "An error occured while updating restaurant with restaurant_id=" + userRestaurantId,
-      });
-    });
-}
-
 // gets restaurant information based on authentication
 const getRestaurant = (req, res) => {
   userRestaurantId = req.params.restaurantId;

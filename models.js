@@ -135,7 +135,7 @@ const Restaurant = database.define("restaurant", {
     autoIncrement: true,
   },
   uniqueName: {
-    type: Sequelize.STRING, unique: true, allowNull: false
+    type: Sequelize.STRING, unique: true, allowNull: true
   },
   name: {
     type: Sequelize.STRING,
