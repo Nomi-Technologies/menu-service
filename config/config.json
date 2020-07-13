@@ -1,5 +1,6 @@
 {
   "development": {
+<<<<<<< HEAD
     "username": "wangyiran", //change to your own postgres username
     "password": null,
     "database": "nomi", //change to your own nomi database name
@@ -18,6 +19,13 @@
     "password": null,
     "database": "database_production",
     "host": "127.0.0.1",
+=======
+    "database": "nomi",
+    "dialect": "postgres"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+>>>>>>> 0117dcd059b7f7202908d660d7e683e201711a19
     "dialect": "postgres"
   }
 }

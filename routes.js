@@ -15,14 +15,14 @@ module.exports = app => {
   // use cors only other than reverse proxy, otherwise web browsers won't be able to
   // access the react apps
   var whitelist = [
-    'https://nomi-technologies.github.io',
-    'https://nomi-smart-menu.netlify.app',
-    'http://localhost:8000'
+    /https\:\/\/(.*--)?nomi-menu-dashboard\.netlify\.app/,
+    /https\:\/\/(.*--)?nomi-smart-menu\.netlify\.app/,
+    /http\:\/\/localhost:8000/
   ];
   var corsOptions = {
     origin: function (origin, callback) {
-      console.log(origin);
-      if (whitelist.indexOf(origin) !== -1 || origin === undefined) {
+      const found = whitelist.find(regex => regex.test(origin));
+      if (found !== undefined) {
         callback(null, true)
       } else {
         callback(new Error('Not allowed by CORS'))
@@ -33,7 +33,7 @@ module.exports = app => {
   app.use(cors(corsOptions));
 
   var router = express.Router();
-  
+
   router.post('/user/register', controller.registerUser);
   router.post('/user/login', controller.loginUser);
   
@@ -55,6 +55,13 @@ module.exports = app => {
   router.put('/dishes/:id', controller.updateDish);
   router.delete('/dishes/:id', controller.deleteDish);
   router.get('/dishes-by-category', controller.dishesByCategory);
+
+  router.post('/categories/', controller.createCategory);
+  router.put('/categories/:id', controller.updateCategory);
+  router.delete('/categories/:id', controller.deleteCategory);
+  router.get('/categories/:id', controller.getCategory);
+  
+  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
 
   app.use('/api', router);
 
