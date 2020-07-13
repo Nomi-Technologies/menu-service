@@ -97,8 +97,11 @@ for allergen in [
   let %s = await db.Tag.create({
     name: "%s",
     type: "allergen",
-    excludeForFilter: true
-  });''' % (allergen, allergen.capitalize()))
+    excludeForFilter: true,
+  });
+  %s.setRestaurant(restaurant);
+
+  ''' % (allergen, allergen.capitalize(), allergen))
 
 f.writelines('''
   let dish;''')

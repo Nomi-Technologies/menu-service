@@ -272,6 +272,21 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+const tagsList = (req, res) => {
+  userRestaurantId = req.user.restaurantId;
+  Tag.findAll({
+    where: {restaurantId: userRestaurantId}
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while getting tags list"
+    })
+  })
+}
+
 const dishesList = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Dish.findAll({
@@ -541,4 +556,4 @@ module.exports = {
   publicRestaurantList,
   uploadMenuCSV,
   publicRestaurantList
-};
+}

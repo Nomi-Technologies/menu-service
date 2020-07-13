@@ -110,10 +110,9 @@ const Category = database.define("category", {
   name: { type: Sequelize.STRING, allowNull: false },
 });
 
-Category.hasMany(Dish, { onDelete: "cascade" });
-Dish.belongsTo(Category);
-
-const Tag = database.define("tag", {
+Category.hasMany(Dish, {onDelete: 'cascade'})
+Dish.belongsTo(Category)
+const Tag = database.define('tag', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
   type: { type: Sequelize.STRING, allowNull: false }, // 'Allergen, Diet, etc.'
@@ -182,6 +181,7 @@ Dish.belongsTo(Restaurant);
 Restaurant.hasMany(User, { onDelete: "cascade" });
 Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
+Tag.belongsTo(Restaurant)
 
 module.exports = {
   database,
