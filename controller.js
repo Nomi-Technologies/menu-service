@@ -509,10 +509,10 @@ const publicDishList = (req, res) => {
     ],
   })
     .then((data) => res.send(data))
-    .catch((err) => {
+    .catch((err) => 
       res.status(500).send({
         message: err.message || "An error occured while getting dishes list",
-      })}
+      })
     );
 };
 
