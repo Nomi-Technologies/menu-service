@@ -499,17 +499,20 @@ const fetchAsset = async (req, res) => {
 };
 
 const publicDishList = (req, res) => {
-  let restaurantId = req.params.restaurantId;
+  let uniqueName = req.params.uniqueName;
   Dish.findAll({
     attributes: ["id", "name", "description", "addons", "canRemove"],
-    where: { restaurantId: restaurantId },
-    include: [{ model: Tag }, { model: Category }],
+    include: [
+      { model: Tag }, 
+      { model: Category }, 
+      { model: Restaurant, where: { uniqueName: uniqueName } }
+    ],
   })
     .then((data) => res.send(data))
-    .catch((err) =>
+    .catch((err) => {
       res.status(500).send({
         message: err.message || "An error occured while getting dishes list",
-      })
+      })}
     );
 };
 
