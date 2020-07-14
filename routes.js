@@ -25,7 +25,7 @@ module.exports = (app) => {
   var corsOptions = {
     origin: function (origin, callback) {
       const found = whitelist.find(regex => regex.test(origin));
-      if (found !== undefined) {
+      if (found !== undefined || origin === undefined) {
         callback(null, true)
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -62,7 +62,7 @@ module.exports = (app) => {
   app.use("/api", router);
 
   var webApiRouter = express.Router();
-  webApiRouter.get("/dishes/:restaurantId", controller.publicDishList);
+  webApiRouter.get("/dishes/:uniqueName", controller.publicDishList);
   webApiRouter.get("/restaurants", controller.publicRestaurantList);
   app.use("/webApi", webApiRouter);
 };
