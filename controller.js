@@ -61,13 +61,27 @@ const registerUser = (req, res) => {
       req.body.lastname
     ).then((user) => {
       res.send("User " + user.email + " was successfully created!");
+    }).catch((err) => {
+      res.status(500).send(err)
     });
   } catch (err) {
     res.status(500).send(err);
   }
 };
 
-// TODO:
+const checkEmail = (req, res) => {
+  User.findAndCountAll({
+    where: { email: req.query.email }
+  }).then((result) => {
+    if(result.count > 0) {
+      res.send({taken: true});
+    } else {
+      res.send({taken: false});
+    }
+  })
+}
+
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (email && password) {
@@ -132,14 +146,14 @@ const createRestaurant = async (req, res) => {
   const uniqueNameBase = slug(restaurant.name);
   let uniqueName = uniqueNameBase;
   let retries = 0;
-  let collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+  let collision = await Restaurant.findAll({ where: { uniqueName: uniqueName }});
   while (collision.length > 0) {
-    // Bacari-1
     uniqueName = `${uniqueNameBase}-${++retries}`;
-    collision = await Restaurant.findAll({ where: { unique_name: uniqueName }});
+    collision = await Restaurant.findAll({ where: { uniqueName: uniqueName }});
   }
 
-  restaurant.unique_name = uniqueName;
+  restaurant.uniqueName = uniqueName;
+  restaurant.published = true; // temp until we set up publishing
 
   Restaurant.create(restaurant)
     .then((data) => {
@@ -172,7 +186,7 @@ const getRestaurant = (req, res) => {
 };
 
 const updateRestaurant = (req, res) => {
-  userRestaurantId = req.params.id;
+  userRestaurantId = req.user.restaurantId;
   Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
       Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(
@@ -571,5 +585,6 @@ module.exports = {
   uploadMenuCSV,
   updateCategory,
   publicRestaurantList,
+  checkEmail,
   getTags
 }

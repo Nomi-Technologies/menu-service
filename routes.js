@@ -41,15 +41,17 @@ module.exports = (app) => {
   router.get('/assets/*', controller.fetchAsset);
 
   router.post("/user/register", controller.registerUser);
+  router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details/:id", controller.updateUserDetails);
 
   router.get("/assets/*", controller.fetchAsset);
 
+  // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
   router.get("/restaurants/me", controller.getRestaurant);
-  router.put("/restaurants/me/:id", controller.updateRestaurant);
+  router.put("/restaurants/me", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
   router.get("/dishes", controller.dishesList);
