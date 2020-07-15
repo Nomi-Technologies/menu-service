@@ -181,7 +181,6 @@ Dish.belongsTo(Restaurant);
 Restaurant.hasMany(User, { onDelete: "cascade" });
 Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
-Tag.belongsTo(Restaurant)
 
 module.exports = {
   database,

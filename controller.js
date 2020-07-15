@@ -321,13 +321,7 @@ const dishesByCategory = (req, res) => {
 };
 
 const getTags = (req, res) => {
-  const restaurantId = req.user.restaurantId
-
-  Tag.findAll({
-    where: {
-      restaurantId: restaurantId
-    }
-  })
+  Tag.findAll()
   .then(data => {
     res.send(data);
   })
