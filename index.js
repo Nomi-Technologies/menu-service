@@ -1,3 +1,4 @@
+const db = require('./models');
 const express = require('express')
 const bodyParser = require('body-parser')
 
@@ -9,7 +10,6 @@ const { database } = require('./models')
 const { passport } = require('./controller')
 
 const port = process.env.PORT || 3000
-
 
 const app = express()
 
@@ -24,6 +24,81 @@ app.get("/", (req, res) => {
 
 database.sync().then(() => {
   // populateDB();
+  db.Tag.findAll().then((result) => {
+    if(result.length == 0) {
+      console.log("Initializing Tags")
+      db.Tag.create({
+        name: "Dairy",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+    
+      
+      db.Tag.create({
+        name: "Gluten",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+    
+      
+      db.Tag.create({
+        name: "Treenuts",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Egg",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Soy",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Shellfish",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Fish",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Seeds",
+        type: "allergen",
+        excludeForFilter: true,
+      });  
+      db.Tag.create({
+        name: "Sesame",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Garlic",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Onion",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+      db.Tag.create({
+        name: "Cilantro",
+        type: "allergen",
+        excludeForFilter: true,
+      });    
+      db.Tag.create({
+        name: "Truffle",
+        type: "allergen",
+        excludeForFilter: true,
+      });
+    }
+  })
+
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   });

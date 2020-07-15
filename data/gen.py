@@ -99,9 +99,8 @@ for allergen in [
     type: "allergen",
     excludeForFilter: true,
   });
-  %s.setRestaurant(restaurant);
 
-  ''' % (allergen, allergen.capitalize(), allergen))
+  ''' % (allergen, allergen.capitalize()))
 
 f.writelines('''
   let dish;''')
