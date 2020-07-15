@@ -222,7 +222,10 @@ const createDish = (req, res) => {
   }
   Dish.create(dish)
     .then((data) => {
-      res.send(data);
+      data.setTags(req.body.dishTags).then((data) => {
+        res.send(data);
+      })
+      
     })
     .catch((err) => {
       res.status(500).send({
@@ -371,11 +374,15 @@ const getDish = (req, res) => {
 
 const updateDish = (req, res) => {
   userRestaurantId = req.user.restaurantId;
+
+  console.log(req.body.dishTags)
+
   Dish.findByPk(req.params.id)
     .then((dish) => {
       // verify user belongs to restauraunt of dish to update
       if (dish && dish.restaurantId == userRestaurantId) {
         Dish.update(req.body, { where: { id: req.params.id } }).then(() => {
+          dish.setTags(req.body.dishTags)
           res.status(200).send({
             message: "dish update successful",
           });
