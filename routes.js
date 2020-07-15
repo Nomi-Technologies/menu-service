@@ -20,7 +20,7 @@ module.exports = (app) => {
   var whitelist = [
     /https\:\/\/(.*--)?nomi-menu-dashboard\.netlify\.app/,
     /https\:\/\/(.*--)?nomi-smart-menu\.netlify\.app/,
-    /http\:\/\/localhost:8000/
+    /http\:\/\/localhost:8000/,
   ];
   var corsOptions = {
     origin: function (origin, callback) {
@@ -51,13 +51,17 @@ module.exports = (app) => {
   router.get("/restaurants/me", controller.getRestaurant);
   router.put("/restaurants/me/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
-
   router.post("/dishes", controller.createDish);
   router.get("/dishes", controller.dishesList);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
   router.get("/dishes-by-category", controller.dishesByCategory);
+  router.post("/categories", controller.createCategory);
+  router.get("/categories/:id", controller.getCategory);
+  router.put("/categories/:id", controller.updateCategory);
+  router.delete("/categories/:id", controller.deleteCategory);
+  router.get("/tags", controller.getTags);
 
   app.use("/api", router);
 

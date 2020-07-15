@@ -320,6 +320,23 @@ const dishesByCategory = (req, res) => {
     });
 };
 
+const getTags = (req, res) => {
+  const restaurantId = req.user.restaurantId
+
+  Tag.findAll({
+    where: {
+      restaurantId: restaurantId
+    }
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "An error occured while getting tags with restaurant=" + restaurantId
+    })
+  })
+}
 
 const getDish = (req, res) => {
   const id = req.params.id
@@ -555,5 +572,7 @@ module.exports = {
   publicDishList,
   publicRestaurantList,
   uploadMenuCSV,
-  publicRestaurantList
+  updateCategory,
+  publicRestaurantList,
+  getTags
 }

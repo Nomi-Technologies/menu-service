@@ -46,11 +46,11 @@ const User = database.define("user", {
   },
   firstname: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   lastname: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
