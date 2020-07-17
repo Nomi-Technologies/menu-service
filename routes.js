@@ -35,7 +35,7 @@ module.exports = (app) => {
   };
   app.use(cors(corsOptions));
 
-  var router = express.Router();  
+  var router = express.Router();
 
   router.post('/restaurants/register', controller.createRestaurant);
   router.get('/assets/*', controller.fetchAsset);
@@ -64,6 +64,7 @@ module.exports = (app) => {
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
+  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
 
   app.use("/api", router);
 
