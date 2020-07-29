@@ -325,6 +325,9 @@ const dishesByCategory = (req, res) => {
   Category.findAll({
     where: { restaurantId: userRestaurantId },
     include: [{ model: Dish, include: [{ model: Tag }] }],
+    order: [
+      [Category, 'createdAt', 'asc'],
+    ]
   })
     .then((data) => {
       res.send(data);
@@ -554,6 +557,9 @@ const publicDishList = (req, res) => {
       { model: Category }, 
       { model: Restaurant, where: { uniqueName: uniqueName } }
     ],
+    order: [
+      [Category, 'createdAt', 'asc'],
+    ]
   })
     .then((data) => res.send(data))
     .catch((err) => 

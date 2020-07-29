@@ -33,7 +33,7 @@ database.sync().then(() => {
         excludeForFilter: true,
       });
     
-      
+      // create tags
       db.Tag.create({
         name: "Gluten",
         type: "allergen",
