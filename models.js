@@ -19,7 +19,7 @@ if (PROD === "true") {
     dialect: "postgres",
     operatorsAliases: Sequelize.op,
     logging: (str) => {
-      console.log(str);
+      console.log(`[sequelize] ${str}`);
     }, //false
   });
 
