@@ -78,17 +78,22 @@ module.exports = (app) => {
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
   router.get("/dishes-by-category", controller.dishesByCategory);
+  router.post("/upload-menu-csv", controller.uploadMenuCSV);
+  router.get("/dishes-by-name", controller.dishesByName);
   router.post("/categories", controller.createCategory);
   router.get("/categories/:id", controller.getCategory);
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
+<<<<<<< HEAD
   router.post('/uploadMenuCSV', controller.uploadMenuCSV);
   router.post("/menus", controller.createMenu);
   router.get("/menus/:id", controller.getMenu);
   router.put("/menus/:id", controller.updateMenu);
   router.delete("/menus/:id", controller.deleteMenu);
   router.get("/all-menus", controller.getAllMenus);
+=======
+>>>>>>> ac87e05... added backend for search bar
 
   app.use("/api", router);
 
