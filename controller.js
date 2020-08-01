@@ -18,6 +18,10 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 
+const services = require('./service');
+const Container = require('typedi').Container;
+const userService = Container.get(services.UserService);
+
 const aws = require("aws-sdk");
 aws.config.update({
   region: "us-west-1",
@@ -36,7 +40,7 @@ passReqToCallback: true;
 
 // auth strategy
 let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
-  User.getUser({ email: jwt_payload.email }).then((user) => {
+  userService.findOne({ email: jwt_payload.email }).then((user) => {
     if (user) {
       next(null, user);
     } else {
@@ -49,43 +53,31 @@ passport.use(strategy);
 
 // users
 const registerUser = (req, res) => {
-  try {
-    let newUser;
-    User.register(
-      req.body.email,
-      req.body.password,
-      req.body.phone,
-      req.body.role,
-      req.body.restaurantId,
-      req.body.firstname,
-      req.body.lastname
-    ).then((user) => {
-      res.send("User " + user.email + " was successfully created!");
-    }).catch((err) => {
-      res.status(500).send(err)
-    });
-  } catch (err) {
-    res.status(500).send(err);
-  }
+  userService.register({
+    email: req.body.email,
+    password: req.body.password,
+    phone: req.body.phone,
+    role: req.body.role,
+    restaurantId: req.body.restaurantId,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+  }).then((user) => {
+    res.send("User " + user.email + " was successfully created!");
+  }).catch((err) => {
+    // console.log(err); logging??
+    res.status(500).send(err.message);
+  });
 };
 
-const checkEmail = (req, res) => {
-  User.findAndCountAll({
-    where: { email: req.query.email }
-  }).then((result) => {
-    if(result.count > 0) {
-      res.send({taken: true});
-    } else {
-      res.send({taken: false});
-    }
-  })
+const checkEmail = async (req, res) => {
+  const taken = await userService.contains({ email: req.query.email });
+  res.send({taken: taken});
 }
-
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (email && password) {
-    let user = await User.authenticate(email, password);
+    let user = await userService.authenticate(email, password);
     if (user) {
       let payload = { email: user.email };
       let token = jwt.sign(payload, jwtOptions.secretOrKey);
@@ -97,7 +89,7 @@ const loginUser = async (req, res) => {
 };
 
 const getUserDetails = async (req, res) => {
-  User.getUser({ email: req.user.email })
+  userService.findOne({ email: req.query.email })
   .then((user) => {
     res.send(user)
   })  
@@ -111,16 +103,13 @@ const getUserDetails = async (req, res) => {
 }
 
 const updateUserDetails = async (req, res) => {
-  email = req.user.email
-
-  User.findOne({ where: { email: email }})
-  .then((user) => {
-    // verify user belongs to restauraunt of dish to update
-    user.update(req.body, { where: { email: email } }).then(() => {
-      res.status(200).send({
-        message: "update sucessful",
-        user: user
-      });
+  const id = parseInt(req.params.id);
+  userService.update(req.body, { id: id })
+  .then(async () => {
+    const user = await userService.findOne({ id: id });
+    res.status(200).send({
+      message: "update sucessful",
+      user: user,
     });
   })
   .catch((err) => {

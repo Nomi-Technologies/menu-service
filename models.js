@@ -54,47 +54,6 @@ const User = database.define("user", {
   },
 });
 
-// TODO: Make sure user doesn't already exist and throw error
-User.register = async (
-  email,
-  password,
-  phone,
-  role,
-  restaurant,
-  fname,
-  lname
-) => {
-  const passwordHash = bcrypt.hashSync(password, 10);
-  let user = {
-    email: email,
-    password: passwordHash,
-    phone: phone,
-    role: role,
-    restaurantId: restaurant,
-    firstname: fname,
-    lastname: lname
-  };
-
-  let created_user = await User.create(user);
-  return User.authenticate(email, password);
-};
-
-User.getUser = async (obj) => {
-  return await User.findOne({
-    where: obj,
-  });
-};
-
-// used to validate the user
-User.authenticate = async (email, password) => {
-  let user = await User.findOne({ where: { email: email } });
-  if (user && bcrypt.compareSync(password, user.password)) {
-    return user;
-  } else {
-    return null;
-  }
-};
-
 const Dish = database.define("dish", {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: Sequelize.STRING, allowNull: false },
@@ -181,6 +140,9 @@ Dish.belongsTo(Restaurant);
 Restaurant.hasMany(User, { onDelete: "cascade" });
 Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
+
+const Container = require('typedi').Container;
+Container.set('user.dao', User);
 
 module.exports = {
   database,
