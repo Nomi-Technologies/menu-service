@@ -175,12 +175,33 @@ const Restaurant = database.define("restaurant", {
   ]
 });
 
+const Menu = database.define("menu", {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+})
+
 // One to many for restaurants
 Restaurant.hasMany(Dish, { onDelete: "cascade" });
 Dish.belongsTo(Restaurant);
 Restaurant.hasMany(User, { onDelete: "cascade" });
 Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
+
+Restaurant.hasMany(Menu, { onDelete: "cascade" });
+Menu.belongsTo(Restaurant);
+
+Menu.hasMany(Category, { onDelete: "cascade" });
+Category.belongsTo(Menu);
+
+Menu.hasMany(Dish, { onDelete: "cascade" });
+Dish.belongsTo(Menu);
 
 module.exports = {
   database,
@@ -189,4 +210,5 @@ module.exports = {
   Tag,
   Restaurant,
   Category,
+  Menu,
 };
