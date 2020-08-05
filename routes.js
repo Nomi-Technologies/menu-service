@@ -74,7 +74,6 @@ module.exports = (app) => {
   router.put("/restaurants/me", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
-  router.get("/dishes", controller.dishesList);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
@@ -86,11 +85,17 @@ module.exports = (app) => {
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
+  router.post("/menus", controller.createMenu);
+  router.get("/menus/:id", controller.getMenu);
+  router.put("/menus/:id", controller.updateMenu);
+  router.delete("/menus/:id", controller.deleteMenu);
+  router.get("/all-menus", controller.getAllMenus);
 
   app.use("/api", router);
 
   var webApiRouter = express.Router();
-  webApiRouter.get("/dishes/:uniqueName", controller.publicDishList);
+  webApiRouter.get("/:uniqueName", controller.publicMenuList);
+  webApiRouter.get("/:uniqueName/:menuId", controller.publicDishList);
   webApiRouter.get("/restaurants", controller.publicRestaurantList);
   app.use("/webApi", webApiRouter);
 };
