@@ -48,11 +48,15 @@ module.exports = {
         menuId: menu.id
       })
 
-      return Dish.create({
+      let dishData = {
         name: "Test Dish",
-        categoryId: category.id,
-        restaurantId: restaurant.id
-      })
+        description: "test description",
+        restaurantId: restaurant.id 
+      }
+
+      let dish = await Dish.create(dishData)
+      await dish.setCategories([category.id])
+      return dish.setTags([1, 3, 6])
     })
   },
 
@@ -64,8 +68,5 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-   await queryInterface.bulkDelete('Users', null, {});
-   await queryInterface.bulkDelete('Menu', null, {});
-   return queryInterface.bulkDelete('Restaurant', null, {});
   }
 };

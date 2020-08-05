@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Tag.belongsToMany(models.Dish, {
       through: 'DishTag',
-      as: 'dishes',
+      as: 'Dishes',
       foreignKey: 'tagId',
       otherKey: 'dishId'
     });

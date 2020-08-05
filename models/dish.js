@@ -16,14 +16,14 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Dish.belongsToMany(models.Category, {
       through: 'CategoryDish',
-      as: 'categories',
+      as: 'Categories',
       foreignKey: 'categoryId',
       otherKey: 'dishId',
     });
 
     Dish.belongsToMany(models.Tag, {
       through: 'DishTag',
-      as: 'tags',
+      as: 'Tags',
       foreignKey: 'dishId',
       otherKey: 'tagId',
     });
