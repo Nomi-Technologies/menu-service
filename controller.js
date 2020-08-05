@@ -448,6 +448,8 @@ const dishesByName = (req, res) => {
       message: err.message || "An error occured while searching for dish",
     });
   });
+}
+
 const getMenuDishes = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   userMenuId = req.params.menuId;
@@ -775,4 +777,4 @@ module.exports = {
   getAllMenus,
   getMenuDishes,
   publicMenuList
-}
+};
