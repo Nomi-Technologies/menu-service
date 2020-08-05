@@ -216,8 +216,7 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
-    restaurantId: req.user.restaurantId,         // register to user's restaurant
-    categoryId: req.body.categoryId,
+    categoryId: req.body.categoryId
   }
   Dish.create(dish)
     .then((data) => {
