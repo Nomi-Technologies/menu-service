@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     canRemove: DataTypes.BOOLEAN,
     notes: DataTypes.STRING,
     tableTalkPoints: DataTypes.TEXT,
-    restaurantId: DataTypes.INTEGER
+    restaurantId: DataTypes.INTEGER,
+    categoryId: DataTypes.INTEGER
   }, {});
   Dish.associate = function(models) {
     Dish.belongsToMany(models.Tag, {
@@ -22,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
 
     Dish.belongsTo(models.Restaurant, {
       foreignKey: 'restaurantId',
+      onDelete: 'CASCADE'
+    })
+
+    Dish.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
       onDelete: 'CASCADE'
     })
   };

@@ -35,6 +35,15 @@ module.exports = {
           as: 'restaurantId'
         }
       },
+      categoryId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Categories',
+          key: 'id',
+          as: 'categoryId'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

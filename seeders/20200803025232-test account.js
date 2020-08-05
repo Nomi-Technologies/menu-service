@@ -43,23 +43,33 @@ module.exports = {
         published: true
       });
 
-      let category = await Category.create({
+      let apps = await Category.create({
         name: "Appetizers",
         menuId: menu.id
       })
 
+      let entrees = await Category.create({
+        name: "Entrees",
+        menuId: menu.id
+      })
+
       let dishData = {
-        name: "Test Dish",
-        description: "test description",
-        restaurantId: restaurant.id 
+        name: "Calamari",
+        description: "So tasty",
+        restaurantId: restaurant.id,
+        categoryId: apps.id
       }
 
       let dish = await Dish.create(dishData);
-      await dish.setTags([1, 3, 6])
-      return MenuDish.create({
-        categoryId: category.id,
-        dishId: dish.id
-      })
+
+      dishData = {
+        name: "Hamburger",
+        description: "Very juicy",
+        restaurantId: restaurant.id,
+        categoryId: entrees.id
+      }
+
+      return Dish.create(dishData);
     })
   },
 

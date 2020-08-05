@@ -4,7 +4,6 @@ const {
   User,
   Restaurant,
   Category,
-  MenuDish,
   Menu
 } = require("./models");
 
@@ -345,7 +344,7 @@ const getDish = (req, res) => {
  
   Dish.findByPk(id, {
     include: {
-      model: Tag, as: 'tags'
+      model: Tag, as: 'Tags'
     }
   })
     .then(dish => {
@@ -368,15 +367,15 @@ const updateDish = (req, res) => {
       // verify user belongs to restauraunt of dish to update
       if (dish) {
         Dish.update(req.body, { where: { id: req.params.id } }).then(() => {
-          dishTags = JSON.parse("[" + req.body.dishTags + "]");
+          dishTags = req.body.dishTags
           dish.setTags(dishTags).then(() => {
             res.status(200).send({
               message: "dish update successful",
             });
           })
 
-
           .catch((err) => {
+            console.error(err)
             res.status(500).send({
               message:
                 err || "An error occured while updating dish with id=" + id,
@@ -384,6 +383,7 @@ const updateDish = (req, res) => {
           })
 
         }).catch((err) => {
+          console.error(err)
           res.status(500).send({
             message:
               err.message || "An error occured while updating dish with id=" + id,
@@ -593,8 +593,12 @@ const getMenu = (req, res) => {
   const id = req.params.id
   userRestaurantId = req.user.restaurantId
   Menu.findOne({
-    where: { restaurantId: userRestaurantId, id: id },
-    include: [{ model: Category, include: [{ model: MenuDish, as: "Dishes", include: [{ model: Dish, include: [{ model: Tag, as: "Tags" }] }] }] }] })
+      where: { restaurantId: userRestaurantId, id: id },
+      include: [{ model: Category, include: [{ model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] }] }] ,
+      order: [
+        [Category, 'updatedAt', 'asc']
+      ]
+    })
     .then((data) => {
       res.send(data);
     })
