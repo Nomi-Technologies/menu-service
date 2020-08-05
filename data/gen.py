@@ -65,6 +65,14 @@ const populateDB = async () => {
   });
   await db.User.register('admin@gmail.com', 'password123', '3033253734', 'admin', 1);''')
 
+f.writelines('''
+  let menu = await db.Menu.create({
+    id: 1,
+    name: "Spring 2020",
+  });
+  menu.setRestaurant(restaurant);
+''')
+
 for key in [
   "Cold",
   "Hot",
@@ -76,7 +84,8 @@ for key in [
   let %s = await db.Category.create({ 
     name: "%s",
   });
-  %s.setRestaurant(restaurant)''' % (key.replace(' ', '_'), key, key.replace(' ', '_')))
+  %s.setRestaurant(restaurant)
+  %s.setMenu(menu)''' % (key.replace(' ', '_'), key, key.replace(' ', '_'), key.replace(' ', '_')))
 
 for allergen in [
   "dairy", 
@@ -114,6 +123,7 @@ for key in all_dishes:
   });
   dish.setCategory(%s);
   dish.setRestaurant(restaurant);
+  dish.setMenu(menu);
 ''' % (escape_character(dish[0]), escape_character(dish[1]), escape_character(dish[4]), key.replace(' ', '_')))
     for a in dish[3]:
       f.write('  dish.addTag({});\n'.format(a.lower()))

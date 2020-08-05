@@ -55,7 +55,7 @@ module.exports = (app) => {
     ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
   }));
 
-  var router = express.Router();  
+  var router = express.Router();
 
   router.post('/restaurants/register', controller.createRestaurant);
   router.get('/assets/*', controller.fetchAsset);
@@ -84,6 +84,12 @@ module.exports = (app) => {
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
+  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
+  router.post("/menus", controller.createMenu);
+  router.get("/menus/:id", controller.getMenu);
+  router.put("/menus/:id", controller.updateMenu);
+  router.delete("/menus/:id", controller.deleteMenu);
+  router.get("/all-menus", controller.getAllMenus);
 
   app.use("/api", router);
 
