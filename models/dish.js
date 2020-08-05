@@ -13,14 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     restaurantId: DataTypes.INTEGER
   }, {});
   Dish.associate = function(models) {
-    // associations can be defined here
-    Dish.belongsToMany(models.Category, {
-      through: 'CategoryDish',
-      as: 'Categories',
-      foreignKey: 'categoryId',
-      otherKey: 'dishId',
-    });
-
     Dish.belongsToMany(models.Tag, {
       through: 'DishTag',
       as: 'Tags',

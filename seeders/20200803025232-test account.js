@@ -1,5 +1,5 @@
 'use strict';
-const { User, Restaurant, Menu, Dish, Category } = require('../models');
+const { User, Restaurant, Menu, Dish, Category, MenuDish } = require('../models');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -54,9 +54,12 @@ module.exports = {
         restaurantId: restaurant.id 
       }
 
-      let dish = await Dish.create(dishData)
-      await dish.setCategories([category.id])
-      return dish.setTags([1, 3, 6])
+      let dish = await Dish.create(dishData);
+      await dish.setTags([1, 3, 6])
+      return MenuDish.create({
+        categoryId: category.id,
+        dishId: dish.id
+      })
     })
   },
 

@@ -5,17 +5,15 @@ module.exports = (sequelize, DataTypes) => {
     menuId: DataTypes.INTEGER
   }, {});
   Category.associate = function(models) {
-    // associations can be defined here
-    Category.belongsToMany(models.Dish, {
-      through: 'CategoryDish',
-      as: 'Dishes',
-      foreignKey: 'dishId',
-      otherKey: 'categoryId',
-    });
-
     Category.belongsTo(models.Menu, {
       foreignKey: 'menuId',
       onDelete: 'CASCADE'
+    })
+
+    Category.hasMany(models.MenuDish, {
+      foreignKey: 'categoryId',
+      onDelete: 'CASCADE',
+      as: "Dishes"
     })
   };
   return Category;

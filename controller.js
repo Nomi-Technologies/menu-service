@@ -4,7 +4,7 @@ const {
   User,
   Restaurant,
   Category,
-  CategoryDish,
+  MenuDish,
   Menu
 } = require("./models");
 
@@ -594,7 +594,7 @@ const getMenu = (req, res) => {
   userRestaurantId = req.user.restaurantId
   Menu.findOne({
     where: { restaurantId: userRestaurantId, id: id },
-    include: [{ model: Category, include: [{ model: CategoryDish, as: "Dishes", include: [{ model: Dish, include: [{ model: Tag, as: "Tags" }] }] }] }] })
+    include: [{ model: Category, include: [{ model: MenuDish, as: "Dishes", include: [{ model: Dish, include: [{ model: Tag, as: "Tags" }] }] }] }] })
     .then((data) => {
       res.send(data);
     })
