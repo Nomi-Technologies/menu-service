@@ -6,6 +6,7 @@ const {
   Category,
   Menu
 } = require("./models");
+
 const slug = require('slug');
 
 const {
@@ -49,10 +50,10 @@ let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
 passport.use(strategy);
 
 // users
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
+
   try {
-    let newUser;
-    User.register(
+    user = await User.register(
       req.body.email,
       req.body.password,
       req.body.phone,
@@ -60,13 +61,10 @@ const registerUser = (req, res) => {
       req.body.restaurantId,
       req.body.firstname,
       req.body.lastname
-    ).then((user) => {
-      res.send("User " + user.email + " was successfully created!");
-    }).catch((err) => {
-      res.status(500).send(err)
-    });
+    );
+    res.send("User " + user.email + " was successfully created!");
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).send(err)
   }
 };
 
@@ -218,9 +216,7 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
-    restaurantId: req.user.restaurantId,         // register to user's restaurant
-    categoryId: req.body.categoryId,
-    menuId: req.body.menuId,
+    categoryId: req.body.categoryId
   }
   Dish.create(dish)
     .then((data) => {
@@ -290,10 +286,7 @@ function capitalizeFirstLetter(string) {
 }
 
 const tagsList = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  Tag.findAll({
-    where: {restaurantId: userRestaurantId}
-  })
+  Tag.findAll()
   .then(data => {
     res.send(data);
   })
@@ -303,22 +296,6 @@ const tagsList = (req, res) => {
     })
   })
 }
-
-const dishesList = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  Dish.findAll({
-    where: { restaurantId: userRestaurantId },
-    include: [{ model: Tag }, { model: Category }],
-  })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "An error occured while getting dishes list",
-      });
-    });
-};
 
 const dishesByCategory = (req, res) => {
   userRestaurantId = req.user.restaurantId;
@@ -351,18 +328,15 @@ const getTags = (req, res) => {
 
 const getDish = (req, res) => {
   const id = req.params.id
-  userRestaurantId = req.user.restaurantId
  
-  Dish.findByPk(id)
+  Dish.findByPk(id, {
+    include: {
+      model: Tag, as: 'tags'
+    }
+  })
     .then(dish => {
       // verify user belongs to restauraunt of dish requested
-      if (dish && dish.restaurantId == userRestaurantId) {
-        res.send(dish);
-      } else {
-        res.status(404).send({
-          message: "Could not find dish",
-        });
-      }
+      res.send(dish);
     })
     .catch((err) => {
       res.status(500).send({
@@ -373,18 +347,32 @@ const getDish = (req, res) => {
 };
 
 const updateDish = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-
-  console.log(req.body.dishTags)
-
+  userRestaurantId = req.user.restaurantId
   Dish.findByPk(req.params.id)
     .then((dish) => {
       // verify user belongs to restauraunt of dish to update
-      if (dish && dish.restaurantId == userRestaurantId) {
+
+
+
+      if (dish) {
         Dish.update(req.body, { where: { id: req.params.id } }).then(() => {
-          dish.setTags(req.body.dishTags)
-          res.status(200).send({
-            message: "dish update successful",
+          dishTags = JSON.parse("[" + req.body.dishTags + "]");
+          dish.setTags(dishTags).then(() => {
+            res.status(200).send({
+              message: "dish update successful",
+            });
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message:
+                err || "An error occured while updating dish with id=" + id,
+            });
+          })
+
+        }).catch((err) => {
+          res.status(500).send({
+            message:
+              err.message || "An error occured while updating dish with id=" + id,
           });
         });
       } else {
@@ -707,7 +695,6 @@ const publicRestaurantList = (req, res) => {
 
 module.exports = {
   createDish,
-  dishesList,
   dishesByCategory,
   getDish,
   updateDish,

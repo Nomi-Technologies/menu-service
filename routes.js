@@ -74,7 +74,6 @@ module.exports = (app) => {
   router.put("/restaurants/me", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
-  router.get("/dishes", controller.dishesList);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
