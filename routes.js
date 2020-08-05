@@ -93,7 +93,8 @@ module.exports = (app) => {
   app.use("/api", router);
 
   var webApiRouter = express.Router();
-  webApiRouter.get("/dishes/:uniqueName", controller.publicDishList);
+  webApiRouter.get("/:uniqueName", controller.publicMenuList);
+  webApiRouter.get("/:uniqueName/:menuId", controller.publicDishList);
   webApiRouter.get("/restaurants", controller.publicRestaurantList);
   app.use("/webApi", webApiRouter);
 };

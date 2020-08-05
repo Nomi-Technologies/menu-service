@@ -680,12 +680,27 @@ const fetchAsset = async (req, res) => {
   );
 };
 
+const publicMenuList = (req, res) => {
+  let uniqueName = req.params.uniqueName;
+  Menu.findAll({
+    include: [
+      { model: Restaurant, where: { uniqueName: uniqueName } }
+    ],
+    where: {
+      published: true
+    }
+  }).then((menuList) => {
+    res.send(menuList)
+  })
+}
+
 const publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
+  let menuId = req.params.menuId
   Dish.findAll({
     attributes: ["id", "name", "description", "addons", "canRemove"],
     include: [
-      { model: Tag }, 
+      { model: Tag, as: "Tags" }, 
       { model: Category }, 
       { model: Restaurant, where: { uniqueName: uniqueName } }
     ],
@@ -736,5 +751,6 @@ module.exports = {
   getMenu,
   deleteMenu,
   getAllMenus,
-  getMenuDishes
+  getMenuDishes,
+  publicMenuList
 }
