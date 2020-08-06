@@ -4,7 +4,7 @@ const { User, Restaurant, Menu, Dish, Category, MenuDish } = require('../models'
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction().then(async t => {
-      const restaurant = Restaurant.create({
+      const restaurant = await Restaurant.create({
         uniqueName: "test-restaurant",
         name: "Test Restaurant",
         streetAddress: "2145 1st St",
