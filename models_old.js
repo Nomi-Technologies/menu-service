@@ -110,7 +110,7 @@ const Category = database.define("category", {
   name: { type: Sequelize.STRING, allowNull: false },
 });
 
-Category.hasMany(Dish, {onDelete: 'CASCADE'})
+Category.hasMany(Dish, {onDelete: 'cascade'})
 Dish.belongsTo(Category)
 const Tag = database.define('tag', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -188,19 +188,19 @@ const Menu = database.define("menu", {
 })
 
 // One to many for restaurants
-Restaurant.hasMany(Dish, { onDelete: "CASCADE" });
+Restaurant.hasMany(Dish, { onDelete: "cascade" });
 Dish.belongsTo(Restaurant);
-Restaurant.hasMany(User, { onDelete: "CASCADE" });
-Restaurant.hasMany(Category, { onDelete: "CASCADE" });
+Restaurant.hasMany(User, { onDelete: "cascade" });
+Restaurant.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Restaurant);
 
-Restaurant.hasMany(Menu, { onDelete: "CASCADE" });
+Restaurant.hasMany(Menu, { onDelete: "cascade" });
 Menu.belongsTo(Restaurant);
 
-Menu.hasMany(Category, { onDelete: "CASCADE" });
+Menu.hasMany(Category, { onDelete: "cascade" });
 Category.belongsTo(Menu);
 
-Menu.hasMany(Dish, { onDelete: "CASCADE" });
+Menu.hasMany(Dish, { onDelete: "cascade" });
 Dish.belongsTo(Menu);
 
 module.exports = {
