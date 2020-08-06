@@ -3,29 +3,17 @@ const { User, Restaurant, Menu, Dish, Category, MenuDish } = require('../models'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.bulkInsert('People', [{
-        name: 'John Doe',
-        isBetaMember: false
-      }], {});
-    */
-
-
-
-    return Restaurant.create({
-      uniqueName: "test-restaurant2",
-      name: "Test Restaurant",
-      streetAddress: "2145 1st St",
-      city: "Los Angeles",
-      state: "CA",
-      zip: "90007",
-      phone: "1111111111",
-      url: "google.com"
-    }).then(async (restaurant) => {
+    return queryInterface.sequelize.transaction().then(async t => {
+      const restaurant = Restaurant.create({
+        uniqueName: "test-restaurant",
+        name: "Test Restaurant",
+        streetAddress: "2145 1st St",
+        city: "Los Angeles",
+        state: "CA",
+        zip: "90007",
+        phone: "1111111111",
+        url: "google.com"
+      });
       console.log("creating user")
       await User.register(
         "admin@test.com",
@@ -60,7 +48,7 @@ module.exports = {
         categoryId: apps.id
       }
 
-      let dish = await Dish.create(dishData);
+      await Dish.create(dishData);
 
       dishData = {
         name: "Hamburger",
@@ -69,17 +57,18 @@ module.exports = {
         categoryId: entrees.id
       }
 
-      return Dish.create(dishData);
-    })
+      await Dish.create(dishData);
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.bulkDelete('People', null, {});
-    */
+    return queryInterface.sequelize.transaction().then(async t => {
+      await queryInterface.bulkDelete('Restaurants', { 
+        uniqueName: 'test-restaurant' 
+      }, {});
+      await queryInterface.bulkDelete('Users', { 
+        email: 'admin@test.com' 
+      }, {});
+    });
   }
 };
