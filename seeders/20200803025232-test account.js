@@ -38,7 +38,7 @@ module.exports = {
       )
 
       let menu = await Menu.create({
-        name: "Fall 2020",
+        name: "Dinner",
         restaurantId: restaurant.id,
         published: true
       });
@@ -69,7 +69,70 @@ module.exports = {
         categoryId: entrees.id
       }
 
-      return Dish.create(dishData);
+      await Dish.create(dishData);
+
+
+      menu = await Menu.create({
+        name: "Drinks",
+        restaurantId: restaurant.id,
+        published: true
+      })
+    
+    
+      let Wine = await Category.create({
+        name: "Wine",
+        menuId: menu.id
+      })
+    
+      let Beer = await Category.create({
+        name: "Beer",
+        menuId: menu.id
+      })
+    
+      await Dish.create({
+        name: "Corona",
+        description: "yike",
+        restaurantId: restaurant.id,
+        categoryId: Beer.id
+      })
+    
+      await Dish.create({
+        name: "Corona",
+        description: "yike",
+        restaurantId: restaurant.id,
+        categoryId: Beer.id
+      }).then((dish) => {
+        dish.setTags([1,3, 5])
+      })
+    
+      await Dish.create({
+        name: "Coors Lite",
+        description: "crispy",
+        restaurantId: restaurant.id,
+        categoryId: Beer.id
+      }).then((dish) => {
+        dish.setTags([1,3, 5])
+      })
+    
+    
+      await Dish.create({
+        name: "Malbec",
+        description: "yike",
+        restaurantId: restaurant.id,
+        categoryId: Wine.id
+      }).then((dish) => {
+        dish.setTags([1,3, 5])
+      })
+    
+      return Dish.create({
+        name: "Pinot Noir",
+        description: "crispy",
+        restaurantId: restaurant.id,
+        categoryId: Wine.id
+      }).then((dish) => {
+        dish.setTags([1,3, 5])
+      })
+      
     })
   },
 
