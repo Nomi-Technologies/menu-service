@@ -701,7 +701,7 @@ const publicDishList = (req, res) => {
     attributes: ["id", "name", "description", "addons", "canRemove"],
     include: [
       { model: Tag, as: "Tags" }, 
-      { model: Category }, 
+      { model: Category, where: { menuId: menuId } }, 
       { model: Restaurant, where: { uniqueName: uniqueName } }
     ],
     order: [

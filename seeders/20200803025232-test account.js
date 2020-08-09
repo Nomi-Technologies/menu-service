@@ -29,7 +29,7 @@ module.exports = {
         name: "Fall 2020",
         restaurantId: restaurant.id,
         published: true
-      });
+      });      
 
       let apps = await Category.create({
         name: "Appetizers",
@@ -58,6 +58,25 @@ module.exports = {
       }
 
       await Dish.create(dishData);
+      
+      let menu2 = await Menu.create({
+        name: "Drinks",
+        restaurantId: restaurant.id,
+        published: true
+      });
+
+      let drinks = await Category.create({
+        name: "Drinks",
+        menuId: menu2.id
+      });
+
+      await Dish.create({
+        name: "Wine",
+        description: "Very intoxicating",
+        restaurantId: restaurant.id,
+        categoryId: drinks.id
+      });
+
     });
   },
 
