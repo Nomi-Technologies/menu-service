@@ -29,7 +29,7 @@ module.exports = {
         name: "Dinner",
         restaurantId: restaurant.id,
         published: true
-      });
+      });      
 
       let apps = await Category.create({
         name: "Appetizers",
