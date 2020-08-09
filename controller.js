@@ -222,11 +222,14 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
+    restaurantId: req.user.restaurantId,
+    categoryId: req.body.restaurantId,
+    menuId: req.body.menuId,
   }
   Dish.create(dishData)
     .then((dish) => {
       dish.setTags(req.body.dishTags).then(() => {
-        dish.setCategories([req.body.categoryId]).then(() => {
+        dish.setCategory([req.body.categoryId]).then((data) => {
           res.send(data);
         })
       })
@@ -410,7 +413,6 @@ const deleteDish = (req, res) => {
   Dish.findByPk(req.params.id)
   .then(dish => {
     // verify user belongs to restauraunt of dish to update
-    console.log(dish)
     if(dish && dish.restaurantId == userRestaurantId) {
       Dish.destroy({
         where: {id: req.params.id}
@@ -465,12 +467,9 @@ const createCategory = (req, res) => {
 };
 
 const updateCategory = (req, res) => {
-  userRestaurantId = req.user.restaurantId
   Category.findByPk(req.params.id)
   .then(category => {
-    // verify category belongs to restauraunt of category to update
-    if(category && category.restaurantId == userRestaurantId) {
-      console.log(req)
+    if(category) {
       Category.update(req.body, {where: {id: req.params.id}}).then(() => {
         res.status(200).send({
           message: "update sucessful"
@@ -478,7 +477,7 @@ const updateCategory = (req, res) => {
       });
     }
     else {
-      // sends if dish does not exist, or user does not have access
+      // sends if category does not exist, or user does not have access
       res.status(404).send({
         message: "Could not find category to update"
       });
@@ -492,13 +491,10 @@ const updateCategory = (req, res) => {
 };
 
 const deleteCategory = (req, res) => {
-  console.log("in delete category")
-  userRestaurantId = req.user.restaurantId
   Category.findByPk(req.params.id)
   .then(category => {
     // verify user belongs to restauraunt of category to update
-    console.log(category)
-    if(category && category.restaurantId == userRestaurantId) {
+    if(category) {
       Category.destroy({
         where: {id: req.params.id}
       })
@@ -527,10 +523,7 @@ const deleteCategory = (req, res) => {
 };
 
 const getCategory = (req, res) => {
-  const id = req.params.id
-  userRestaurantId = req.user.restaurantId
- 
-  Category.findByPk(id)
+  Category.findByPk(req.params.id)
     .then(category => {
       // TODO: some sort of verification
       res.send(category);
