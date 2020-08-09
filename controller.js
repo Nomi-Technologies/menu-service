@@ -226,7 +226,7 @@ const createDish = (req, res) => {
   Dish.create(dishData)
     .then((dish) => {
       dish.setTags(req.body.dishTags).then(() => {
-        dish.setCategories([req.body.categoryId]).then(() => {
+        dish.setCategory(req.body.categoryId).then(() => {
           res.send(data);
         })
       })
