@@ -229,7 +229,7 @@ const createDish = (req, res) => {
   Dish.create(dishData)
     .then((dish) => {
       dish.setTags(req.body.dishTags).then(() => {
-        dish.setCategory([req.body.categoryId]).then((data) => {
+        dish.setCategory(req.body.categoryId).then((data) => {
           res.send(data);
         })
       })
@@ -694,7 +694,7 @@ const publicDishList = (req, res) => {
     attributes: ["id", "name", "description", "addons", "canRemove"],
     include: [
       { model: Tag, as: "Tags" }, 
-      { model: Category }, 
+      { model: Category, where: { menuId: menuId } }, 
       { model: Restaurant, where: { uniqueName: uniqueName } }
     ],
     order: [
