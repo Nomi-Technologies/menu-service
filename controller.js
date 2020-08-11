@@ -17,6 +17,8 @@ const {
 } = require("./config.js");
 const jwt = require("jsonwebtoken");
 
+const { Op } = require("sequelize");
+
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 
@@ -261,7 +263,6 @@ async function CsvHelper(req) {
   var dataArr = req.body.data;
   var dish, dishcategory;
   for(let i = 0; i < dataArr.length; i++){
-    // find or create category with given name and restaurantId
     dishcategory = await Category.findCreateFind({
       where: {
         name: dataArr[i][0],
@@ -436,15 +437,36 @@ const getMenuDishes = (req, res) => {
     where: { restaurantId: userRestaurantId, menuId: userMenuId },
     include: [{ model: Dish, include: [{ model: Tag }] }]
   })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "An error occured while getting categories list",
-      });
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message || "An error occured while getting categories list",
     });
+  });
+}
+const dishesByName = (req, res) => {
+  userRestaurantId = req.user.restaurantId;
+  let searchValue = '%' + req.query.searchInput + '%';
+  Dish.findAll({
+    where: { 
+      name: {
+        [Op.like]: searchValue
+      },
+      restaurantId: userRestaurantId, 
+    },
+    include: [{model: Tag}, {model: Category}],
+  })
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message: err.message || "An error occured while searching for dish",
+    });
+  });
 }
 
 //Categories
@@ -719,6 +741,7 @@ module.exports = {
   getDish,
   updateDish,
   deleteDish,
+  dishesByName,
   createCategory,
   updateCategory,
   deleteCategory,
