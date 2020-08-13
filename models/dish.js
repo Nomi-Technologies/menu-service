@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     notes: DataTypes.STRING,
     tableTalkPoints: DataTypes.TEXT,
     restaurantId: DataTypes.INTEGER,
-    categoryId: DataTypes.INTEGER
+    categoryId: DataTypes.INTEGER,
+    price: DataTypes.STRING,
   }, {});
   Dish.associate = function(models) {
     Dish.belongsToMany(models.Tag, {
