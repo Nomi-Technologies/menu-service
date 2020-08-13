@@ -698,7 +698,7 @@ const publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId
   Dish.findAll({
-    attributes: ["id", "name", "description", "addons", "canRemove"],
+    attributes: ["id", "name", "description", "addons", "canRemove", "price"],
     include: [
       { model: Tag, as: "Tags" }, 
       { model: Category, where: { menuId: menuId } }, 
