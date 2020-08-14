@@ -63,9 +63,7 @@ module.exports = (app) => {
   router.post("/user/register", controller.registerUser);
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
-  router.get("/user/details", controller.getUserDetails);
-  router.put("/user/details/:id", controller.updateUserDetails);
-
+  
   router.get("/assets/*", controller.fetchAsset);
 
   // All routes below are authenticated
@@ -91,6 +89,8 @@ module.exports = (app) => {
   router.put("/menus/:id", controller.updateMenu);
   router.delete("/menus/:id", controller.deleteMenu);
   router.get("/all-menus", controller.getAllMenus);
+  router.get("/user/details", controller.getUserDetails);
+  router.put("/user/details", controller.updateUserDetails);
 
   app.use("/api", router);
 
