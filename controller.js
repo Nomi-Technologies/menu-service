@@ -117,7 +117,7 @@ const updateUserDetails = async (req, res) => {
   User.findOne({ where: { email: email }})
   .then((user) => {
     // verify user belongs to restauraunt of dish to update
-    user.update(req.body, { where: { email: email } }).then(() => {
+    user.update(req.body).then(() => {
       res.status(200).send({
         message: "update sucessful",
         user: user
@@ -173,6 +173,7 @@ const createRestaurant = async (req, res) => {
 
 // gets restaurant information based on authentication
 const getRestaurant = (req, res) => {
+  console.log(176)
   userRestaurantId = req.params.restaurantId;
   Restaurant.findOne({ id: userRestaurantId })
     .then((restaurant) => {
