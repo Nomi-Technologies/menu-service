@@ -119,7 +119,7 @@ const updateUserDetails = async (req, res) => {
   User.findOne({ where: { email: email }})
   .then((user) => {
     // verify user belongs to restauraunt of dish to update
-    user.update(req.body, { where: { email: email } }).then(() => {
+    user.update(req.body).then(() => {
       res.status(200).send({
         message: "update sucessful",
         user: user
@@ -175,6 +175,7 @@ const createRestaurant = async (req, res) => {
 
 // gets restaurant information based on authentication
 const getRestaurant = (req, res) => {
+  console.log(176)
   userRestaurantId = req.params.restaurantId;
   Restaurant.findOne({ id: userRestaurantId })
     .then((restaurant) => {
@@ -224,11 +225,14 @@ const createDish = (req, res) => {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
+    restaurantId: req.user.restaurantId,
+    categoryId: req.body.restaurantId,
+    menuId: req.body.menuId,
   }
   Dish.create(dishData)
     .then((dish) => {
       dish.setTags(req.body.dishTags).then(() => {
-        dish.setCategories([req.body.categoryId]).then(() => {
+        dish.setCategory(req.body.categoryId).then((data) => {
           res.send(data);
         })
       })
@@ -411,7 +415,6 @@ const deleteDish = (req, res) => {
   Dish.findByPk(req.params.id)
   .then(dish => {
     // verify user belongs to restauraunt of dish to update
-    console.log(dish)
     if(dish && dish.restaurantId == userRestaurantId) {
       Dish.destroy({
         where: {id: req.params.id}
@@ -457,15 +460,36 @@ const getMenuDishes = (req, res) => {
     where: { restaurantId: userRestaurantId, menuId: userMenuId },
     include: [{ model: Dish, include: [{ model: Tag }] }]
   })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "An error occured while getting categories list",
-      });
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message || "An error occured while getting categories list",
     });
+  });
+}
+const dishesByName = (req, res) => {
+  userRestaurantId = req.user.restaurantId;
+  let searchValue = '%' + req.query.searchInput + '%';
+  Dish.findAll({
+    where: { 
+      name: {
+        [Op.like]: searchValue
+      },
+      restaurantId: userRestaurantId, 
+    },
+    include: [{model: Tag}, {model: Category}],
+  })
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message: err.message || "An error occured while searching for dish",
+    });
+  });
 }
 
 //Categories
@@ -488,12 +512,9 @@ const createCategory = (req, res) => {
 };
 
 const updateCategory = (req, res) => {
-  userRestaurantId = req.user.restaurantId
   Category.findByPk(req.params.id)
   .then(category => {
-    // verify category belongs to restauraunt of category to update
-    if(category && category.restaurantId == userRestaurantId) {
-      console.log(req)
+    if(category) {
       Category.update(req.body, {where: {id: req.params.id}}).then(() => {
         res.status(200).send({
           message: "update sucessful"
@@ -501,7 +522,7 @@ const updateCategory = (req, res) => {
       });
     }
     else {
-      // sends if dish does not exist, or user does not have access
+      // sends if category does not exist, or user does not have access
       res.status(404).send({
         message: "Could not find category to update"
       });
@@ -515,13 +536,10 @@ const updateCategory = (req, res) => {
 };
 
 const deleteCategory = (req, res) => {
-  console.log("in delete category")
-  userRestaurantId = req.user.restaurantId
   Category.findByPk(req.params.id)
   .then(category => {
     // verify user belongs to restauraunt of category to update
-    console.log(category)
-    if(category && category.restaurantId == userRestaurantId) {
+    if(category) {
       Category.destroy({
         where: {id: req.params.id}
       })
@@ -550,10 +568,7 @@ const deleteCategory = (req, res) => {
 };
 
 const getCategory = (req, res) => {
-  const id = req.params.id
-  userRestaurantId = req.user.restaurantId
- 
-  Category.findByPk(id)
+  Category.findByPk(req.params.id)
     .then(category => {
       // TODO: some sort of verification
       res.send(category);
@@ -721,10 +736,10 @@ const publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId
   Dish.findAll({
-    attributes: ["id", "name", "description", "addons", "canRemove"],
+    attributes: ["id", "name", "description", "addons", "canRemove", "price"],
     include: [
       { model: Tag, as: "Tags" }, 
-      { model: Category }, 
+      { model: Category, where: { menuId: menuId } }, 
       { model: Restaurant, where: { uniqueName: uniqueName } }
     ],
     order: [

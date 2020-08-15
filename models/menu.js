@@ -8,7 +8,13 @@ module.exports = (sequelize, DataTypes) => {
       default: false,
       allowNull: true
     }
-  }, {});
+  }, {
+    indexes: [{
+      unique: true,
+      fields: ['name', 'restaurantId'],
+      name: 'UniqueMenuNameIndex',
+    }]
+  });
   Menu.associate = function(models) {
     // associations can be defined here
     Menu.belongsTo(models.Restaurant, {
