@@ -175,8 +175,7 @@ const createRestaurant = async (req, res) => {
 
 // gets restaurant information based on authentication
 const getRestaurant = (req, res) => {
-  console.log(176)
-  userRestaurantId = req.params.restaurantId;
+  userRestaurantId = req.user.restaurantId;
   Restaurant.findOne({ id: userRestaurantId })
     .then((restaurant) => {
       res.send(restaurant);
