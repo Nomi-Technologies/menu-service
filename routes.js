@@ -83,7 +83,6 @@ module.exports = (app) => {
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
-  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
   router.post("/menus", controller.createMenu);
   router.get("/menus/:id", controller.getMenu);
   router.put("/menus/:id", controller.updateMenu);
