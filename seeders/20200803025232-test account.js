@@ -19,8 +19,8 @@ module.exports = {
         "admin@test.com",
         "password123",
         "2222222222",
-        restaurant.id,
         1,
+        restaurant.id,
         "John",
         "Doe"
       )
