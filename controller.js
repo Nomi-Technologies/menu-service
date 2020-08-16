@@ -316,8 +316,10 @@ const tagsList = (req, res) => {
 const dishesByCategory = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Category.findAll({
-    where: { restaurantId: userRestaurantId },
-    include: [{ model: Dish, include: [{ model: Tag }] }]
+    include: [
+      { model: Dish, include: [{ model: Tag, as: "Tags" }] },
+      { model: Menu, where: { restaurantId: userRestaurantId }},
+    ]
   })
     .then((data) => {
       res.send(data);
@@ -431,23 +433,6 @@ const deleteDish = (req, res) => {
   })
 }
 
-const getMenuDishes = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  userMenuId = req.params.menuId;
-  Category.findAll({
-    where: { restaurantId: userRestaurantId, menuId: userMenuId },
-    include: [{ model: Dish, include: [{ model: Tag }] }]
-  })
-  .then((data) => {
-    res.send(data);
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message:
-        err.message || "An error occured while getting categories list",
-    });
-  });
-}
 const dishesByName = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   let searchValue = req.query.searchInput + '%';
@@ -665,7 +650,6 @@ const getAllMenus = (req, res) => {
   userRestaurantId = req.user.restaurantId
   Menu.findAll({
     where: { restaurantId: userRestaurantId },
-    //include: [{ model: Category, include: [{ model: Dish, include: [{ model: Tag }] }] }]
   })
     .then((data) => {
       res.send(data);
@@ -768,6 +752,5 @@ module.exports = {
   getMenu,
   deleteMenu,
   getAllMenus,
-  getMenuDishes,
   publicMenuList
 };

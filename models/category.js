@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     Category.hasMany(models.Dish, {
       foreignKey: 'categoryId',
       onDelete: 'CASCADE',
-      as: "Dishes"
     })
   };
   return Category;
