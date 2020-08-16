@@ -431,28 +431,6 @@ const deleteDish = (req, res) => {
   })
 }
 
-const dishesByName = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  let searchValue = '%' + req.query.searchInput + '%';
-  Dish.findAll({
-    where: { 
-      name: {
-        [Op.like]: searchValue
-      },
-      restaurantId: userRestaurantId, 
-    },
-    include: [{model: Tag}, {model: Category}],
-  })
-  .then((data) => {
-    res.send(data);
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "An error occured while searching for dish",
-    });
-  });
-}
-
 const getMenuDishes = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   userMenuId = req.params.menuId;
@@ -472,22 +450,22 @@ const getMenuDishes = (req, res) => {
 }
 const dishesByName = (req, res) => {
   userRestaurantId = req.user.restaurantId;
-  let searchValue = '%' + req.query.searchInput + '%';
+  let searchValue = req.query.searchInput + '%';
   Dish.findAll({
     where: { 
       name: {
-        [Op.like]: searchValue
+        [Op.iLike]: searchValue
       },
       restaurantId: userRestaurantId, 
     },
-    include: [{model: Tag}, {model: Category}],
+    include: [{ model: Tag, as: "Tags" }],
   })
   .then((data) => {
     res.send(data);
   })
   .catch((err) => {
     res.status(500).send({
-      message: err.message || "An error occured while searching for dish",
+      message: err.message + "An error occured while searching for dish",
     });
   });
 }
