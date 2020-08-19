@@ -88,6 +88,7 @@ module.exports = (app) => {
   router.get("/menus/:id", controller.getMenu);
   router.put("/menus/:id", controller.updateMenu);
   router.delete("/menus/:id", controller.deleteMenu);
+  router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV)
   router.get("/all-menus", controller.getAllMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
