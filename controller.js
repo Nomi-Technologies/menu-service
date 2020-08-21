@@ -695,7 +695,7 @@ const publicDishList = (req, res) => {
     include: [
       { model: Tag, as: "Tags" }, 
       { model: Category, where: { menuId: menuId } }, 
-      { model: Restaurant, where: { uniqueName: uniqueName } }
+      { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] }
     ],
     order: [
       [Category, 'createdAt', 'asc'],
