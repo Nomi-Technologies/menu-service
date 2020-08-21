@@ -225,8 +225,9 @@ const createDish = (req, res) => {
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
     restaurantId: req.user.restaurantId,
-    categoryId: req.body.restaurantId,
+    categoryId: req.body.categoryId,
     menuId: req.body.menuId,
+    price: req.body.price,
   }
   Dish.create(dishData)
     .then((dish) => {
