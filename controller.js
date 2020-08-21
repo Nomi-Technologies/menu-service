@@ -456,13 +456,7 @@ const dishesByName = (req, res) => {
 
 //Categories
 const createCategory = (req, res) => {
-  const category = {
-    name: req.body.name,
-    restaurantId: req.user.restaurantId,
-    menuId: req.body.menuId, 
-  }
-
-  Category.create(category)
+  Category.create(req.body)
     .then(data => {
       res.send(data);
     })

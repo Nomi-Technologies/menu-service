@@ -2,7 +2,8 @@
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
     name: DataTypes.STRING,
-    menuId: DataTypes.INTEGER
+    menuId: DataTypes.INTEGER,
+    description: DataTypes.TEXT,
   }, {});
   Category.associate = function(models) {
     Category.belongsTo(models.Menu, {
