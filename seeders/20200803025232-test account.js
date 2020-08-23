@@ -1,5 +1,5 @@
 'use strict';
-const { User, Restaurant, Menu, Dish, Category } = require('../models');
+const { User, Restaurant, Menu, Dish, Category, Tag } = require('../models');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
