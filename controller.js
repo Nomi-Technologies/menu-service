@@ -541,7 +541,6 @@ const getCategory = (req, res) => {
 };
 
 const getAllCategoriesByMenu = (req, res) => {
-  const id = req.params.id;
   const menuId = req.params.menuId;
   Category.findAll({
     where: { menuId: menuId },
