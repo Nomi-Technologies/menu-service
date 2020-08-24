@@ -445,7 +445,7 @@ const dishesByName = (req, res) => {
     },
     include: [
       { model: Tag, as: "Tags" },
-      { model: Category, where: { menuId: req.query.menuId } },
+      { model: Category, where: { menuId: req.query.menuId }, attributes: [] },
     ],
      
   })
