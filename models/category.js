@@ -1,9 +1,20 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
-    name: DataTypes.STRING,
-    menuId: DataTypes.INTEGER,
-    description: DataTypes.TEXT,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    menuId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
   }, {});
   Category.associate = function(models) {
     Category.belongsTo(models.Menu, {

@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Restaurants', {
+    return queryInterface.createTable('Restaurant', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,35 +11,42 @@ module.exports = {
       uniqueName: {
         type: Sequelize.STRING, 
         unique: true, 
-        allowNull: true
+        allowNull: false
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       streetAddress: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       city: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       state: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       zip: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       phone: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: '',
       },
       url: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: false,
+        defaultValue: '',
       },
       createdAt: {
         allowNull: false,
@@ -49,9 +56,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }, {
+      indexes: [
+        { unique: true, fields: ['uniqueName'] }
+      ]
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Menus');
+    return queryInterface.dropTable('Menu');
   }
 };

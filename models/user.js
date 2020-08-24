@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
+      allowNull: false,
     },
     restaurantId: {
       type: DataTypes.INTEGER,
@@ -26,16 +27,22 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: '',
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: '',
     }
   }, {});
-  User.associate = function(models) {
-    // associations can be defined here
-  };
+
+  User.associate = models => {
+    User.belongsTo(models.Restaurant, {
+      foreignKey: 'restaurantId',
+      onDelete: 'CASCADE'
+    });
+  }
 
   User.register = async (
     email,
