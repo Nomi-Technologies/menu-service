@@ -35,7 +35,7 @@ module.exports = (app) => {
     optionsSuccessStatus: 200,
   };
   app.use(cors(corsOptions));
-  
+
   // var winston = require('winston');
   // var expressWinston = require('express-winston');
 
@@ -63,7 +63,7 @@ module.exports = (app) => {
   router.post("/user/register", controller.registerUser);
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
-  
+
   router.get("/assets/*", controller.fetchAsset);
 
   // All routes below are authenticated
@@ -80,6 +80,7 @@ module.exports = (app) => {
   router.get("/dishes-by-name", controller.dishesByName);
   router.post("/categories", controller.createCategory);
   router.get("/categories/:id", controller.getCategory);
+  router.get("/categories-by-menu/:menuId", controller.getAllCategoriesByMenu)
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
