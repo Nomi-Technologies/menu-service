@@ -435,7 +435,9 @@ const deleteDish = (req, res) => {
 
 const dishesByName = (req, res) => {
   userRestaurantId = req.user.restaurantId;
-  let searchValue = req.query.searchInput + '%';
+  let searchValue = '%' + req.query.searchInput + '%';
+  console.log('menu id:');
+  console.log(req.query.menuId);
   Dish.findAll({
     where: { 
       name: {
@@ -443,7 +445,11 @@ const dishesByName = (req, res) => {
       },
       restaurantId: userRestaurantId, 
     },
-    include: [{ model: Tag, as: "Tags" }],
+    include: [
+      { model: Tag, as: "Tags" },
+      { model: Category, where: { menuId: req.query.menuId } },
+    ],
+     
   })
   .then((data) => {
     res.send(data);
