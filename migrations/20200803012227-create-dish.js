@@ -24,7 +24,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       tableTalkPoints: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       restaurantId: {
         type: Sequelize.INTEGER,
