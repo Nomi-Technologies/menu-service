@@ -30,7 +30,5 @@ $ npm run develop
 If running locally, create a `.env` file with the following content:
 ```
 JWT_SECRET=<any string>
-AWS_S3_BUCKET_NAME=nomi-cloud-services
-AWS_S3_ACCESS_KEY_ID=<your access key>
-AWS_S3_SECRET_ACCESS_KEY=<your secret key>
+DB_NAME=<db name i.e "nomi-dev">
 ```
