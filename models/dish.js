@@ -1,18 +1,49 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Dish = sequelize.define('Dish', {
-    name: { 
+    name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: '',
     },
-    description: DataTypes.STRING,
-    addons: DataTypes.STRING,
-    canRemove: DataTypes.BOOLEAN,
-    notes: DataTypes.STRING,
-    tableTalkPoints: DataTypes.TEXT,
-    restaurantId: DataTypes.INTEGER,
-    categoryId: DataTypes.INTEGER,
-    price: DataTypes.STRING,
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    addons: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    canRemove: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    notes: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    tableTalkPoints: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
+    price: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   }, {});
   Dish.associate = function(models) {
     Dish.belongsToMany(models.Tag, {
