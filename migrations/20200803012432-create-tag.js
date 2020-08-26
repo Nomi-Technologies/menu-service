@@ -10,8 +10,8 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        unique: true,
         allowNull: false,
-        defaultValue: '',
       },
       type: {
         type: Sequelize.STRING,
