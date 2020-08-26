@@ -33,12 +33,13 @@ module.exports = {
   
       let apps = await Category.create({
         name: "Appetizers",
-        menuId: menu.id,
-        description: "Yummy appetizers",
-      });
-  
+        description: "Small plates to start with",
+        menuId: menu.id
+      })
+
       let entrees = await Category.create({
         name: "Entrees",
+        description: "The main event",
         menuId: menu.id
       })
   
@@ -73,6 +74,7 @@ module.exports = {
     
       let Wine = await Category.create({
         name: "Wine",
+        description: "This stuff is made from grapes!",
         menuId: menu.id
       })
     
