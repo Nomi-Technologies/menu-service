@@ -528,6 +528,7 @@ const createMenu = (req, res) => {
   const menu = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
+    published: true
   }
 
   Menu.create(menu)
