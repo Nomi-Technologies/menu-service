@@ -524,7 +524,6 @@ const getAllCategoriesByMenu = (req, res) => {
 
 //Menus
 const createMenu = (req, res) => {
-  console.log("in create menu")
   const menu = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
@@ -532,7 +531,16 @@ const createMenu = (req, res) => {
   }
 
   Menu.create(menu)
-    .then(data => {
+    .then(async data => {
+      if (req.body.csv != 'null') {
+        await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
+        .catch(err => {
+          console.error(err)
+          res.status(500).send({
+            message: err.message || "An error occured while processing this request"
+          });
+        })
+      }
       res.send(data);
     })
     .catch(err => {
