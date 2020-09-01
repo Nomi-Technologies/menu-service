@@ -25,7 +25,6 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 
 const aws = require("aws-sdk");
-const { isNull } = require("util");
 aws.config.update({
   region: "us-west-1",
   accessKeyId: ACCESS_KEY_ID,
@@ -532,7 +531,6 @@ const createMenu = (req, res) => {
     published: true
   }
 
-  menuId = 0
   Menu.create(menu)
     .then(data => {
       if (req.body.csv != 'null') {
