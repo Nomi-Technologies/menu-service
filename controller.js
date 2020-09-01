@@ -532,10 +532,10 @@ const createMenu = (req, res) => {
   }
 
   Menu.create(menu)
-    .then(data => {
+    .then(async data => {
       if (req.body.csv != 'null') {
         console.log(req.body)
-        parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
+        await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
         .catch(err => {
           console.error(err)
           res.status(500).send({
