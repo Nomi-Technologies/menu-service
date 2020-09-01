@@ -25,6 +25,7 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 
 const aws = require("aws-sdk");
+const { isNull } = require("util");
 aws.config.update({
   region: "us-west-1",
   accessKeyId: ACCESS_KEY_ID,
@@ -531,8 +532,19 @@ const createMenu = (req, res) => {
     published: true
   }
 
+  menuId = 0
   Menu.create(menu)
     .then(data => {
+      if (req.body.csv != 'null') {
+        console.log(req.body)
+        parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
+        .catch(err => {
+          console.error(err)
+          res.status(500).send({
+            message: err.message || "An error occured while processing this request"
+          });
+        })
+      }
       res.send(data);
     })
     .catch(err => {
