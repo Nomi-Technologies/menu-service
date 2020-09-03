@@ -68,6 +68,7 @@ module.exports = (app) => {
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
   router.get("/restaurants/me", controller.getRestaurant);
+  // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
