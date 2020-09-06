@@ -659,7 +659,7 @@ const fetchAsset = async (req, res) => {
     },
     (err, data) => {
       if (err) {
-        res.status(err.statusCode).send(err.message);
+        res.status(500).send(err.message);
       } else {
         res.setHeader("Content-Type", "image/png");
         res.send(data.Body);
@@ -685,6 +685,7 @@ const publicMenuList = (req, res) => {
 const publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId
+
   Dish.findAll({
     attributes: ["id", "name", "description", "addons", "canRemove", "price"],
     include: [
