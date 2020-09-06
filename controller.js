@@ -7,9 +7,8 @@ const {
   Menu
 } = require("./models");
 
-const { parseCSV } = require("./util/csv-parser")
-
-const { getFile } = require("./util/aws-s3-utils");
+const { parseCSV } = require("./util/csv-parser");
+const { getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require('slug');
 
@@ -20,6 +19,8 @@ const { Op } = require("sequelize");
 
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
+
+const caseless = require("caseless");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -647,6 +648,19 @@ const fetchAsset = async (req, res) => {
     });
 };
 
+const uploadAsset = async (req, res) => {
+  const path = req.params[0];
+  const headers = caseless(req.headers);
+  uploadFile(`assets/${path}`, req.body, headers.get('content-type'))
+    .then((data) => res.send(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: `An error occurred while uploading asset to ${path}`
+      });
+    });
+}
+
 const publicMenuList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   Menu.findAll({
@@ -708,6 +722,7 @@ module.exports = {
   getRestaurant,
   updateRestaurant,
   fetchAsset,
+  uploadAsset,
   publicDishList,
   publicRestaurantList,
   uploadMenuCSV,

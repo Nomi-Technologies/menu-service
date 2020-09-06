@@ -19,3 +19,13 @@ module.exports.getFile = async (path) => {
   }).promise();
   return data;
 }
+
+module.exports.uploadFile = async (path, data, type) => {
+  let result = await s3.upload({
+    Bucket: BUCKET_NAME,
+    Key: path,
+    Body: data,
+    ContentType: type,
+  }).promise();
+  return `File uploaded at ${result.Key}`;
+}
