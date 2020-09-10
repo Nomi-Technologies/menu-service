@@ -63,11 +63,12 @@ module.exports = (app) => {
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
 
+  // TODO(tony): split fetch and upload assets endpoint
   router.get("/assets/*", controller.fetchAsset);
-  router.put("/assets/*", controller.uploadAsset);
-
+  
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
+  router.put("/assets/*", controller.uploadAsset);
   router.get("/restaurants/me", controller.getRestaurant);
   // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
