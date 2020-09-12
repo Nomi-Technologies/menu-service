@@ -63,10 +63,12 @@ module.exports = (app) => {
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
 
+  // TODO(tony): split fetch and upload assets endpoint
   router.get("/assets/*", controller.fetchAsset);
-
+  
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
+  router.put("/assets/*", controller.uploadAsset);
   router.get("/restaurants/me", controller.getRestaurant);
   // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
@@ -76,7 +78,7 @@ module.exports = (app) => {
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
   router.get("/dishes-by-category", controller.dishesByCategory);
-  router.post("/upload-menu-csv", controller.uploadMenuCSV);
+  router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
   router.get("/dishes-by-name", controller.dishesByName);
   router.post("/categories", controller.createCategory);
   router.get("/categories/:id", controller.getCategory);
