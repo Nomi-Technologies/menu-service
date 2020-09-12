@@ -547,10 +547,10 @@ module.exports.createMenu = (req, res) => {
     restaurantId: req.user.restaurantId,
     published: true,
   };
-
+  
   Menu.create(menu)
     .then(async data => {
-      if (req.body.csv != 'null') {
+      if (req.body.csv) {
         await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
         .catch(err => {
           console.error(err)
