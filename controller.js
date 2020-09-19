@@ -1,15 +1,11 @@
 const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
 
 const { parseCSV } = require("./util/csv-parser");
+const { getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
 
-const {
-  JWT_SECRET,
-  BUCKET_NAME,
-  ACCESS_KEY_ID,
-  SECRET_ACCESS_KEY,
-} = require("./config.js");
+const { JWT_SECRET } = require("./config.js");
 const jwt = require("jsonwebtoken");
 
 const { Op } = require("sequelize");
@@ -17,13 +13,7 @@ const { Op } = require("sequelize");
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 
-const aws = require("aws-sdk");
-aws.config.update({
-  region: "us-west-1",
-  accessKeyId: ACCESS_KEY_ID,
-  secretAccessKey: SECRET_ACCESS_KEY,
-});
-const s3 = new aws.S3();
+const caseless = require("caseless");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -45,9 +35,10 @@ let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
 });
 
 passport.use(strategy);
+module.exports.passport = passport;
 
 // users
-const registerUser = async (req, res) => {
+module.exports.registerUser = async (req, res) => {
   try {
     user = await User.register(
       req.body.email,
@@ -65,7 +56,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const checkEmail = (req, res) => {
+module.exports.checkEmail = (req, res) => {
   User.findAndCountAll({
     where: { email: req.query.email },
   }).then((result) => {
@@ -77,7 +68,7 @@ const checkEmail = (req, res) => {
   });
 };
 
-const loginUser = async (req, res) => {
+module.exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (email && password) {
     let user = await User.authenticate(email, password);
@@ -91,7 +82,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getUserDetails = async (req, res) => {
+module.exports.getUserDetails = async (req, res) => {
   User.getUser({ email: req.user.email })
     .then((user) => {
       res.send(user);
@@ -106,7 +97,7 @@ const getUserDetails = async (req, res) => {
     });
 };
 
-const updateUserDetails = async (req, res) => {
+module.exports.updateUserDetails = async (req, res) => {
   userId = req.user.id;
   User.findOne({ where: { id: userId } })
     .then((user) => {
@@ -129,7 +120,7 @@ const updateUserDetails = async (req, res) => {
 };
 
 // Restaurants
-const createRestaurant = async (req, res) => {
+module.exports.createRestaurant = async (req, res) => {
   const restaurant = {
     name: req.body.name,
     streetAddress: req.body.streetAddress,
@@ -169,7 +160,7 @@ const createRestaurant = async (req, res) => {
 };
 
 // gets restaurant information based on authentication
-const getRestaurant = (req, res) => {
+module.exports.getRestaurant = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Restaurant.findOne({ id: userRestaurantId })
     .then((restaurant) => {
@@ -186,7 +177,7 @@ const getRestaurant = (req, res) => {
     });
 };
 
-const updateRestaurant = (req, res) => {
+module.exports.updateRestaurant = (req, res) => {
   userRestaurantId = req.params.id;
   Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
@@ -211,7 +202,7 @@ const updateRestaurant = (req, res) => {
 
 // Dishes
 // TODO: Get user from auth and get restaurant from user
-const createDish = (req, res) => {
+module.exports.createDish = (req, res) => {
   const dishData = {
     name: req.body.name,
     description: req.body.description,
@@ -241,7 +232,7 @@ const createDish = (req, res) => {
 };
 
 // reads csv and creates menu
-const uploadMenuCSV = (req, res) => {
+module.exports.uploadMenuCSV = (req, res) => {
   parseCSV(
     req.body.data,
     req.user.restaurantId,
@@ -260,7 +251,7 @@ const uploadMenuCSV = (req, res) => {
     });
 };
 
-const tagsList = (req, res) => {
+module.exports.tagsList = (req, res) => {
   Tag.findAll()
     .then((data) => {
       res.send(data);
@@ -273,7 +264,7 @@ const tagsList = (req, res) => {
     });
 };
 
-const dishesByCategory = (req, res) => {
+module.exports.dishesByCategory = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Category.findAll({
     include: [
@@ -293,7 +284,7 @@ const dishesByCategory = (req, res) => {
     });
 };
 
-const getTags = (req, res) => {
+module.exports.getTags = (req, res) => {
   Tag.findAll()
     .then((data) => {
       res.send(data);
@@ -308,7 +299,7 @@ const getTags = (req, res) => {
     });
 };
 
-const getDish = (req, res) => {
+module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
   Dish.findByPk(id, {
@@ -330,7 +321,7 @@ const getDish = (req, res) => {
     });
 };
 
-const updateDish = (req, res) => {
+module.exports.updateDish = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id)
     .then((dish) => {
@@ -379,7 +370,7 @@ const updateDish = (req, res) => {
     });
 };
 
-const deleteDish = (req, res) => {
+module.exports.deleteDish = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id).then((dish) => {
     // verify user belongs to restauraunt of dish to update
@@ -403,7 +394,7 @@ const deleteDish = (req, res) => {
   });
 };
 
-const dishesByName = (req, res) => {
+module.exports.dishesByName = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   let searchValue = "%" + req.query.searchInput + "%";
   Dish.findAll({
@@ -429,7 +420,7 @@ const dishesByName = (req, res) => {
 };
 
 //Categories
-const createCategory = (req, res) => {
+module.exports.createCategory = (req, res) => {
   Category.create(req.body)
     .then((data) => {
       res.send(data);
@@ -441,7 +432,7 @@ const createCategory = (req, res) => {
     });
 };
 
-const updateCategory = (req, res) => {
+module.exports.updateCategory = (req, res) => {
   Category.findByPk(req.params.id)
     .then((category) => {
       if (category) {
@@ -467,7 +458,7 @@ const updateCategory = (req, res) => {
     });
 };
 
-const deleteCategory = (req, res) => {
+module.exports.deleteCategory = (req, res) => {
   Category.findByPk(req.params.id)
     .then((category) => {
       // verify user belongs to restauraunt of category to update
@@ -504,7 +495,7 @@ const deleteCategory = (req, res) => {
     });
 };
 
-const getCategory = (req, res) => {
+module.exports.getCategory = (req, res) => {
   const id = req.params.id;
   Category.findByPk(id)
     .then((category) => {
@@ -520,7 +511,7 @@ const getCategory = (req, res) => {
     });
 };
 
-const getAllCategoriesByMenu = (req, res) => {
+module.exports.getAllCategoriesByMenu = (req, res) => {
   const menuId = req.params.menuId;
   Category.findAll({
     where: { menuId: menuId },
@@ -539,17 +530,17 @@ const getAllCategoriesByMenu = (req, res) => {
 };
 
 //Menus
-const createMenu = (req, res) => {
+module.exports.createMenu = (req, res) => {
   console.log("in create menu");
   const menu = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
     published: true,
   };
-
+  
   Menu.create(menu)
     .then(async data => {
-      if (req.body.csv != 'null') {
+      if (req.body.csv) {
         await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
         .catch(err => {
           console.error(err)
@@ -567,7 +558,7 @@ const createMenu = (req, res) => {
     });
 };
 
-const updateMenu = (req, res) => {
+module.exports.updateMenu = (req, res) => {
   console.log("in update menu");
   userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
@@ -596,7 +587,7 @@ const updateMenu = (req, res) => {
     });
 };
 
-const getMenu = (req, res) => {
+module.exports.getMenu = (req, res) => {
   const id = req.params.id;
   userRestaurantId = req.user.restaurantId;
   Menu.findOne({
@@ -622,7 +613,7 @@ const getMenu = (req, res) => {
     });
 };
 
-const deleteMenu = (req, res) => {
+module.exports.deleteMenu = (req, res) => {
   console.log("in delete menu");
   userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
@@ -661,7 +652,7 @@ const deleteMenu = (req, res) => {
     });
 };
 
-const duplicateMenu = (req, res) => {
+module.exports.duplicateMenu = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id,
     {
@@ -734,7 +725,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
   })
 }
 
-const getAllMenus = (req, res) => {
+module.exports.getAllMenus = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Menu.findAll({
     where: { restaurantId: userRestaurantId },
@@ -749,25 +740,36 @@ const getAllMenus = (req, res) => {
     });
 };
 
-const fetchAsset = async (req, res) => {
+module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
-  s3.getObject(
-    {
-      Bucket: BUCKET_NAME,
-      Key: `assets/${path}`,
-    },
-    (err, data) => {
-      if (err) {
-        res.status(err.statusCode).send(err.message);
-      } else {
-        res.setHeader("Content-Type", "image/png");
-        res.send(data.Body);
-      }
-    }
-  );
+
+  getFile(`assets/${path}`)
+    .then((data) => {
+      res.setHeader("Content-Type", data.ContentType);
+      res.send(data.Body);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(err.statusCode).send({
+        message: err.message
+      });
+    });
 };
 
-const publicMenuList = (req, res) => {
+module.exports.uploadAsset = async (req, res) => {
+  const path = req.params[0];
+  const headers = caseless(req.headers);
+  uploadFile(`assets/${path}`, req.body, headers.get('content-type'))
+    .then((data) => res.send(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: `An error occurred while uploading asset to ${path}`
+      });
+    });
+}
+
+module.exports.publicMenuList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   Menu.findAll({
     include: [{ model: Restaurant, where: { uniqueName: uniqueName } }],
@@ -779,7 +781,7 @@ const publicMenuList = (req, res) => {
   });
 };
 
-const publicDishList = (req, res) => {
+module.exports.publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId;
   Dish.findAll({
@@ -799,43 +801,6 @@ const publicDishList = (req, res) => {
     );
 };
 
-const publicRestaurantList = (req, res) => {
+module.exports.publicRestaurantList = (req, res) => {
   res.send("[]");
-};
-
-module.exports = {
-  createDish,
-  dishesByCategory,
-  getDish,
-  updateDish,
-  deleteDish,
-  dishesByName,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  getCategory,
-  getAllCategoriesByMenu,
-  registerUser,
-  loginUser,
-  getUserDetails,
-  updateUserDetails,
-  passport,
-  createRestaurant,
-  getRestaurant,
-  updateRestaurant,
-  fetchAsset,
-  publicDishList,
-  publicRestaurantList,
-  uploadMenuCSV,
-  updateCategory,
-  publicRestaurantList,
-  checkEmail,
-  getTags,
-  createMenu,
-  updateMenu,
-  getMenu,
-  deleteMenu,
-  duplicateMenu,
-  getAllMenus,
-  publicMenuList,
 };
