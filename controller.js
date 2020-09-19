@@ -670,7 +670,6 @@ module.exports.duplicateMenu = (req, res) => {
   .then((oldMenu) => {
     // verify user belongs to restauraunt of menu to update
     if (oldMenu && oldMenu.restaurantId == userRestaurantId) {
-      console.log(oldMenu)
       Menu.create({ 
         name: oldMenu.dataValues.name + ' Copy', 
         restaurantId: req.user.restaurantId, 
