@@ -330,6 +330,7 @@ module.exports.updateDish = (req, res) => {
         Dish.update(req.body, { where: { id: req.params.id } })
           .then(() => {
             dishTags = req.body.dishTags;
+            console.log(dishTags)
             dish
               .setTags(dishTags)
               .then(() => {
@@ -337,7 +338,6 @@ module.exports.updateDish = (req, res) => {
                   message: "dish update successful",
                 });
               })
-
               .catch((err) => {
                 console.error(err);
                 res.status(500).send({

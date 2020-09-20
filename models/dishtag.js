@@ -3,12 +3,12 @@ module.exports = (sequelize, DataTypes) => {
   const DishTag = sequelize.define('DishTag', {
     dishId: {
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     tagId: {
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     removable: {

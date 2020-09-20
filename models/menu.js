@@ -1,13 +1,21 @@
 'use strict';
+const { Sequelize } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   const Menu = sequelize.define('Menu', {
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: '',
       },
       restaurantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
       },
       published: {

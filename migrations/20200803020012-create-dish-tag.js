@@ -4,7 +4,7 @@ module.exports = {
     return queryInterface.createTable('DishTag', {
       dishId: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         onDelete: 'CASCADE',
         references: {
@@ -15,7 +15,7 @@ module.exports = {
       },
       tagId: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         onDelete: 'CASCADE',
         references: {
