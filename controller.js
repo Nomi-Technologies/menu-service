@@ -652,6 +652,82 @@ module.exports.deleteMenu = (req, res) => {
     });
 };
 
+module.exports.duplicateMenu = (req, res) => {
+  userRestaurantId = req.user.restaurantId;
+  Menu.findByPk(req.params.id,
+    {include: [
+        {
+          model: Category,
+          include: [
+            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+          ],
+        },
+      ],
+      order: [[Category, "updatedAt", "asc"]],
+    }
+  )
+  .then((oldMenu) => {
+    // verify user belongs to restauraunt of menu to update
+    if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
+      Menu.create({ 
+        name: oldMenu.dataValues.name + ' Copy', 
+        restaurantId: req.user.restaurantId, 
+        published: true
+      }).then((newMenu) => {
+          //duplicate all categories with menuId = menu.dataValues.id, use new menuId
+          duplicateCategoriesAndDishes(oldMenu, newMenu)
+          .then(() => {
+            res.send({
+              message: "menu was duplicated successfully",
+              menu: {
+                id: newMenu.dataValues.id
+              }
+            })
+          })
+      })
+    }
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message ||
+        "An error occured while duplicating menu",
+    });
+  });
+};
+
+const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
+  // for each category c in oldMenu.Categories create duplicate cCopy 
+  // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
+  // add tags for every dCopy
+  return new Promise((resolve, reject) => {
+    oldMenu.Categories.forEach(c => {
+      Category.create({
+        name: c.dataValues.name,
+        menuId: newMenu.dataValues.id,
+        description: c.dataValues.description,
+      }).then((cCopy) => {
+        c.Dishes.forEach(d => {
+          Dish.create({
+            name: d.dataValues.name,
+            description: d.dataValues.description,
+            price: d.dataValues.price,
+            categoryId: cCopy.dataValues.id,
+            restaurantId: d.dataValues.restaurantId,
+            addons: d.dataValues.addons,
+            canRemove: d.dataValues.canRemove,
+            notes: d.dataValues.notes,
+            tableTalkPoints: d.dataValues.tableTalkPoints,
+          }).then((dCopy) => {
+            dCopy.setTags(d.Tags);
+            resolve();
+          })
+        })
+      })
+    })
+  })
+}
+
 module.exports.getAllMenus = (req, res) => {
   userRestaurantId = req.user.restaurantId;
   Menu.findAll({
