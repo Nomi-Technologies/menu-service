@@ -3,10 +3,10 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('User', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
       },
       email: {
         type: Sequelize.STRING,
@@ -26,9 +26,9 @@ module.exports = {
         defaultValue: 1,
       },
       restaurantId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        type: Sequelize.UUID,
         onDelete: 'CASCADE',
+        allowNull: false,
         references: {
           model: 'Restaurant',
           key: 'id',

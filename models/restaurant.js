@@ -1,7 +1,14 @@
 'use strict';
+const { Sequelize } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   const Restaurant = sequelize.define('Restaurant', {
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
+      },
       uniqueName: {
         type: DataTypes.STRING,
         unique: true,

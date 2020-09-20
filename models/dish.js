@@ -1,6 +1,14 @@
 'use strict';
+const { Sequelize } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   const Dish = sequelize.define('Dish', {
+    id: {
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -37,11 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: '',
     },
     restaurantId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     categoryId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
   }, {});
