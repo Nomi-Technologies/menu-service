@@ -1,8 +1,15 @@
 'use strict';
 const bcrypt = require("bcrypt");
+const { Sequelize } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
+    id: {
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
+    },
     email: {
       type: DataTypes.STRING,
       unique: true,
@@ -22,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     restaurantId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     firstName: {
