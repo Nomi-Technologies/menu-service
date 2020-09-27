@@ -5,16 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon .",
-    "develop": "nodemon ."
+    "start": "node .",
+    "develop": "nodemon .",
+    "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.699.0",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "caseless": "^0.12.0",
     "cors": "^2.8.5",
+    "csv-parse": "^4.12.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.0",
@@ -28,9 +31,10 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.0.0",
-    "sequelize": "^5.21.13",
-    "sequelize-cli": "^5.5.1",
+    "sequelize": "^6.0.0",
+    "sequelize-cli": "^6.0.0",
     "slug": "^3.3.0",
+    "uuid": "^8.3.0",
     "winston": "^3.3.3"
   }
 }

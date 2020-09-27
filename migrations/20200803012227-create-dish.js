@@ -1,45 +1,62 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Dishes', {
+    return queryInterface.createTable('Dish', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       addons: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       canRemove: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       notes: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       tableTalkPoints: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT,
+        allowNull: false,
+        defaultValue: '',
+      },
+      price: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '',
       },
       restaurantId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         onDelete: 'CASCADE',
         references: {
-          model: 'Restaurants',
+          model: 'Restaurant',
           key: 'id',
           as: 'restaurantId'
         }
       },
       categoryId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         onDelete: 'CASCADE',
         references: {
-          model: 'Categories',
+          model: 'Category',
           key: 'id',
           as: 'categoryId'
         }
@@ -55,6 +72,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Dishes');
+    return queryInterface.dropTable('Dish');
   }
 };

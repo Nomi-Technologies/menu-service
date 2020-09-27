@@ -1,18 +1,33 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('DishTags', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
+    return queryInterface.createTable('DishTag', {
       dishId: {
-        type: Sequelize.INTEGER
+        primaryKey: true,
+        type: Sequelize.UUID,
+        allowNull: false,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Dish',
+          key: 'id',
+          as: 'dishId'
+        }
       },
       tagId: {
-        type: Sequelize.INTEGER
+        primaryKey: true,
+        type: Sequelize.UUID,
+        allowNull: false,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Tag',
+          key: 'id',
+          as: 'tagId'
+        }
+      },
+      removable: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -25,6 +40,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('DishTags');
+    return queryInterface.dropTable('DishTag');
   }
 };

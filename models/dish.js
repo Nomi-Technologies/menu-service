@@ -1,18 +1,57 @@
 'use strict';
+const { Sequelize } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   const Dish = sequelize.define('Dish', {
-    name: { 
-      type: DataTypes.STRING,
-      allowNull: false
+    id: {
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
     },
-    description: DataTypes.STRING,
-    addons: DataTypes.STRING,
-    canRemove: DataTypes.BOOLEAN,
-    notes: DataTypes.STRING,
-    tableTalkPoints: DataTypes.TEXT,
-    restaurantId: DataTypes.INTEGER,
-    categoryId: DataTypes.INTEGER,
-    price: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    addons: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    canRemove: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    notes: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    tableTalkPoints: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
+    price: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    restaurantId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
   }, {});
   Dish.associate = function(models) {
     Dish.belongsToMany(models.Tag, {

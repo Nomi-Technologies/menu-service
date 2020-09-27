@@ -21,13 +21,13 @@ module.exports = (app) => {
     /https\:\/\/(.*--)?nomi-menu-dashboard\.netlify\.app/,
     /https\:\/\/(.*--)?nomi-smart-menu\.netlify\.app/,
     /http\:\/\/localhost:8000/,
-    /http\:\/\/localhost:8001/
+    /http\:\/\/localhost:8001/,
   ];
   var corsOptions = {
     origin: function (origin, callback) {
-      const found = whitelist.find(regex => regex.test(origin));
+      const found = whitelist.find((regex) => regex.test(origin));
       if (found !== undefined || origin === undefined) {
-        callback(null, true)
+        callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
@@ -35,10 +35,9 @@ module.exports = (app) => {
     optionsSuccessStatus: 200,
   };
   app.use(cors(corsOptions));
-  
+
   // var winston = require('winston');
   // var expressWinston = require('express-winston');
-
 
   // app.use(expressWinston.logger({
   //   transports: [
@@ -57,35 +56,42 @@ module.exports = (app) => {
 
   var router = express.Router();
 
-  router.post('/restaurants/register', controller.createRestaurant);
-  router.get('/assets/*', controller.fetchAsset);
+  router.post("/restaurants/register", controller.createRestaurant);
+  router.get("/assets/*", controller.fetchAsset);
 
   router.post("/user/register", controller.registerUser);
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
-  
-  router.get("/assets/*", controller.fetchAsset);
 
+  // TODO(tony): split fetch and upload assets endpoint
+  router.get("/assets/*", controller.fetchAsset);
+  
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
+  router.put("/assets/*", controller.uploadAsset);
   router.get("/restaurants/me", controller.getRestaurant);
-  router.put("/restaurants/me", controller.updateRestaurant);
+  // TODO(tony): change it back to /restaurants/me
+  router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
   router.delete("/dishes/:id", controller.deleteDish);
   router.get("/dishes-by-category", controller.dishesByCategory);
+  router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
+  router.get("/dishes-by-name", controller.dishesByName);
   router.post("/categories", controller.createCategory);
   router.get("/categories/:id", controller.getCategory);
+  router.get("/categories-by-menu/:menuId", controller.getAllCategoriesByMenu);
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
-  router.post('/uploadMenuCSV', controller.uploadMenuCSV);
   router.post("/menus", controller.createMenu);
   router.get("/menus/:id", controller.getMenu);
   router.put("/menus/:id", controller.updateMenu);
   router.delete("/menus/:id", controller.deleteMenu);
+  router.post("/menus/:id", controller.duplicateMenu);
+  router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
   router.get("/all-menus", controller.getAllMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);

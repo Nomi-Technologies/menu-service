@@ -1,12 +1,12 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('User', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
       },
       email: {
         type: Sequelize.STRING,
@@ -26,16 +26,24 @@ module.exports = {
         defaultValue: 1,
       },
       restaurantId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        onDelete: 'CASCADE',
         allowNull: false,
+        references: {
+          model: 'Restaurant',
+          key: 'id',
+          as: 'restaurantId'
+        }
       },
       firstName: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: '',
       },
       lastName: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: '',
       },
       createdAt: {
         allowNull: false,
@@ -48,6 +56,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('User');
   }
 };

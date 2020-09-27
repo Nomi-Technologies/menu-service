@@ -1,8 +1,15 @@
 'use strict';
 const bcrypt = require("bcrypt");
+const { Sequelize } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
+    id: {
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
+    },
     email: {
       type: DataTypes.STRING,
       unique: true,
@@ -19,23 +26,30 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
+      allowNull: false,
     },
     restaurantId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: '',
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: '',
     }
   }, {});
-  User.associate = function(models) {
-    // associations can be defined here
-  };
+
+  User.associate = models => {
+    User.belongsTo(models.Restaurant, {
+      foreignKey: 'restaurantId',
+      onDelete: 'CASCADE'
+    });
+  }
 
   User.register = async (
     email,
