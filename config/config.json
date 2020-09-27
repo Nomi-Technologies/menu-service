@@ -1,10 +1,17 @@
 {
   "development": {
-    "database": "nomi",
-    "dialect": "postgres"
+    "database": "nomi-dev",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "define": {
+      "freezeTableName": true
+    }
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "define": {
+      "freezeTableName": true
+    }
   }
 }
