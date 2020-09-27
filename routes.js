@@ -18,8 +18,7 @@ module.exports = (app) => {
   // use cors only other than reverse proxy, otherwise web browsers won't be able to
   // access the react apps
   var whitelist = [
-    /https\:\/\/(.*--)?nomi-menu-dashboard\.netlify\.app/,
-    /https\:\/\/(.*--)?nomi-smart-menu\.netlify\.app/,
+    /https\:\/\/(.*--)?(.+)\.netlify\.app/,
     /http\:\/\/localhost:8000/,
     /http\:\/\/localhost:8001/,
   ];
