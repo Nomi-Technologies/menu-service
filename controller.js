@@ -1,7 +1,7 @@
 const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
 
 const { parseCSV } = require("./util/csv-parser");
-const { getFile, uploadFile } = require('./util/aws-s3-utils');
+const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
 
@@ -746,7 +746,7 @@ module.exports.getAllMenus = (req, res) => {
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
 
-  getFile(`assets/${path}`)
+  getStaticFile(`assets/${path}`)
     .then((data) => {
       res.setHeader("Content-Type", data.ContentType);
       res.send(data.Body);
@@ -759,10 +759,9 @@ module.exports.fetchAsset = async (req, res) => {
     });
 };
 
-module.exports.uploadAsset = async (req, res) => {
-  const path = req.params[0];
+function imageUploadHelper(path, req, res) {
   const headers = caseless(req.headers);
-  uploadFile(`assets/${path}`, req.body, headers.get('content-type'))
+  uploadFile(path, req.body, headers.get('content-type'))
     .then((data) => res.send(data))
     .catch((err) => {
       console.log(err);
@@ -770,6 +769,44 @@ module.exports.uploadAsset = async (req, res) => {
         message: `An error occurred while uploading asset to ${path}`
       });
     });
+}
+
+function imageDownloadHelper(path, req, res) {
+  getFile(path)
+    .then((data) => {
+      res.setHeader("Content-Type", data.ContentType);
+      res.send(data.Body);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(err.statusCode).send({
+        message: err.message
+      });
+    });
+}
+
+module.exports.uploadRestaurantImage = async (req, res) => {
+  imageUploadHelper(`${req.user.restaurantId}/logo`, req, res);
+}
+
+module.exports.getRestaurantImage = async (req, res) => {
+  imageDownloadHelper(`${req.user.restaurantId}/logo`, req, res);
+}
+
+module.exports.uploadMenuImage = async (req, res) => {
+  imageUploadHelper(`${req.user.restaurantId}/menus/${req.params.id}`, req, res);
+}
+
+module.exports.getMenuImage = async (req, res) => {
+  imageDownloadHelper(`${req.user.restaurantId}/menus/${req.params.id}`, req, res);
+}
+
+module.exports.uploadDishImage = async (req, res) => {
+  imageUploadHelper(`${req.user.restaurantId}/dishes/${req.params.id}`, req, res);
+}
+
+module.exports.getDishImage = async (req, res) => {
+  imageDownloadHelper(`${req.user.restaurantId}/dishes/${req.params.id}`, req, res);
 }
 
 module.exports.publicMenuList = (req, res) => {

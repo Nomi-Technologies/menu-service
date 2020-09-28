@@ -67,7 +67,13 @@ module.exports = (app) => {
   
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
-  router.put("/assets/*", controller.uploadAsset);
+  router.put("/images/restaurant", controller.uploadRestaurantImage);
+  router.get("/images/restaurant", controller.getRestaurantImage);
+  router.put("/images/menu/:id", controller.uploadMenuImage);
+  router.get("/images/menu/:id", controller.getMenuImage);
+  router.put("/images/dishes/:id", controller.uploadDishImage);
+  router.get("/images/dishes/:id", controller.getDishImage);
+
   router.get("/restaurants/me", controller.getRestaurant);
   // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);

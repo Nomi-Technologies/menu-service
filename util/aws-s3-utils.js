@@ -1,5 +1,6 @@
 const {
   BUCKET_NAME,
+  ENV_SPEC_BUCKET_NAME,
   ACCESS_KEY_ID,
   SECRET_ACCESS_KEY,
 } = require("../config.js");
@@ -12,7 +13,7 @@ aws.config.update({
 });
 const s3 = new aws.S3();
 
-module.exports.getFile = async (path) => {
+module.exports.getStaticFile = async (path) => {
   let data = await s3.getObject({
     Bucket: BUCKET_NAME,
     Key: path,
@@ -22,10 +23,18 @@ module.exports.getFile = async (path) => {
 
 module.exports.uploadFile = async (path, data, type) => {
   let result = await s3.upload({
-    Bucket: BUCKET_NAME,
+    Bucket: ENV_SPEC_BUCKET_NAME,
     Key: path,
     Body: data,
     ContentType: type,
   }).promise();
   return `File uploaded at ${result.Key}`;
+}
+
+module.exports.getFile = async (path) => {
+  let data = await s3.getObject({
+    Bucket: ENV_SPEC_BUCKET_NAME,
+    Key: path,
+  }).promise();
+  return data;
 }
