@@ -119,6 +119,31 @@ module.exports.updateUserDetails = async (req, res) => {
     });
 };
 
+module.exports.updatePassword = async (req, res) => {
+  let userId = req.user.id;
+  let suppliedPassword = req.body.password
+
+  console.log(suppliedPassword)
+  User.findOne({ where: { id: userId } }).then((user) => {
+    // test supplied password
+    return User.authenticate(user.email, suppliedPassword)
+  }).then(authenticatedUser => {
+    if(authenticatedUser) {
+      return User.updatePassword(authenticatedUser.id, req.body.newPassword)
+    } else {
+      throw Error("Could not authenticate user")
+    }
+  }).then(() => {
+    res.send({
+      message: "password updated succesffuly"
+    })
+  }).catch(() => {
+    res.status(500).send({
+      message: "An error occured while updating password"
+    })
+  })
+}
+
 // Restaurants
 module.exports.createRestaurant = async (req, res) => {
   const restaurant = {
@@ -181,14 +206,14 @@ module.exports.updateRestaurant = (req, res) => {
   userRestaurantId = req.params.id;
   Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
-      Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(
-        () => {
-          res.status(200).send({
-            message: "update sucessful",
-          });
-        }
-      );
-    })
+      return Restaurant.update(req.body, { where: { id: userRestaurantId } })
+    }).then(
+      () => {
+        res.status(200).send({
+          message: "update sucessful",
+        });
+      }
+    )
     .catch((err) => {
       console.error(err);
       res.status(500).send({

@@ -64,9 +64,9 @@ module.exports = (app) => {
 
   // TODO(tony): split fetch and upload assets endpoint
   router.get("/assets/*", controller.fetchAsset);
-  
-  // All routes below are authenticated
+
   router.use(passport.authenticate("jwt", { session: false }));
+  // All routes below are authenticated
   router.put("/images/restaurant", controller.uploadRestaurantImage);
   router.get("/images/restaurant", controller.getRestaurantImage);
   router.put("/images/menu/:id", controller.uploadMenuImage);
@@ -100,6 +100,7 @@ module.exports = (app) => {
   router.get("/all-menus", controller.getAllMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
+  router.post("/user/password", controller.updatePassword);
 
   app.use("/api", router);
 
