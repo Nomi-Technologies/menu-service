@@ -49,39 +49,33 @@ module.exports = {
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
-
       await Tag.create({
         name: "Onion",
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
-
       await Tag.create({
         name: "Cilantro",
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });    
-
       await Tag.create({
         name: "Truffle",
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
-
       await Tag.create({
         name: "Dairy",
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
-      transaction.commit();
-
-      return Tag.create({
+      await Tag.create({
         name: "Peanuts",
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
       transaction.commit();
-    })
+    });
   },
 
   down: (queryInterface, Sequelize) => {
@@ -98,7 +92,6 @@ module.exports = {
       "Cilantro",
       "Truffle",
       "Soy",
-      "Dairy"
     ]}, {});
   }
 };
