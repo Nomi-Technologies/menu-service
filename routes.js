@@ -18,6 +18,7 @@ module.exports = (app) => {
   // use cors only other than reverse proxy, otherwise web browsers won't be able to
   // access the react apps
   var whitelist = [
+    /https\:\/\/nomi\.menu/,
     /https\:\/\/(.*--)?(.+)\.netlify\.app/,
     /http\:\/\/localhost:8000/,
     /http\:\/\/localhost:8001/,
@@ -64,10 +65,16 @@ module.exports = (app) => {
 
   // TODO(tony): split fetch and upload assets endpoint
   router.get("/assets/*", controller.fetchAsset);
-  
-  // All routes below are authenticated
+
   router.use(passport.authenticate("jwt", { session: false }));
-  router.put("/assets/*", controller.uploadAsset);
+  // All routes below are authenticated
+  router.put("/images/restaurant", controller.uploadRestaurantImage);
+  router.get("/images/restaurant", controller.getRestaurantImage);
+  router.put("/images/menu/:id", controller.uploadMenuImage);
+  router.get("/images/menu/:id", controller.getMenuImage);
+  router.put("/images/dishes/:id", controller.uploadDishImage);
+  router.get("/images/dishes/:id", controller.getDishImage);
+
   router.get("/restaurants/me", controller.getRestaurant);
   // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
@@ -94,6 +101,7 @@ module.exports = (app) => {
   router.get("/all-menus", controller.getAllMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
+  router.post("/user/password", controller.updatePassword);
 
   app.use("/api", router);
 
