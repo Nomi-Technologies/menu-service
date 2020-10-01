@@ -75,7 +75,7 @@ module.exports = {
       }, { transaction });
       transaction.commit();
 
-      await Tag.create({
+      return Tag.create({
         name: "Peanuts",
         type: "allergen",
         excludeForFilter: true,
