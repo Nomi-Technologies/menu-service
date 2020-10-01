@@ -74,6 +74,15 @@ module.exports = (sequelize, DataTypes) => {
     let created_user = await User.create(user);
     return User.authenticate(email, password);
   };
+
+  User.updatePassword = async (id, newPassword) => {
+    const passwordHash = bcrypt.hashSync(newPassword, 10);
+    User.findOne({ where: { id: id } }).then((user) => {
+      return user.update({password: passwordHash});
+    }).catch((err) => {
+      throw err
+    })
+  }
   
   User.getUser = async (obj) => {
     return await User.findOne({
