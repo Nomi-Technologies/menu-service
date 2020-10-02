@@ -840,14 +840,20 @@ module.exports.getDishImage = async (req, res) => {
 
 module.exports.publicMenuList = (req, res) => {
   let uniqueName = req.params.uniqueName;
-  Menu.findAll({
-    include: [{ model: Restaurant, where: { uniqueName: uniqueName } }],
+
+  Restaurant.findOne({
     where: {
-      published: true,
+      uniqueName: uniqueName
     },
-  }).then((menuList) => {
-    res.send(menuList);
-  });
+    include: [
+      { model: Menu, where: { published: true } }
+    ]
+  })
+  .then(restaurant => res.send(restaurant))
+  .catch(err => { 
+    console.log(err)
+    res.send(err)
+  })
 };
 
 module.exports.publicDishList = (req, res) => {
