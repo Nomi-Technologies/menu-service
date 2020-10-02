@@ -555,32 +555,36 @@ module.exports.getAllCategoriesByMenu = (req, res) => {
 };
 
 //Menus
-module.exports.createMenu = (req, res) => {
-  console.log("in create menu");
-  const menu = {
+module.exports.createMenu = async (req, res) => {
+  const menuData = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
     published: true,
   };
   
-  Menu.create(menu)
-    .then(async data => {
-      if (req.body.csv) {
-        await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
-        .catch(err => {
-          console.error(err)
-          res.status(500).send({
-            message: err.message || "An error occured while processing this request"
-          });
-        })
+  try {
+    const menu = await Menu.create(menuData)
+    if(req.body.csv) {
+      try { 
+        await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
+      } catch (err) {
+        // if there's an error, clean up the menu that was created
+        await Menu.destroy({where: {id: menu.id}})
+        res.status(500).send({
+          message: err.message || "Menu could not be created with supplied .csv file",
+        });
+        return
       }
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Menu could not be created",
-      });
+    }
+
+    res.send(menu)
+    return
+  } catch(err) {
+    res.status(500).send({
+      message: err.message || "Menu could not be created",
     });
+    return
+  }
 };
 
 module.exports.updateMenu = (req, res) => {
@@ -836,14 +840,20 @@ module.exports.getDishImage = async (req, res) => {
 
 module.exports.publicMenuList = (req, res) => {
   let uniqueName = req.params.uniqueName;
-  Menu.findAll({
-    include: [{ model: Restaurant, where: { uniqueName: uniqueName } }],
+
+  Restaurant.findOne({
     where: {
-      published: true,
+      uniqueName: uniqueName
     },
-  }).then((menuList) => {
-    res.send(menuList);
-  });
+    include: [
+      { model: Menu, where: { published: true } }
+    ]
+  })
+  .then(restaurant => res.send(restaurant))
+  .catch(err => { 
+    console.log(err)
+    res.send(err)
+  })
 };
 
 module.exports.publicDishList = (req, res) => {
