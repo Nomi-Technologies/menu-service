@@ -122,8 +122,6 @@ module.exports.updateUserDetails = async (req, res) => {
 module.exports.updatePassword = async (req, res) => {
   let userId = req.user.id;
   let suppliedPassword = req.body.password
-
-  console.log(suppliedPassword)
   User.findOne({ where: { id: userId } }).then((user) => {
     // test supplied password
     return User.authenticate(user.email, suppliedPassword)
@@ -186,8 +184,8 @@ module.exports.createRestaurant = async (req, res) => {
 
 // gets restaurant information based on authentication
 module.exports.getRestaurant = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  Restaurant.findOne({ id: userRestaurantId })
+  let userRestaurantId = req.user.restaurantId;
+  Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
       res.send(restaurant);
     })
@@ -203,7 +201,7 @@ module.exports.getRestaurant = (req, res) => {
 };
 
 module.exports.updateRestaurant = (req, res) => {
-  userRestaurantId = req.params.id;
+  let userRestaurantId = req.params.id;
   Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
       return Restaurant.update(req.body, { where: { id: userRestaurantId } })
@@ -290,7 +288,7 @@ module.exports.tagsList = (req, res) => {
 };
 
 module.exports.dishesByCategory = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Category.findAll({
     include: [
       { model: Dish, include: [{ model: Tag, as: "Tags" }] },
@@ -347,7 +345,6 @@ module.exports.getDish = (req, res) => {
 };
 
 module.exports.updateDish = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id)
     .then((dish) => {
       // verify user belongs to restauraunt of dish to update
@@ -355,7 +352,6 @@ module.exports.updateDish = (req, res) => {
         Dish.update(req.body, { where: { id: req.params.id } })
           .then(() => {
             dishTags = req.body.dishTags;
-            console.log(dishTags)
             dish
               .setTags(dishTags)
               .then(() => {
@@ -396,7 +392,7 @@ module.exports.updateDish = (req, res) => {
 };
 
 module.exports.deleteDish = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id).then((dish) => {
     // verify user belongs to restauraunt of dish to update
     if (dish && dish.restaurantId == userRestaurantId) {
@@ -420,7 +416,7 @@ module.exports.deleteDish = (req, res) => {
 };
 
 module.exports.dishesByName = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   let searchValue = "%" + req.query.searchInput + "%";
   Dish.findAll({
     where: {
@@ -461,7 +457,6 @@ module.exports.updateCategory = (req, res) => {
   Category.findByPk(req.params.id)
     .then((category) => {
       if (category) {
-        console.log("this category", category);
         Category.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
             message: "update sucessful",
@@ -588,13 +583,11 @@ module.exports.createMenu = async (req, res) => {
 };
 
 module.exports.updateMenu = (req, res) => {
-  console.log("in update menu");
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
     .then((menu) => {
       // verify menu belongs to restauraunt of menu to update
       if (menu && menu.restaurantId == userRestaurantId) {
-        console.log(req);
         Menu.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
             message: "update sucessful",
@@ -618,7 +611,7 @@ module.exports.updateMenu = (req, res) => {
 
 module.exports.getMenu = (req, res) => {
   const id = req.params.id;
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findOne({
     where: { restaurantId: userRestaurantId, id: id },
     include: [
@@ -643,12 +636,10 @@ module.exports.getMenu = (req, res) => {
 };
 
 module.exports.deleteMenu = (req, res) => {
-  console.log("in delete menu");
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
     .then((menu) => {
       // verify user belongs to restauraunt of menu to update
-      console.log(menu);
       if (menu && menu.restaurantId == userRestaurantId) {
         Menu.destroy({
           where: { id: req.params.id },
@@ -682,7 +673,7 @@ module.exports.deleteMenu = (req, res) => {
 };
 
 module.exports.duplicateMenu = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id,
     {include: [
         {
@@ -758,7 +749,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
 }
 
 module.exports.getAllMenus = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findAll({
     where: { restaurantId: userRestaurantId },
   })
