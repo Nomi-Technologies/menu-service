@@ -119,6 +119,29 @@ module.exports.updateUserDetails = async (req, res) => {
     });
 };
 
+module.exports.updatePassword = async (req, res) => {
+  let userId = req.user.id;
+  let suppliedPassword = req.body.password
+  User.findOne({ where: { id: userId } }).then((user) => {
+    // test supplied password
+    return User.authenticate(user.email, suppliedPassword)
+  }).then(authenticatedUser => {
+    if(authenticatedUser) {
+      return User.updatePassword(authenticatedUser.id, req.body.newPassword)
+    } else {
+      throw Error("Could not authenticate user")
+    }
+  }).then(() => {
+    res.send({
+      message: "password updated succesffuly"
+    })
+  }).catch(() => {
+    res.status(500).send({
+      message: "An error occured while updating password"
+    })
+  })
+}
+
 // Restaurants
 module.exports.createRestaurant = async (req, res) => {
   const restaurant = {
@@ -161,8 +184,8 @@ module.exports.createRestaurant = async (req, res) => {
 
 // gets restaurant information based on authentication
 module.exports.getRestaurant = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
-  Restaurant.findOne({ id: userRestaurantId })
+  let userRestaurantId = req.user.restaurantId;
+  Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
       res.send(restaurant);
     })
@@ -178,17 +201,17 @@ module.exports.getRestaurant = (req, res) => {
 };
 
 module.exports.updateRestaurant = (req, res) => {
-  userRestaurantId = req.params.id;
+  let userRestaurantId = req.params.id;
   Restaurant.findByPk(userRestaurantId)
     .then((restaurant) => {
-      Restaurant.update(req.body, { where: { id: userRestaurantId } }).then(
-        () => {
-          res.status(200).send({
-            message: "update sucessful",
-          });
-        }
-      );
-    })
+      return Restaurant.update(req.body, { where: { id: userRestaurantId } })
+    }).then(
+      () => {
+        res.status(200).send({
+          message: "update sucessful",
+        });
+      }
+    )
     .catch((err) => {
       console.error(err);
       res.status(500).send({
@@ -265,7 +288,7 @@ module.exports.tagsList = (req, res) => {
 };
 
 module.exports.dishesByCategory = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Category.findAll({
     include: [
       { model: Dish, include: [{ model: Tag, as: "Tags" }] },
@@ -322,7 +345,6 @@ module.exports.getDish = (req, res) => {
 };
 
 module.exports.updateDish = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id)
     .then((dish) => {
       // verify user belongs to restauraunt of dish to update
@@ -330,7 +352,6 @@ module.exports.updateDish = (req, res) => {
         Dish.update(req.body, { where: { id: req.params.id } })
           .then(() => {
             dishTags = req.body.dishTags;
-            console.log(dishTags)
             dish
               .setTags(dishTags)
               .then(() => {
@@ -371,7 +392,7 @@ module.exports.updateDish = (req, res) => {
 };
 
 module.exports.deleteDish = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Dish.findByPk(req.params.id).then((dish) => {
     // verify user belongs to restauraunt of dish to update
     if (dish && dish.restaurantId == userRestaurantId) {
@@ -395,7 +416,7 @@ module.exports.deleteDish = (req, res) => {
 };
 
 module.exports.dishesByName = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   let searchValue = "%" + req.query.searchInput + "%";
   Dish.findAll({
     where: {
@@ -436,7 +457,6 @@ module.exports.updateCategory = (req, res) => {
   Category.findByPk(req.params.id)
     .then((category) => {
       if (category) {
-        console.log("this category", category);
         Category.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
             message: "update sucessful",
@@ -530,42 +550,44 @@ module.exports.getAllCategoriesByMenu = (req, res) => {
 };
 
 //Menus
-module.exports.createMenu = (req, res) => {
-  console.log("in create menu");
-  const menu = {
+module.exports.createMenu = async (req, res) => {
+  const menuData = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
     published: true,
   };
   
-  Menu.create(menu)
-    .then(async data => {
-      if (req.body.csv) {
-        await parseCSV(req.body.csv, req.user.restaurantId, data.id, req.body.overwrite)
-        .catch(err => {
-          console.error(err)
-          res.status(500).send({
-            message: err.message || "An error occured while processing this request"
-          });
-        })
+  try {
+    const menu = await Menu.create(menuData)
+    if(req.body.csv) {
+      try { 
+        await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
+      } catch (err) {
+        // if there's an error, clean up the menu that was created
+        await Menu.destroy({where: {id: menu.id}})
+        res.status(500).send({
+          message: err.message || "Menu could not be created with supplied .csv file",
+        });
+        return
       }
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Menu could not be created",
-      });
+    }
+
+    res.send(menu)
+    return
+  } catch(err) {
+    res.status(500).send({
+      message: err.message || "Menu could not be created",
     });
+    return
+  }
 };
 
 module.exports.updateMenu = (req, res) => {
-  console.log("in update menu");
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
     .then((menu) => {
       // verify menu belongs to restauraunt of menu to update
       if (menu && menu.restaurantId == userRestaurantId) {
-        console.log(req);
         Menu.update(req.body, { where: { id: req.params.id } }).then(() => {
           res.status(200).send({
             message: "update sucessful",
@@ -589,7 +611,7 @@ module.exports.updateMenu = (req, res) => {
 
 module.exports.getMenu = (req, res) => {
   const id = req.params.id;
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findOne({
     where: { restaurantId: userRestaurantId, id: id },
     include: [
@@ -614,12 +636,10 @@ module.exports.getMenu = (req, res) => {
 };
 
 module.exports.deleteMenu = (req, res) => {
-  console.log("in delete menu");
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id)
     .then((menu) => {
       // verify user belongs to restauraunt of menu to update
-      console.log(menu);
       if (menu && menu.restaurantId == userRestaurantId) {
         Menu.destroy({
           where: { id: req.params.id },
@@ -653,7 +673,7 @@ module.exports.deleteMenu = (req, res) => {
 };
 
 module.exports.duplicateMenu = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findByPk(req.params.id,
     {include: [
         {
@@ -701,12 +721,18 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
   // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
   // add tags for every dCopy
   return new Promise((resolve, reject) => {
+    if(oldMenu.Categories.length === 0) {
+      resolve();
+    }
     oldMenu.Categories.forEach(c => {
       Category.create({
         name: c.dataValues.name,
         menuId: newMenu.dataValues.id,
         description: c.dataValues.description,
       }).then((cCopy) => {
+        if(c.Dishes.length == 0) {
+          resolve();
+        }
         c.Dishes.forEach(d => {
           Dish.create({
             name: d.dataValues.name,
@@ -729,7 +755,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
 }
 
 module.exports.getAllMenus = (req, res) => {
-  userRestaurantId = req.user.restaurantId;
+  let userRestaurantId = req.user.restaurantId;
   Menu.findAll({
     where: { restaurantId: userRestaurantId },
   })
@@ -811,14 +837,20 @@ module.exports.getDishImage = async (req, res) => {
 
 module.exports.publicMenuList = (req, res) => {
   let uniqueName = req.params.uniqueName;
-  Menu.findAll({
-    include: [{ model: Restaurant, where: { uniqueName: uniqueName } }],
+
+  Restaurant.findOne({
     where: {
-      published: true,
+      uniqueName: uniqueName
     },
-  }).then((menuList) => {
-    res.send(menuList);
-  });
+    include: [
+      { model: Menu, where: { published: true } }
+    ]
+  })
+  .then(restaurant => res.send(restaurant))
+  .catch(err => { 
+    console.log(err)
+    res.send(err)
+  })
 };
 
 module.exports.publicDishList = (req, res) => {

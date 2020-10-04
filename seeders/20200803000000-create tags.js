@@ -64,6 +64,16 @@ module.exports = {
         type: "allergen",
         excludeForFilter: true,
       }, { transaction });
+      await Tag.create({
+        name: "Dairy",
+        type: "allergen",
+        excludeForFilter: true,
+      }, { transaction });
+      await Tag.create({
+        name: "Peanuts",
+        type: "allergen",
+        excludeForFilter: true,
+      }, { transaction });
       transaction.commit();
     });
   },
