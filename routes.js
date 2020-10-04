@@ -63,8 +63,6 @@ module.exports = (app) => {
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
 
-  // TODO(tony): split fetch and upload assets endpoint
-  router.get("/assets/*", controller.fetchAsset);
   router.get("/images/restaurants/:id", controller.getRestaurantImage);
   router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
