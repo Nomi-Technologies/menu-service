@@ -15,8 +15,9 @@ const fs = require('fs');
 
 // converts list of allergen names to ids
 let allergensToIds = async (allergens) => {
-    allergenIds = []
-    allergens.split(",").forEach(async (allergen) => {
+    let allergenIds = []
+    let splitAllergens = allergens.split(",")
+    for(allergen of splitAllergens) {
         try {
             let tag = await Tag.findOne(
                 {where: { name: {[Op.iLike]: allergen.trim() }}}
@@ -27,18 +28,13 @@ let allergensToIds = async (allergens) => {
         } catch(err) {
             throw err;
         }
-
-    })
-
+    }
     return allergenIds
 }
 
 let getOrCreateCategory = async (categoryName, menuId) => {
-    console.log("Inside getOrCreateCategory")
     try {
-        console.log("39")
-        category = await Category.findOne({where: { name: categoryName, menuId: menuId }})
-        console.log("41")
+        let category = await Category.findOne({where: { name: categoryName, menuId: menuId }})
         if(category) {
             return category.id
         } else {
@@ -46,7 +42,6 @@ let getOrCreateCategory = async (categoryName, menuId) => {
             return newCategory.id
         }
     } catch (err) {
-        console.log("49")
         throw err
     }
 
@@ -63,15 +58,15 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     let categoryId
                     let allergenIds
                     let existingDish
+
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
-                        existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId}})
+                        existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
                     } 
                     catch(err){
                         reject(err)
                     }
-                    
     
                     if(existingDish) {
                         try {

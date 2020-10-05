@@ -721,12 +721,18 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
   // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
   // add tags for every dCopy
   return new Promise((resolve, reject) => {
+    if(oldMenu.Categories.length === 0) {
+      resolve();
+    }
     oldMenu.Categories.forEach(c => {
       Category.create({
         name: c.dataValues.name,
         menuId: newMenu.dataValues.id,
         description: c.dataValues.description,
       }).then((cCopy) => {
+        if(c.Dishes.length == 0) {
+          resolve();
+        }
         c.Dishes.forEach(d => {
           Dish.create({
             name: d.dataValues.name,
