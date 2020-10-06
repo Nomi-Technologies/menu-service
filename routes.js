@@ -63,17 +63,15 @@ module.exports = (app) => {
   router.get("/user/check-email", controller.checkEmail);
   router.post("/user/login", controller.loginUser);
 
-  // TODO(tony): split fetch and upload assets endpoint
-  router.get("/assets/*", controller.fetchAsset);
-
-  router.use(passport.authenticate("jwt", { session: false }));
-  // All routes below are authenticated
-  router.put("/images/restaurant", controller.uploadRestaurantImage);
-  router.get("/images/restaurant", controller.getRestaurantImage);
-  router.put("/images/menu/:id", controller.uploadMenuImage);
-  router.get("/images/menu/:id", controller.getMenuImage);
-  router.put("/images/dishes/:id", controller.uploadDishImage);
+  router.get("/images/restaurants/:id", controller.getRestaurantImage);
+  router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
+  
+  // All routes below are authenticated
+  router.use(passport.authenticate("jwt", { session: false }));
+  router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
+  router.put("/images/menus/:id", controller.uploadMenuImage);
+  router.put("/images/dishes/:id", controller.uploadDishImage);
 
   router.get("/restaurants/me", controller.getRestaurant);
   // TODO(tony): change it back to /restaurants/me
