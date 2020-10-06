@@ -812,27 +812,27 @@ function imageDownloadHelper(path, req, res) {
 }
 
 module.exports.uploadRestaurantImage = async (req, res) => {
-  imageUploadHelper(`${req.user.restaurantId}/logo`, req, res);
+  imageUploadHelper(`restaurants/${req.params.id}`, req, res);
 }
 
 module.exports.getRestaurantImage = async (req, res) => {
-  imageDownloadHelper(`${req.user.restaurantId}/logo`, req, res);
+  imageDownloadHelper(`restaurants/${req.params.id}`, req, res);
 }
 
 module.exports.uploadMenuImage = async (req, res) => {
-  imageUploadHelper(`${req.user.restaurantId}/menus/${req.params.id}`, req, res);
+  imageUploadHelper(`menus/${req.params.id}`, req, res);
 }
 
 module.exports.getMenuImage = async (req, res) => {
-  imageDownloadHelper(`${req.user.restaurantId}/menus/${req.params.id}`, req, res);
+  imageDownloadHelper(`menus/${req.params.id}`, req, res);
 }
 
 module.exports.uploadDishImage = async (req, res) => {
-  imageUploadHelper(`${req.user.restaurantId}/dishes/${req.params.id}`, req, res);
+  imageUploadHelper(`dishes/${req.params.id}`, req, res);
 }
 
 module.exports.getDishImage = async (req, res) => {
-  imageDownloadHelper(`${req.user.restaurantId}/dishes/${req.params.id}`, req, res);
+  imageDownloadHelper(`dishes/${req.params.id}`, req, res);
 }
 
 module.exports.publicMenuList = (req, res) => {
