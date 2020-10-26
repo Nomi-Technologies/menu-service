@@ -1,4 +1,4 @@
-const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu } = require("./models");
 
 const { parseCSV, menuToCSV } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
@@ -270,6 +270,24 @@ module.exports.uploadMenuCSV = (req, res) => {
       res.status(500).send({
         message:
           err.message || "An error occured while processing this request",
+      });
+    });
+};
+
+module.exports.favoriteMenu = (req, res) => {
+  const favMenu = {
+    menuId: req.params.id,
+    userId: req.user.id,
+  };
+  console.log(favMenu);
+  FavoriteMenu.create(favMenu)
+    .then((favmenu) => {
+      res.send(favmenu);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message || "Menu could not be favorited",
       });
     });
 };
