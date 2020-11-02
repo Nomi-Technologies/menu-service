@@ -80,7 +80,7 @@ module.exports.loginUser = async (req, res) => {
       res.status(401).json({ msg: "Could not authentiate user" });
     }
   }
-};
+};``
 
 module.exports.getUserDetails = async (req, res) => {
   User.getUser({ email: req.user.email })
@@ -857,7 +857,6 @@ module.exports.publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId;
   Dish.findAll({
-    attributes: ["id", "name", "description", "addons", "canRemove", "price"],
     include: [
       { model: Tag, as: "Tags" },
       { model: Category, where: { menuId: menuId } },

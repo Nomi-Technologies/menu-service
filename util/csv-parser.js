@@ -58,7 +58,8 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     let categoryId
                     let allergenIds
                     let existingDish
-
+                    let vp = dish.VP !== ''
+                    let gfp = dish.GFP !== ''
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
@@ -74,7 +75,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 description: dish.Description,
                                 price: dish.Price,
                                 tableTalkPoints: dish['Table Talk Points'],
-                                categoryId: categoryId
+                                categoryId: categoryId,
+                                vp: vp,
+                                gfp: gfp
                             })
                             await existingDish.setTags(allergenIds)
                         } catch (err) {
@@ -90,7 +93,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 tableTalkPoints: dish['Table Talk Points'],
                                 categoryId: categoryId,
                                 menuId: menuId,
-                                restaurantId: restaurantId
+                                restaurantId: restaurantId,
+                                vp: vp,
+                                gfp: gfp
                             })
                             await newDish.setTags(allergenIds)
                         } catch (err) {
