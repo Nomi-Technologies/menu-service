@@ -315,6 +315,19 @@ module.exports.favoriteMenu = (req, res) => {
   }
 };
 
+module.exports.getFavoriteMenus = (req, res) => {
+  User.findByPk(req.user.id).then((user) => {
+    return user.getFavoriteMenus({attributes: ['id']})
+  }).then((favoriteMenus) => {
+    res.send(favoriteMenus);
+  }).catch((err) => {
+    console.log(err);
+    res.status(500).send({
+      message: "Could not get favorite menus"
+    })
+  })
+}
+
 module.exports.tagsList = (req, res) => {
   Tag.findAll()
     .then((data) => {
