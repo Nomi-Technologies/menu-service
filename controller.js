@@ -1,6 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
 
-const { parseCSV } = require("./util/csv-parser");
+const { parseCSV, menuToCSV } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
@@ -768,6 +768,33 @@ module.exports.getAllMenus = (req, res) => {
       });
     });
 };
+
+module.exports.getMenuAsCSV = (req, res) => {
+  let menuId = req.params.id;
+  Menu.findOne({
+    where: { id: menuId },
+    include: [
+      {
+        model: Category,
+        include: [
+          { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+        ],
+      },
+    ],
+    order: [[Category, "updatedAt", "asc"]],
+  }).then((menu) => {
+    return menuToCSV(menu)
+  }).then((csv) => {
+    res.send({
+      csv: csv
+    })
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: "Could not get menu as CSV"
+    })
+  })
+}
 
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];

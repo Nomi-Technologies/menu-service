@@ -110,4 +110,66 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
     })
 };
 
-module.exports = { parseCSV }
+let dishAllergensToString = (tags) => {
+    let allergenNames = []
+    tags.forEach((tag) => {
+        allergenNames.push(tag.name);
+    })
+
+    return allergenNames.join(', ')
+}
+
+let formatCell = (value) => {
+    if(value && value.includes(',')) {
+        return "\"" + value + "\""
+    } else {
+        return value
+    }
+}
+
+// converts a menu object to csv format
+let menuToCSV = async (menu) => {
+    return new Promise(async (finish, reject) => {
+        try {
+            let csv_array = [];
+            let header = [
+                'Category',
+                'Name',
+                'Description',
+                'Price',
+                'Allergens',
+                'Modifiable',
+                'GFP',
+                'VP',
+                'Table Talk Points'
+            ]
+            let num_parameters = header.length;
+        
+            csv_array.push(header);
+    
+            // loop over each category
+            menu.Categories.forEach((category) => {
+                category.Dishes.forEach(async (dish) => {
+                    // create a row of empty strings of length header
+                    row = Array(num_parameters).join(".").split(".")
+                    row[header.indexOf('Category')] = formatCell(category.name)
+                    row[header.indexOf('Name')] = formatCell(dish.name)
+                    row[header.indexOf('Description')] = formatCell(dish.description)
+                    row[header.indexOf('Price')] = formatCell(dish.price)
+                    row[header.indexOf('Allergens')] = formatCell(dishAllergensToString(dish.Tags))
+                    row[header.indexOf('GFP')] = dish.GFP ? "X" : ""
+                    row[header.indexOf('VP')] = dish.VP ? "X" : ""
+                    row[header.indexOf('Table Talk Points')] = formatCell(dish.tableTalkPoints)
+                    csv_array.push(row);
+                })
+            })
+        
+            let csv = csv_array.map(e => e.join(",")).join("\n");
+            finish(csv);
+        } catch (err) {
+            reject(err);
+        }
+    })
+}
+
+module.exports = { parseCSV, menuToCSV }
