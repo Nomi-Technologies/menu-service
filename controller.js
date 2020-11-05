@@ -276,7 +276,7 @@ module.exports.uploadMenuCSV = (req, res) => {
 
 module.exports.favoriteMenu = (req, res) => {
   let favorite = req.body.favorite
-  if(favorite == 'true') {
+  if(favorite === true) {
     User.findByPk(req.user.id).then((user) => {
       return user.addFavoriteMenu(req.params.id);
     }).then(() => {
@@ -317,7 +317,7 @@ module.exports.favoriteMenu = (req, res) => {
 
 module.exports.getFavoriteMenus = (req, res) => {
   User.findByPk(req.user.id).then((user) => {
-    return user.getFavoriteMenus({attributes: ['id']})
+    return user.getFavoriteMenus({attributes: ['id', 'name']})
   }).then((favoriteMenus) => {
     res.send(favoriteMenus);
   }).catch((err) => {
