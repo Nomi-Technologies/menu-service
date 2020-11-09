@@ -52,6 +52,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       allowNull: false,
     },
+    vp: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    gfp: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   }, {});
   Dish.associate = function(models) {
     Dish.belongsToMany(models.Tag, {

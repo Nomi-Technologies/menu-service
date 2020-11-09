@@ -1,6 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
 
-const { parseCSV, getOrCreateCategory } = require("./util/csv-parser");
+const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
@@ -80,7 +80,7 @@ module.exports.loginUser = async (req, res) => {
       res.status(401).json({ msg: "Could not authentiate user" });
     }
   }
-};
+};``
 
 module.exports.getUserDetails = async (req, res) => {
   User.getUser({ email: req.user.email })
@@ -841,6 +841,33 @@ module.exports.getAllMenus = (req, res) => {
     });
 };
 
+module.exports.getMenuAsCSV = (req, res) => {
+  let menuId = req.params.id;
+  Menu.findOne({
+    where: { id: menuId },
+    include: [
+      {
+        model: Category,
+        include: [
+          { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+        ],
+      },
+    ],
+    order: [[Category, "updatedAt", "asc"]],
+  }).then((menu) => {
+    return menuToCSV(menu)
+  }).then((csv) => {
+    res.send({
+      csv: csv
+    })
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: "Could not get menu as CSV"
+    })
+  })
+}
+
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
 
@@ -929,7 +956,6 @@ module.exports.publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId;
   Dish.findAll({
-    attributes: ["id", "name", "description", "addons", "canRemove", "price"],
     include: [
       { model: Tag, as: "Tags" },
       { model: Category, where: { menuId: menuId } },

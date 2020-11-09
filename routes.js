@@ -92,6 +92,7 @@ module.exports = (app) => {
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
   router.get("/menus/:id", controller.getMenu);
+  router.get("/menus/:id/csv", controller.getMenuAsCSV);
   router.put("/menus/:id", controller.updateMenu);
   router.delete("/menus/:id", controller.deleteMenu);
   router.post("/menus/:id", controller.duplicateMenu);
