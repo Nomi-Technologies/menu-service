@@ -1,4 +1,4 @@
-const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu } = require("./models");
 
 const { parseCSV, menuToCSV } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
@@ -273,6 +273,60 @@ module.exports.uploadMenuCSV = (req, res) => {
       });
     });
 };
+
+module.exports.favoriteMenu = (req, res) => {
+  let favorite = req.body.favorite
+  if(favorite === true) {
+    User.findByPk(req.user.id).then((user) => {
+      return user.addFavoriteMenu(req.params.id);
+    }).then(() => {
+      res.send({
+        message: "Successfully favorited menu"
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not favorite menu"
+      })
+    })
+  } else 
+  {
+    User.findByPk(req.user.id).then((user) => {
+      user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
+        if(favoritedMenu) {
+          return user.removeFavoriteMenu(req.params.id)
+        }
+      }).then(() => {
+        res.send({
+          message: "Successfully unfavorited menu"
+        })
+      }).catch(err => {
+        console.error(err);
+        res.status(500).send({
+          message: "Could not unfavorite menu"
+        })
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not unfavorite menu"
+      })
+    })
+  }
+};
+
+module.exports.getFavoriteMenus = (req, res) => {
+  User.findByPk(req.user.id).then((user) => {
+    return user.getFavoriteMenus({attributes: ['id', 'name']})
+  }).then((favoriteMenus) => {
+    res.send(favoriteMenus);
+  }).catch((err) => {
+    console.log(err);
+    res.status(500).send({
+      message: "Could not get favorite menus"
+    })
+  })
+}
 
 module.exports.tagsList = (req, res) => {
   Tag.findAll()

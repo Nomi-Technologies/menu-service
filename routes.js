@@ -97,7 +97,9 @@ module.exports = (app) => {
   router.delete("/menus/:id", controller.deleteMenu);
   router.post("/menus/:id", controller.duplicateMenu);
   router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
+  router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
   router.get("/all-menus", controller.getAllMenus);
+  router.get("/user/favorite-menus", controller.getFavoriteMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
