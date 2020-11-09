@@ -1,6 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
 
-const { parseCSV } = require("./util/csv-parser");
+const { parseCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
@@ -254,6 +254,59 @@ module.exports.createDish = (req, res) => {
     });
 };
 
+module.exports.bulkCreateDish = async (req, res) => {
+  let ids = req.body.ids;
+console.log("here1");
+  const menuData = {
+    name: req.body.name,
+    restaurantId: req.user.restaurantId,
+    published: true,
+  };
+
+  const menu = await Menu.create(menuData).then((menu) => {
+    ids.forEach((id) => {
+      Dish.findByPk(id, {
+        include: [
+          { model: Category, attributes: ["name"] },
+          { model: Tag, as: "Tags", attributes: ["id"] },
+        ]
+      }).then((originalDish) => {
+        getOrCreateCategory(dish.Category.name, menu.id).then((category) => {
+          const dishData = {
+            name: originalDish.name,
+            description: originalDish.description,
+            addons: originalDish.addons,
+            canRemove: originalDish.canRemove,
+            notes: originalDish.notes,
+            tableTalkPoints: originalDish.tableTalkPoints,
+            restaurantId: originalDish.restaurantId,
+            categoryId: category.id,
+            menuId: menu.id,
+            price: originalDish.price,
+          };
+
+          tagIds = [];
+
+          originalDish.Tags.forEach((tag) => {
+            tagIds.push(tag.id);
+          });
+
+          Dish.create(dishData)
+            .then((dish) => {
+              dish.setTags(tagIds).then(() => {});
+            })
+            .catch((err) => {
+              console.error(err);
+              res.status(500).send({
+                message: err.message || "Dish could not be created",
+              });
+            });
+        });
+      });
+    });
+  });
+};
+
 // reads csv and creates menu
 module.exports.uploadMenuCSV = (req, res) => {
   parseCSV(
@@ -389,6 +442,25 @@ module.exports.updateDish = (req, res) => {
           err.message || "An error occured while updating dish with id=" + id,
       });
     });
+};
+
+module.exports.bulkDeleteDish = (req, res) => {
+  let userRestaurantId = req.user.restaurantId;
+  let dishIds = req.body.dishesToDelete;
+
+  Dish.destroy({
+    where: { id: dishIds }
+  }).then(
+    res.send({
+      message: "Dishes were deleted successfully",
+    })
+  ).catch((err) => {
+    res.status(500).send({
+      message:
+        err.message ||
+        "An error occured while deleting dishes",
+    });
+  });
 };
 
 module.exports.deleteDish = (req, res) => {
@@ -556,11 +628,11 @@ module.exports.createMenu = async (req, res) => {
     restaurantId: req.user.restaurantId,
     published: true,
   };
-  
+
   try {
     const menu = await Menu.create(menuData)
     if(req.body.csv) {
-      try { 
+      try {
         await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
       } catch (err) {
         // if there's an error, clean up the menu that was created
@@ -689,9 +761,9 @@ module.exports.duplicateMenu = (req, res) => {
   .then((oldMenu) => {
     // verify user belongs to restauraunt of menu to update
     if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
-      Menu.create({ 
-        name: oldMenu.dataValues.name + ' Copy', 
-        restaurantId: req.user.restaurantId, 
+      Menu.create({
+        name: oldMenu.dataValues.name + ' Copy',
+        restaurantId: req.user.restaurantId,
         published: true
       }).then((newMenu) => {
           //duplicate all categories with menuId = menu.dataValues.id, use new menuId
@@ -717,7 +789,7 @@ module.exports.duplicateMenu = (req, res) => {
 };
 
 const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
-  // for each category c in oldMenu.Categories create duplicate cCopy 
+  // for each category c in oldMenu.Categories create duplicate cCopy
   // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
   // add tags for every dCopy
   return new Promise((resolve, reject) => {
@@ -847,7 +919,7 @@ module.exports.publicMenuList = (req, res) => {
     ]
   })
   .then(restaurant => res.send(restaurant))
-  .catch(err => { 
+  .catch(err => {
     console.log(err)
     res.send(err)
   })
