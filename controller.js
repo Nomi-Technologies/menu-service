@@ -256,7 +256,7 @@ module.exports.createDish = (req, res) => {
 
 module.exports.bulkCreateDish = async (req, res) => {
   let ids = req.body.ids;
-console.log("here1");
+
   const menuData = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
@@ -264,14 +264,15 @@ console.log("here1");
   };
 
   const menu = await Menu.create(menuData).then((menu) => {
-    ids.forEach((id) => {
+    //wrap this into promise
+    var promises = ids.map(async (id) => {
       Dish.findByPk(id, {
         include: [
           { model: Category, attributes: ["name"] },
           { model: Tag, as: "Tags", attributes: ["id"] },
         ]
       }).then((originalDish) => {
-        getOrCreateCategory(dish.Category.name, menu.id).then((category) => {
+        getOrCreateCategory(originalDish.Category.name, menu.id).then((categoryId) => {
           const dishData = {
             name: originalDish.name,
             description: originalDish.description,
@@ -280,7 +281,7 @@ console.log("here1");
             notes: originalDish.notes,
             tableTalkPoints: originalDish.tableTalkPoints,
             restaurantId: originalDish.restaurantId,
-            categoryId: category.id,
+            categoryId: categoryId,
             menuId: menu.id,
             price: originalDish.price,
           };
@@ -303,6 +304,13 @@ console.log("here1");
             });
         });
       });
+
+      return new Promise((res, rej) => {res({})});
+    });
+
+    Promise.all(promises).then((results) => {
+      console.log(promises);
+      res.send(menu);
     });
   });
 };

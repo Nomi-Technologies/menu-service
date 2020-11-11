@@ -91,6 +91,7 @@ module.exports = (app) => {
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
+  router.post("/menus/bulkCreate", controller.bulkCreateDish);
   router.get("/menus/:id", controller.getMenu);
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
   router.put("/menus/:id", controller.updateMenu);
@@ -102,7 +103,6 @@ module.exports = (app) => {
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
-  router.post("/menus/bulkCreate", controller.bulkCreateDish);
 
   app.use("/api", router);
 
