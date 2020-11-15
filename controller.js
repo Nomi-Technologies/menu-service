@@ -298,6 +298,9 @@ module.exports.bulkCreateDish = async (req, res) => {
             })
             .catch((err) => {
               console.error(err);
+              Menu.destroy({
+                where: { id: menu.id },
+              })
               res.status(500).send({
                 message: err.message || "Dish could not be created",
               });
