@@ -264,55 +264,56 @@ module.exports.bulkCreateDish = async (req, res) => {
   };
 
   const menu = await Menu.create(menuData).then((menu) => {
-    //wrap this into promise
     var promises = ids.map(async (id) => {
-      Dish.findByPk(id, {
-        include: [
-          { model: Category, attributes: ["name"] },
-          { model: Tag, as: "Tags", attributes: ["id"] },
-        ]
-      }).then((originalDish) => {
-        getOrCreateCategory(originalDish.Category.name, menu.id).then((categoryId) => {
-          const dishData = {
-            name: originalDish.name,
-            description: originalDish.description,
-            addons: originalDish.addons,
-            canRemove: originalDish.canRemove,
-            notes: originalDish.notes,
-            tableTalkPoints: originalDish.tableTalkPoints,
-            restaurantId: originalDish.restaurantId,
-            categoryId: categoryId,
-            menuId: menu.id,
-            price: originalDish.price,
-          };
+      return new Promise((resolve, reject) => {
+        Dish.findByPk(id, {
+          include: [
+            { model: Category, attributes: ["name"] },
+            { model: Tag, as: "Tags", attributes: ["id"] },
+          ]
+        }).then((originalDish) => {
+          getOrCreateCategory(originalDish.Category.name, menu.id).then((categoryId) => {
+            const dishData = {
+              name: originalDish.name,
+              description: originalDish.description,
+              addons: originalDish.addons,
+              canRemove: originalDish.canRemove,
+              notes: originalDish.notes,
+              tableTalkPoints: originalDish.tableTalkPoints,
+              restaurantId: originalDish.restaurantId,
+              categoryId: categoryId,
+              menuId: menu.id,
+              price: originalDish.price,
+            };
 
-          tagIds = [];
+            tagIds = [];
 
-          originalDish.Tags.forEach((tag) => {
-            tagIds.push(tag.id);
-          });
-
-          Dish.create(dishData)
-            .then((dish) => {
-              dish.setTags(tagIds).then(() => {});
-            })
-            .catch((err) => {
-              console.error(err);
-              Menu.destroy({
-                where: { id: menu.id },
-              })
-              res.status(500).send({
-                message: err.message || "Dish could not be created",
-              });
+            originalDish.Tags.forEach((tag) => {
+              tagIds.push(tag.id);
             });
-        });
-      });
 
-      return new Promise((res, rej) => {res({})});
+            Dish.create(dishData)
+              .then((dish) => {
+                dish.setTags(tagIds).then(() => {
+                  resolve()
+                });
+              })
+              .catch((err) => {
+                console.error(err);
+                reject(err);
+                Menu.destroy({
+                  where: { id: menu.id },
+                })
+                res.status(500).send({
+                  message: err.message || "Dish could not be created",
+                });
+              });
+          });
+        });
+      })
     });
 
     Promise.all(promises).then((results) => {
-      console.log(promises);
       res.send(menu);
     });
   });
@@ -456,7 +457,6 @@ module.exports.updateDish = (req, res) => {
 };
 
 module.exports.bulkDeleteDish = (req, res) => {
-  let userRestaurantId = req.user.restaurantId;
   let dishIds = req.body.dishesToDelete;
 
   Dish.destroy({
@@ -798,11 +798,7 @@ module.exports.duplicateMenu = (req, res) => {
     });
   });
 };
-
 const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
-  // for each category c in oldMenu.Categories create duplicate cCopy
-  // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
-  // add tags for every dCopy
   return new Promise((resolve, reject) => {
     if(oldMenu.Categories.length === 0) {
       resolve();
@@ -832,6 +828,8 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
             resolve();
           })
         })
+      }).catch((err) => {
+        reject(err)
       })
     })
   })
