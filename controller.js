@@ -263,16 +263,18 @@ module.exports.bulkCreateDish = async (req, res) => {
     published: true,
   };
 
-  const menu = await Menu.create(menuData).then((menu) => {
-    //wrap this into promise
-    var promises = ids.map(async (id) => {
-      Dish.findByPk(id, {
-        include: [
-          { model: Category, attributes: ["name"] },
-          { model: Tag, as: "Tags", attributes: ["id"] },
-        ]
-      }).then((originalDish) => {
-        getOrCreateCategory(originalDish.Category.name, menu.id).then((categoryId) => {
+  Menu.create(menuData).then(async (menu) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for(let i = 0; i < ids.length; i++) {
+          let id = ids[i];
+          let originalDish = await Dish.findByPk(id, {
+            include: [
+              { model: Category, attributes: ["name"] },
+              { model: Tag, as: "Tags", attributes: ["id"] },
+            ]
+          })
+          let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
           const dishData = {
             name: originalDish.name,
             description: originalDish.description,
@@ -285,37 +287,29 @@ module.exports.bulkCreateDish = async (req, res) => {
             menuId: menu.id,
             price: originalDish.price,
           };
-
+  
           tagIds = [];
-
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
-
-          Dish.create(dishData)
-            .then((dish) => {
-              dish.setTags(tagIds).then(() => {});
-            })
-            .catch((err) => {
-              console.error(err);
-              Menu.destroy({
-                where: { id: menu.id },
-              })
-              res.status(500).send({
-                message: err.message || "Dish could not be created",
-              });
-            });
-        });
-      });
-
-      return new Promise((res, rej) => {res({})});
-    });
-
-    Promise.all(promises).then((results) => {
-      console.log(promises);
-      res.send(menu);
-    });
-  });
+  
+          let dish = await Dish.create(dishData)
+          await dish.setTags(tagIds)
+        }
+        resolve(menu);
+      } catch (error) {
+        await menu.destroy()
+        reject(error)
+      }
+      
+    })
+  }).then((menu) => {
+    res.send(menu);
+  }).catch(_ => {
+    res.status(500).send({
+      "message": "there was an error creating a new menu with selected dishes"
+    })
+  })
 };
 
 // reads csv and creates menu
@@ -510,7 +504,6 @@ module.exports.updateDish = (req, res) => {
 };
 
 module.exports.bulkDeleteDish = (req, res) => {
-  let userRestaurantId = req.user.restaurantId;
   let dishIds = req.body.dishesToDelete;
 
   Dish.destroy({
@@ -852,11 +845,7 @@ module.exports.duplicateMenu = (req, res) => {
     });
   });
 };
-
 const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
-  // for each category c in oldMenu.Categories create duplicate cCopy
-  // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
-  // add tags for every dCopy
   return new Promise((resolve, reject) => {
     if(oldMenu.Categories.length === 0) {
       resolve();
@@ -886,6 +875,8 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
             resolve();
           })
         })
+      }).catch((err) => {
+        reject(err)
       })
     })
   })
