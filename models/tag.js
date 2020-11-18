@@ -1,5 +1,5 @@
 'use strict';
-const { Sequelize } = require('sequelize')
+const { Sequelize, Op } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   const Tag = sequelize.define('Tag', {
@@ -28,6 +28,24 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'tagId',
       otherKey: 'dishId'
     });
+    Tag.belongsToMany(models.Modification, {
+      through: 'ModificationTag',
+      as: 'Modifications',
+      foreignKey: 'tagId',
+      otherKey: 'modificationId'
+    });
   };
+
+  // gets a tag by name, case insensitive
+  Tag.findByName = async (name) => {
+    return Tag.findOne({
+      where: {
+        name: {
+          [Op.iLike]: `%${name}%`
+        }
+      }
+    })
+  }
+
   return Tag;
 };

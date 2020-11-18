@@ -72,9 +72,7 @@ module.exports = (app) => {
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
   router.put("/images/menus/:id", controller.uploadMenuImage);
   router.put("/images/dishes/:id", controller.uploadDishImage);
-
   router.get("/restaurants/me", controller.getRestaurant);
-  // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
