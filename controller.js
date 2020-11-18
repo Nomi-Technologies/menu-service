@@ -263,60 +263,53 @@ module.exports.bulkCreateDish = async (req, res) => {
     published: true,
   };
 
-  const menu = await Menu.create(menuData).then((menu) => {
-    var promises = ids.map(async (id) => {
-      return new Promise((resolve, reject) => {
-        Dish.findByPk(id, {
-          include: [
-            { model: Category, attributes: ["name"] },
-            { model: Tag, as: "Tags", attributes: ["id"] },
-          ]
-        }).then((originalDish) => {
-          getOrCreateCategory(originalDish.Category.name, menu.id).then((categoryId) => {
-            const dishData = {
-              name: originalDish.name,
-              description: originalDish.description,
-              addons: originalDish.addons,
-              canRemove: originalDish.canRemove,
-              notes: originalDish.notes,
-              tableTalkPoints: originalDish.tableTalkPoints,
-              restaurantId: originalDish.restaurantId,
-              categoryId: categoryId,
-              menuId: menu.id,
-              price: originalDish.price,
-            };
-
-            tagIds = [];
-
-            originalDish.Tags.forEach((tag) => {
-              tagIds.push(tag.id);
-            });
-
-            Dish.create(dishData)
-              .then((dish) => {
-                dish.setTags(tagIds).then(() => {
-                  resolve()
-                });
-              })
-              .catch((err) => {
-                console.error(err);
-                reject(err);
-                Menu.destroy({
-                  where: { id: menu.id },
-                })
-                res.status(500).send({
-                  message: err.message || "Dish could not be created",
-                });
-              });
+  Menu.create(menuData).then(async (menu) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for(let i = 0; i < ids.length; i++) {
+          let id = ids[i];
+          let originalDish = await Dish.findByPk(id, {
+            include: [
+              { model: Category, attributes: ["name"] },
+              { model: Tag, as: "Tags", attributes: ["id"] },
+            ]
+          })
+          let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
+          const dishData = {
+            name: originalDish.name,
+            description: originalDish.description,
+            addons: originalDish.addons,
+            canRemove: originalDish.canRemove,
+            notes: originalDish.notes,
+            tableTalkPoints: originalDish.tableTalkPoints,
+            restaurantId: originalDish.restaurantId,
+            categoryId: categoryId,
+            menuId: menu.id,
+            price: originalDish.price,
+          };
+  
+          tagIds = [];
+          originalDish.Tags.forEach((tag) => {
+            tagIds.push(tag.id);
           });
-        });
-      })
-    });
-
-    Promise.all(promises).then((results) => {
-      res.send(menu);
-    });
-  });
+  
+          let dish = await Dish.create(dishData)
+          await dish.setTags(tagIds)
+        }
+        resolve(menu);
+      } catch (error) {
+        await menu.destroy()
+        reject(error)
+      }
+      
+    })
+  }).then((menu) => {
+    res.send(menu);
+  }).catch(_ => {
+    res.status(500).send({
+      "message": "there was an error creating a new menu with selected dishes"
+    })
+  })
 };
 
 // reads csv and creates menu
