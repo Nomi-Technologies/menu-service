@@ -66,7 +66,7 @@ module.exports = (app) => {
   router.get("/images/restaurants/:id", controller.getRestaurantImage);
   router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
-  
+
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
@@ -91,6 +91,7 @@ module.exports = (app) => {
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
+  router.post("/menus/bulkCreate", controller.bulkCreateDish);
   router.get("/menus/:id", controller.getMenu);
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
   router.put("/menus/:id", controller.updateMenu);
@@ -103,6 +104,7 @@ module.exports = (app) => {
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
+  router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
 
   app.use("/api", router);
 
