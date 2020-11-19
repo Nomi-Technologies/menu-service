@@ -63,7 +63,9 @@ module.exports = {
         categoryId: entrees.id
       }
   
-      await Dish.create(dishData).then(dish => dish.setTags([sesame, gluten]));
+      await Dish.create(dishData).then(dish => dish.setTags([sesame, gluten], {
+        through: { removable: true }
+      }));
   
       menu = await Menu.create({
         name: "Drinks",
