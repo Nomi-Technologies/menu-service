@@ -703,12 +703,10 @@ module.exports.createMenu = async (req, res) => {
     }
 
     res.send(menu)
-    return
   } catch(err) {
     res.status(500).send({
       message: err.message || "Menu could not be created",
     });
-    return
   }
 };
 
