@@ -47,6 +47,8 @@ let getOrCreateCategory = async (categoryName, menuId) => {
 
 }
 
+const arrayDiff = (arr1, arr2) => arr1.concat(arr2).filter(val => !(arr1.includes(val) && arr2.includes(val)));
+
 let parseCSV = async (data, restaurantId, menuId, overwrite) => {
     return new Promise(async (finish, reject) => {
         parse(data, {columns: true}, async (err, output) => {
@@ -85,8 +87,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 vp: vp,
                                 gfp: gfp
                             })
-                            await existingDish.setTags(allergenIds)
-                            await existingDish.setTags(modifiableAllergenIds, { through: { removable: true } })
+                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
+                            await existingDish.setTags(nonModifiableAllergenIds)
+                            await existingDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
@@ -104,8 +107,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 vp: vp,
                                 gfp: gfp
                             })
-                            await newDish.setTags(allergenIds)
-                            await newDish.setTags(modifiableAllergenIds, { through: { removable: true } })
+                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
+                            await newDish.setTags(nonModifiableAllergenIds)
+                            await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
