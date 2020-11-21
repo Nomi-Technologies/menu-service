@@ -64,11 +64,11 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
                         existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
-                    } 
+                    }
                     catch(err){
                         reject(err)
                     }
-    
+
                     if(existingDish) {
                         try {
                             await existingDish.update({
@@ -83,7 +83,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                         } catch (err) {
                             reject(err)
                         }
-                        
+
                     } else {
                         try {
                             let newDish = await Dish.create({
@@ -144,9 +144,9 @@ let menuToCSV = async (menu) => {
                 'Table Talk Points'
             ]
             let num_parameters = header.length;
-        
+
             csv_array.push(header);
-    
+
             // loop over each category
             menu.Categories.forEach((category) => {
                 category.Dishes.forEach(async (dish) => {
@@ -163,7 +163,7 @@ let menuToCSV = async (menu) => {
                     csv_array.push(row);
                 })
             })
-        
+
             let csv = csv_array.map(e => e.join(",")).join("\n");
             finish(csv);
         } catch (err) {
@@ -172,4 +172,4 @@ let menuToCSV = async (menu) => {
     })
 }
 
-module.exports = { parseCSV, menuToCSV }
+module.exports = { parseCSV, menuToCSV, getOrCreateCategory }

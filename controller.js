@@ -1,6 +1,6 @@
-const { Dish, Tag, User, Restaurant, Category, Menu } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu } = require("./models");
 
-const { parseCSV, menuToCSV } = require("./util/csv-parser");
+const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
 
 const slug = require("slug");
@@ -254,6 +254,64 @@ module.exports.createDish = (req, res) => {
     });
 };
 
+module.exports.bulkCreateDish = async (req, res) => {
+  let ids = req.body.ids;
+
+  const menuData = {
+    name: req.body.name,
+    restaurantId: req.user.restaurantId,
+    published: true,
+  };
+
+  Menu.create(menuData).then(async (menu) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for(let i = 0; i < ids.length; i++) {
+          let id = ids[i];
+          let originalDish = await Dish.findByPk(id, {
+            include: [
+              { model: Category, attributes: ["name"] },
+              { model: Tag, as: "Tags", attributes: ["id"] },
+            ]
+          })
+          let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
+          const dishData = {
+            name: originalDish.name,
+            description: originalDish.description,
+            addons: originalDish.addons,
+            canRemove: originalDish.canRemove,
+            notes: originalDish.notes,
+            tableTalkPoints: originalDish.tableTalkPoints,
+            restaurantId: originalDish.restaurantId,
+            categoryId: categoryId,
+            menuId: menu.id,
+            price: originalDish.price,
+          };
+  
+          tagIds = [];
+          originalDish.Tags.forEach((tag) => {
+            tagIds.push(tag.id);
+          });
+  
+          let dish = await Dish.create(dishData)
+          await dish.setTags(tagIds)
+        }
+        resolve(menu);
+      } catch (error) {
+        await menu.destroy()
+        reject(error)
+      }
+      
+    })
+  }).then((menu) => {
+    res.send(menu);
+  }).catch(_ => {
+    res.status(500).send({
+      "message": "there was an error creating a new menu with selected dishes"
+    })
+  })
+};
+
 // reads csv and creates menu
 module.exports.uploadMenuCSV = (req, res) => {
   parseCSV(
@@ -273,6 +331,60 @@ module.exports.uploadMenuCSV = (req, res) => {
       });
     });
 };
+
+module.exports.favoriteMenu = (req, res) => {
+  let favorite = req.body.favorite
+  if(favorite === true) {
+    User.findByPk(req.user.id).then((user) => {
+      return user.addFavoriteMenu(req.params.id);
+    }).then(() => {
+      res.send({
+        message: "Successfully favorited menu"
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not favorite menu"
+      })
+    })
+  } else 
+  {
+    User.findByPk(req.user.id).then((user) => {
+      user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
+        if(favoritedMenu) {
+          return user.removeFavoriteMenu(req.params.id)
+        }
+      }).then(() => {
+        res.send({
+          message: "Successfully unfavorited menu"
+        })
+      }).catch(err => {
+        console.error(err);
+        res.status(500).send({
+          message: "Could not unfavorite menu"
+        })
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not unfavorite menu"
+      })
+    })
+  }
+};
+
+module.exports.getFavoriteMenus = (req, res) => {
+  User.findByPk(req.user.id).then((user) => {
+    return user.getFavoriteMenus({attributes: ['id', 'name']})
+  }).then((favoriteMenus) => {
+    res.send(favoriteMenus);
+  }).catch((err) => {
+    console.log(err);
+    res.status(500).send({
+      message: "Could not get favorite menus"
+    })
+  })
+}
 
 module.exports.tagsList = (req, res) => {
   Tag.findAll()
@@ -389,6 +501,24 @@ module.exports.updateDish = (req, res) => {
           err.message || "An error occured while updating dish with id=" + id,
       });
     });
+};
+
+module.exports.bulkDeleteDish = (req, res) => {
+  let dishIds = req.body.dishesToDelete;
+
+  Dish.destroy({
+    where: { id: dishIds }
+  }).then(
+    res.send({
+      message: "Dishes were deleted successfully",
+    })
+  ).catch((err) => {
+    res.status(500).send({
+      message:
+        err.message ||
+        "An error occured while deleting dishes",
+    });
+  });
 };
 
 module.exports.deleteDish = (req, res) => {
@@ -556,11 +686,11 @@ module.exports.createMenu = async (req, res) => {
     restaurantId: req.user.restaurantId,
     published: true,
   };
-  
+
   try {
     const menu = await Menu.create(menuData)
     if(req.body.csv) {
-      try { 
+      try {
         await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
       } catch (err) {
         // if there's an error, clean up the menu that was created
@@ -689,9 +819,9 @@ module.exports.duplicateMenu = (req, res) => {
   .then((oldMenu) => {
     // verify user belongs to restauraunt of menu to update
     if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
-      Menu.create({ 
-        name: oldMenu.dataValues.name + ' Copy', 
-        restaurantId: req.user.restaurantId, 
+      Menu.create({
+        name: oldMenu.dataValues.name + ' Copy',
+        restaurantId: req.user.restaurantId,
         published: true
       }).then((newMenu) => {
           //duplicate all categories with menuId = menu.dataValues.id, use new menuId
@@ -715,11 +845,7 @@ module.exports.duplicateMenu = (req, res) => {
     });
   });
 };
-
 const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
-  // for each category c in oldMenu.Categories create duplicate cCopy 
-  // for every dish d in c.Dishes create copy dCopy and make dCopy.cateogryId = cCopy.id
-  // add tags for every dCopy
   return new Promise((resolve, reject) => {
     if(oldMenu.Categories.length === 0) {
       resolve();
@@ -749,6 +875,8 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
             resolve();
           })
         })
+      }).catch((err) => {
+        reject(err)
       })
     })
   })
@@ -874,7 +1002,7 @@ module.exports.publicMenuList = (req, res) => {
     ]
   })
   .then(restaurant => res.send(restaurant))
-  .catch(err => { 
+  .catch(err => {
     console.log(err)
     res.send(err)
   })

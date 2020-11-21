@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   FavoriteMenu.init({
-    menuID: DataTypes.UUID,
-    userID: DataTypes.UUID
+    menuId: DataTypes.UUID,
+    userId: DataTypes.UUID
   }, {
     sequelize,
     modelName: 'FavoriteMenu',
