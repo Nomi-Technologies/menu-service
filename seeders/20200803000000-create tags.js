@@ -92,6 +92,8 @@ module.exports = {
       "Cilantro",
       "Truffle",
       "Soy",
+      "Dairy",
+      "Peanuts",
     ]}, {});
   }
 };
