@@ -20,7 +20,7 @@ let allergensToIds = async (allergens) => {
     for(allergen of splitAllergens) {
         try {
             let tag = await Tag.findOne(
-                {where: { name: {[Op.iLike]: allergen.trim() }}}
+                { where: { name: {[Op.iLike]: allergen.trim() } } }
             )
             if(tag) {
                 allergenIds.push(tag.id)
@@ -60,15 +60,21 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     let existingDish
                     let vp = dish.VP !== ''
                     let gfp = dish.GFP !== ''
+                    let modifiableAllergenIds
+
+                    // parse relevant information
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
+                        modifiableAllergenIds = await allergensToIds(dish.Modifiable)
                         existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
                     }
-                    catch(err){
+                    catch(err) {
                         reject(err)
+                        throw err
                     }
 
+                    // check if dish exists
                     if(existingDish) {
                         try {
                             await existingDish.update({
@@ -80,10 +86,11 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 gfp: gfp
                             })
                             await existingDish.setTags(allergenIds)
+                            await existingDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
+                            throw err
                         }
-
                     } else {
                         try {
                             let newDish = await Dish.create({
@@ -98,9 +105,10 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 gfp: gfp
                             })
                             await newDish.setTags(allergenIds)
+                            await newDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
-                            console.error(err)
                             reject(err)
+                            throw err
                         }
                     }
                 }
