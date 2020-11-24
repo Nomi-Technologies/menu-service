@@ -737,6 +737,34 @@ module.exports.updateMenu = (req, res) => {
     });
 };
 
+module.exports.toggleFiltering = (req, res) => {
+  let enableFiltering = req.body.enableFiltering === 'true'
+  Menu.update(
+    {
+      enableFiltering: enableFiltering
+    }, 
+    { 
+      where: { id: req.params.id } 
+    }
+  ).then(() => {
+    let message;
+    if(enableFiltering === true) {
+      message = "filtered enabled"
+    } else {
+      message = "filtering disabled"
+    }
+    res.status(200).send({
+      message: message
+    })
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "An error occured while updating filtering",
+    });
+  });
+}
+
 module.exports.getMenu = (req, res) => {
   const id = req.params.id;
   let userRestaurantId = req.user.restaurantId;
@@ -752,15 +780,15 @@ module.exports.getMenu = (req, res) => {
     ],
     order: [[Category, "updatedAt", "asc"]],
   })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message: err.message || "An error occured while getting menus list",
-      });
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "An error occured while getting menus list",
     });
+  });
 };
 
 module.exports.deleteMenu = (req, res) => {
