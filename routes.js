@@ -92,13 +92,14 @@ module.exports = (app) => {
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
   router.post("/menus/bulkCreate", controller.bulkCreateDish);
-  router.get("/menus/:id", controller.getMenu);
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
-  router.put("/menus/:id", controller.updateMenu);
-  router.delete("/menus/:id", controller.deleteMenu);
-  router.post("/menus/:id", controller.duplicateMenu);
+  router.put("/menus/:id/toggle-filtering", controller.toggleFiltering);
   router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
   router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
+  router.delete("/menus/:id", controller.deleteMenu);
+  router.get("/menus/:id", controller.getMenu);
+  router.post("/menus/:id", controller.duplicateMenu);
+  router.put("/menus/:id", controller.updateMenu);
   router.get("/all-menus", controller.getAllMenus);
   router.get("/user/favorite-menus", controller.getFavoriteMenus);
   router.get("/user/details", controller.getUserDetails);
