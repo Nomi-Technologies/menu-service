@@ -49,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: '',
       },
+      restaurantGroupId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
     }, {
       indexes: [
         { unique: true, fields: ['uniqueName'] }
