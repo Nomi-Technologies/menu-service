@@ -1,15 +1,25 @@
 'use strict';
-const { Sequelize } = require('sequelize')
-
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const RestaurantGroup = sequelize.define('RestaurantGroup', {
-      id: {
-        primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        unique: true
-      },
-    }, {});
+  class RestaurantGroup extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  };
+  RestaurantGroup.init({
+    id: DataTypes.UUID
+  }, {
+    sequelize,
+    modelName: 'RestaurantGroup',
+  });
+
   RestaurantGroup.associate = function(models) {
     // associations can be defined here
     RestaurantGroup.hasMany(models.User, {
@@ -20,5 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'restaurantGroupId'
     })
   };
+  
   return RestaurantGroup;
-}
+};
