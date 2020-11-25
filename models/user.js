@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       otherKey: 'menuId'
     })
+
+    User.belongsTo(models.RestaurantGroup, {
+      foreignKey: 'restaurantGroupId',
+      onDelete: 'CASCADE'
+    })
   }
 
   User.register = async (

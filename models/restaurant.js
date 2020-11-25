@@ -71,6 +71,11 @@ module.exports = (sequelize, DataTypes) => {
     Restaurant.hasMany(models.Menu, {
       foreignKey: 'restaurantId'
     })
+
+    Restaurant.belongsTo(models.RestaurantGroup, {
+      foreignKey: 'restaurantGroupId',
+      onDelete: 'CASCADE'
+    })
   };
   return Restaurant;
 }
