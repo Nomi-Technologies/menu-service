@@ -66,7 +66,7 @@ module.exports = (app) => {
   router.get("/images/restaurants/:id", controller.getRestaurantImage);
   router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
-  
+
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
@@ -91,15 +91,21 @@ module.exports = (app) => {
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
-  router.get("/menus/:id", controller.getMenu);
-  router.put("/menus/:id", controller.updateMenu);
-  router.delete("/menus/:id", controller.deleteMenu);
-  router.post("/menus/:id", controller.duplicateMenu);
+  router.post("/menus/bulkCreate", controller.bulkCreateDish);
+  router.get("/menus/:id/csv", controller.getMenuAsCSV);
+  router.put("/menus/:id/toggle-filtering", controller.toggleFiltering);
   router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
+  router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
+  router.delete("/menus/:id", controller.deleteMenu);
+  router.get("/menus/:id", controller.getMenu);
+  router.post("/menus/:id", controller.duplicateMenu);
+  router.put("/menus/:id", controller.updateMenu);
   router.get("/all-menus", controller.getAllMenus);
+  router.get("/user/favorite-menus", controller.getFavoriteMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
+  router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
 
   app.use("/api", router);
 

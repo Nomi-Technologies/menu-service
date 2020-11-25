@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
+      enableFiltering: {
+        type: DataTypes.BOOLEAN,
+        default: true
+      },
       published: {
         type: DataTypes.BOOLEAN,
         default: false,

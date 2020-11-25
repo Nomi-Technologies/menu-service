@@ -20,7 +20,7 @@ let allergensToIds = async (allergens) => {
     for(allergen of splitAllergens) {
         try {
             let tag = await Tag.findOne(
-                {where: { name: {[Op.iLike]: allergen.trim() }}}
+                { where: { name: {[Op.iLike]: allergen.trim() } } }
             )
             if(tag) {
                 allergenIds.push(tag.id)
@@ -47,6 +47,8 @@ let getOrCreateCategory = async (categoryName, menuId) => {
 
 }
 
+const arrayDiff = (arr1, arr2) => arr1.concat(arr2).filter(val => !(arr1.includes(val) && arr2.includes(val)));
+
 let parseCSV = async (data, restaurantId, menuId, overwrite) => {
     return new Promise(async (finish, reject) => {
         parse(data, {columns: true}, async (err, output) => {
@@ -60,15 +62,21 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     let existingDish
                     let vp = dish.VP !== ''
                     let gfp = dish.GFP !== ''
+                    let modifiableAllergenIds
+
+                    // parse relevant information
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
+                        modifiableAllergenIds = await allergensToIds(dish.Modifiable)
                         existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
-                    } 
-                    catch(err){
-                        reject(err)
                     }
-    
+                    catch(err) {
+                        reject(err)
+                        throw err
+                    }
+
+                    // check if dish exists
                     if(existingDish) {
                         try {
                             await existingDish.update({
@@ -79,11 +87,13 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 vp: vp,
                                 gfp: gfp
                             })
-                            await existingDish.setTags(allergenIds)
+                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
+                            await existingDish.setTags(nonModifiableAllergenIds)
+                            await existingDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
+                            throw err
                         }
-                        
                     } else {
                         try {
                             let newDish = await Dish.create({
@@ -97,10 +107,12 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 vp: vp,
                                 gfp: gfp
                             })
-                            await newDish.setTags(allergenIds)
+                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
+                            await newDish.setTags(nonModifiableAllergenIds)
+                            await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
-                            console.error(err)
                             reject(err)
+                            throw err
                         }
                     }
                 }
@@ -110,4 +122,66 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
     })
 };
 
-module.exports = { parseCSV }
+let dishAllergensToString = (tags) => {
+    let allergenNames = []
+    tags.forEach((tag) => {
+        allergenNames.push(tag.name);
+    })
+
+    return allergenNames.join(', ')
+}
+
+let formatCell = (value) => {
+    if(value && value.includes(',')) {
+        return "\"" + value + "\""
+    } else {
+        return value
+    }
+}
+
+// converts a menu object to csv format
+let menuToCSV = async (menu) => {
+    return new Promise(async (finish, reject) => {
+        try {
+            let csv_array = [];
+            let header = [
+                'Category',
+                'Name',
+                'Description',
+                'Price',
+                'Allergens',
+                'Modifiable',
+                'GFP',
+                'VP',
+                'Table Talk Points'
+            ]
+            let num_parameters = header.length;
+
+            csv_array.push(header);
+
+            // loop over each category
+            menu.Categories.forEach((category) => {
+                category.Dishes.forEach(async (dish) => {
+                    // create a row of empty strings of length header
+                    row = Array(num_parameters).join(".").split(".")
+                    row[header.indexOf('Category')] = formatCell(category.name)
+                    row[header.indexOf('Name')] = formatCell(dish.name)
+                    row[header.indexOf('Description')] = formatCell(dish.description)
+                    row[header.indexOf('Price')] = formatCell(dish.price)
+                    row[header.indexOf('Allergens')] = formatCell(dishAllergensToString(dish.Tags))
+                    row[header.indexOf('GFP')] = dish.GFP ? "X" : ""
+                    row[header.indexOf('VP')] = dish.VP ? "X" : ""
+                    row[header.indexOf('Table Talk Points')] = formatCell(dish.tableTalkPoints)
+                    csv_array.push(row);
+                })
+            })
+
+            let csv = csv_array.map(e => e.join(",")).join("\n");
+            finish(csv);
+        } catch (err) {
+            reject(err);
+        }
+    })
+}
+
+module.exports = { parseCSV, menuToCSV, getOrCreateCategory }

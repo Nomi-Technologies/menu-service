@@ -53,6 +53,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'restaurantId',
       onDelete: 'CASCADE'
     });
+
+    User.belongsToMany(models.Menu, {
+      through: 'FavoriteMenu',
+      as: 'FavoriteMenus',
+      foreignKey: 'userId',
+      otherKey: 'menuId'
+    })
   }
 
   User.register = async (
