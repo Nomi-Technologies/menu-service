@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model
+  Model, Sequelize
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class RestaurantGroup extends Model {
@@ -14,7 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   RestaurantGroup.init({
-    id: DataTypes.UUID
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
+    }
   }, {
     sequelize,
     modelName: 'RestaurantGroup',
@@ -30,6 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'restaurantGroupId'
     })
   };
-  
+
   return RestaurantGroup;
 };

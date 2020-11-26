@@ -1,12 +1,13 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RestaurantGroups', {
+    await queryInterface.createTable('RestaurantGroup', {
       id: {
         allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        defaultValue: Sequelize.UUIDV4,
+        unique: true
       },
       createdAt: {
         allowNull: false,
@@ -19,6 +20,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RestaurantGroups');
+    await queryInterface.dropTable('RestaurantGroup');
   }
 };

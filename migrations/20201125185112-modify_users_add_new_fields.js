@@ -12,8 +12,7 @@ module.exports = {
       'User',
       'restaurantGroupId',
       {
-        type: Sequelize.UUID,
-        allowNull: false,
+        type: Sequelize.UUID
       }
     )
   },

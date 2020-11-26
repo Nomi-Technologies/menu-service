@@ -1,4 +1,4 @@
-const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, RestaurantGroup } = require("./models");
 
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
@@ -222,6 +222,53 @@ module.exports.updateRestaurant = (req, res) => {
       });
     });
 };
+
+module.exports.createRestaurantGroup = (req,res) => {
+  RestaurantGroup.create()
+    .then((group) => {
+      res.send(group);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Restaurant group could not be created",
+      });
+    });
+}
+
+module.exports.addUserToGroup = (req,res) => {
+  let userId = req.user.id;
+  let groupId = req.body.groupId;
+  User.findByPk(userId)
+  .then((user) => {
+    user.setRestaurantGroup(groupId).then((data) => {
+      res.send(data);
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "User couldn't be added to group",
+    });
+  });
+}
+
+module.exports.addRestaurantToGroup = (req,res) => {
+  let userRestaurantId = req.params.id;
+  let groupId = req.body.groupId;
+  Restaurant.findByPk(userRestaurantId)
+  .then((restaurant) => {
+    restaurant.setRestaurantGroup(groupId).then((data) => {
+      res.send(data);
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "Restaurant couldn't be added to group",
+    });
+  });
+}
 
 // Dishes
 // TODO: Get user from auth and get restaurant from user
