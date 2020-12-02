@@ -22,6 +22,7 @@ module.exports = (app) => {
     /https\:\/\/(.*--)?(.+)\.netlify\.app/,
     /http\:\/\/localhost:8000/,
     /http\:\/\/localhost:8001/,
+    /http\:\/\/localhost:3000/,
   ];
   var corsOptions = {
     origin: function (origin, callback) {
