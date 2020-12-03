@@ -237,7 +237,7 @@ module.exports.createRestaurantGroup = (req,res) => {
 }
 
 module.exports.addUserToGroup = (req,res) => {
-  let userId = req.user.id;
+  let userId = req.body.userId;
   let groupId = req.body.groupId;
   User.findByPk(userId)
   .then((user) => {
