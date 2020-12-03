@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       restaurantGroupId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
       },
     }, {
       indexes: [

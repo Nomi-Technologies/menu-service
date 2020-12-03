@@ -224,9 +224,16 @@ module.exports.updateRestaurant = (req, res) => {
 };
 
 module.exports.createRestaurantGroup = (req,res) => {
+  let userId = req.user.id;
   RestaurantGroup.create()
     .then((group) => {
-      res.send(group);
+
+      User.findByPk(userId)
+      .then((user) => {
+        user.setRestaurantGroup(group.id).then((data) => {
+          res.send(group);
+        });
+      }) 
     })
     .catch((err) => {
       console.error(err);
