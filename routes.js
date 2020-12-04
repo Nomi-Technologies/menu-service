@@ -77,9 +77,9 @@ module.exports = (app) => {
   // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
-  router.post("/restaurants/create-group", controller.createRestaurantGroup);
-  router.post("/groups/:groupID/add-to-group", controller.addUserToGroup);
-  router.post("/restaurants/add-to-group/:id", controller.addRestaurantToGroup);
+  router.post("/groups/create-group", controller.createRestaurantGroup);
+  router.post("/groups/:groupId/add-user", controller.addUserToGroup);
+  router.post("/groups/:groupId/add-restaurant", controller.addRestaurantToGroup);
   router.post("/dishes", controller.createDish);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
