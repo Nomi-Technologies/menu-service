@@ -338,6 +338,38 @@ module.exports.createModification = (req, res) => {
     })
 }
 
+module.exports.updateModification = (req, res) => {
+  const modificationData = {
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price
+  }
+
+  let modificationID = req.params.id;
+
+  Modification.findByPk(modificationID)
+    .then((modification) => {
+      return modification.update(modificationData);
+    })
+    .then((modification) => {
+      return modification.setTags(req.body.addTags, { through: { addToDish: true } })
+    })
+    .then((modification) => {
+      return modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    })
+    .then((modification) => {
+      res.send({
+        message: "Modification successfully updated"
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: "Modification could not be created"
+      });
+    })
+}
+
 // reads csv and creates menu
 module.exports.uploadMenuCSV = (req, res) => {
   parseCSV(

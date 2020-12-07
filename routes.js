@@ -99,6 +99,8 @@ module.exports = (app) => {
   router.post("/menus/:id", controller.duplicateMenu);
   router.put("/menus/:id", controller.updateMenu);
   router.get("/all-menus", controller.getAllMenus);
+  router.post("/modifications", controller.createModification);
+  router.put("/modifications/:id", controller.updateModification);
   router.get("/user/favorite-menus", controller.getFavoriteMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
