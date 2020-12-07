@@ -1,5 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
+const { createDish } = require("./util/dish")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
 const slug = require("slug");
@@ -236,7 +237,7 @@ module.exports.createDish = async (req, res) => {
   };
 
   try {
-    let dish = await Dish.create(dishData)
+    let dish = await createDish(dishData.categoryId, dishData)
 
     if(req.body.dishTags) {
       await dish.setTags(req.body.dishTags)
@@ -518,31 +519,30 @@ module.exports.getDish = (req, res) => {
 
 module.exports.updateDish = async (req, res) => {
   try {
-    let dish = await Dish.findByPk(req.params.id)
-    if (dish) {
-      await Dish.update(req.body, { where: { id: req.params.id } })
+    let result = await Dish.update(req.body, 
+      { 
+        where: { id: req.params.id }, 
+        returning: true,
+        plain: true 
+      }
+    )
+    let dish = result[1] // returned object is always second element in array
 
-      dishTags = req.body.dishTags;
-      if(req.body.dishTags) {
-        await dish.setTags(req.body.dishTags)
-      }
-      if(req.body.dishModifications) {
-        await dish.setModifications(req.body.dishModifications)
-      
-      }
-      res.status(200).send({
-        message: "dish update successful",
-      });
-    } else {
-      // sends if dish does not exist, or user does not have access
-      res.status(404).send({
-        message: "Could not find dish to update",
-      });
+    if(req.body.dishTags !== undefined) {
+      await dish.setTags(req.body.dishTags)
     }
-  } catch (err) {
-    console.log(err)
+
+    if(req.body.dishModifications !== undefined) { 
+      await dish.setModifications(req.body.dishModifications)
+    }
+    
+    res.send({
+      message: "Dish updated successfully"
+    })
+  } catch (error) {
+    console.error(error)
     res.status(500).send({
-      message: "Error updating dish"
+      message: "Dish could not be updated"
     })
   }
 };

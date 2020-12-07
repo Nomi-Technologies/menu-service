@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: Sequelize.UUIDV4,
       unique: true
     },
+    index: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
