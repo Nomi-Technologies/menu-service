@@ -1,6 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
-const { createDish } = require("./util/dish")
+const { createDish, createCategory } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
 const slug = require("slug");
@@ -11,6 +11,7 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
+const dish = require("./util/menu");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -294,8 +295,13 @@ module.exports.bulkCreateDish = async (req, res) => {
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
+<<<<<<< HEAD
 
           let dish = await Dish.create(dishData)
+=======
+  
+          let dish = await createDish(categoryId, dishData)
+>>>>>>> 134cd32... replace create category and create dish with helper method that tracks index
           await dish.setTags(tagIds)
         }
         resolve(menu);
@@ -665,16 +671,18 @@ module.exports.dishesByName = (req, res) => {
 };
 
 //Categories
-module.exports.createCategory = (req, res) => {
-  Category.create(req.body)
-    .then((data) => {
-      res.send(data);
+module.exports.createCategory = async (req, res) => {
+  try {
+    createCategory(req.body.menuId, req.body)
+    res.send({
+      message: "Category successfully created"
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Category could not be created",
-      });
-    });
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({
+      message: "Error while creating category"
+    })
+  }
 };
 
 module.exports.updateCategory = (req, res) => {
@@ -987,7 +995,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
       resolve();
     }
     oldMenu.Categories.forEach(c => {
-      Category.create({
+      createCategory(menuId, {
         name: c.dataValues.name,
         menuId: newMenu.dataValues.id,
         description: c.dataValues.description,
@@ -996,7 +1004,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
           resolve();
         }
         c.Dishes.forEach(d => {
-          Dish.create({
+          let dishInfo = {
             name: d.dataValues.name,
             description: d.dataValues.description,
             price: d.dataValues.price,
@@ -1006,7 +1014,10 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
             canRemove: d.dataValues.canRemove,
             notes: d.dataValues.notes,
             tableTalkPoints: d.dataValues.tableTalkPoints,
-          }).then((dCopy) => {
+          }
+
+          createDish(cCopy.dataValues.id, dishInfo)
+          .then((dCopy) => {
             dCopy.setTags(d.Tags);
             resolve();
           })
