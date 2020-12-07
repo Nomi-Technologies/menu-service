@@ -69,6 +69,13 @@ module.exports = (sequelize, DataTypes) => {
       otherKey: 'tagId',
     });
 
+    Dish.belongsToMany(models.Modification, {
+      through: 'DishModification',
+      as: 'Modifications',
+      foreignKey: 'dishId',
+      otherKey: 'modificationId',
+    });
+
     Dish.belongsTo(models.Restaurant, {
       foreignKey: 'restaurantId',
       onDelete: 'CASCADE'
