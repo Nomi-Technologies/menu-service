@@ -1,6 +1,6 @@
 const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
-const { createDish, createCategory } = require("./util/menu")
+const { createDish, createCategory, updateCategoryIndex, updateDishIndex } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
 const slug = require("slug");
@@ -12,6 +12,7 @@ const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
 const dish = require("./util/menu");
+const { createRequireFromPath } = require("module");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -839,6 +840,44 @@ module.exports.updateMenu = (req, res) => {
     });
 };
 
+// params: ordering: a list of category objects depicting the current order of the menu
+// note: every category should be passed in, regardless of if categories were reordered or not.
+// let example = [
+//   {
+//     id: 1,
+//     dishes: [
+//       0, 1, 2, 3
+//     ]
+//   },
+// ]
+module.exports.updateMenuOrder = async (req, res) => {
+  let ordering = req.body.ordering
+
+  try {
+    if(ordering !== undefined) {
+      for(let i = 0; i < ordering.length; i++) {
+        let categoryOrdering = ordering[i]
+        await updateCategoryIndex(categoryOrdering.id, i)
+        let dishOrdering = categoryOrdering.dishes
+        if(categoryOrdering.dishes !== undefined) {
+          for(let i = 0; i < categoryOrdering.dishes.length; i++) {
+            await updateDishIndex(categoryOrdering.dishes[i], i);
+          }
+        }
+      }
+
+      res.send({
+        message: "Menu order set successfully"
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({
+      message: "Error updating order of menu"
+    })
+  }
+}
+
 module.exports.toggleFiltering = (req, res) => {
   let enableFiltering = req.body.enableFiltering
   Menu.update(
@@ -886,12 +925,13 @@ module.exports.getMenu = (req, res) => {
                 as: "Modifications",
                 include: [ { model: Tag, as: "Tags" } ],
               },
-            ] 
+            ],
+            order: [[Category, "index", "asc"]],
           },
         ],
       },
     ],
-    order: [[Category, "updatedAt", "asc"]],
+    order: [[Category, "index", "asc"]],
   })
   .then((menu) => {
     if(menu !== null) {
