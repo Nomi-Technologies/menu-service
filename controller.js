@@ -1196,25 +1196,68 @@ module.exports.publicMenuList = (req, res) => {
   })
 };
 
-module.exports.publicDishList = (req, res) => {
-  let uniqueName = req.params.uniqueName;
+// module.exports.publicDishList = (req, res) => {
+//   let uniqueName = req.params.uniqueName;
+//   let menuId = req.params.menuId;
+//   Dish.findAll({
+//     include: [
+//       { model: Tag, as: "Tags" },
+//       { model: Category, where: { menuId: menuId } },
+//       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
+//     ],
+//     order: [
+//       [Category, "index", "asc"],
+//     ],
+//   })
+//     .then((data) => res.send(data))
+//     .catch((err) => {
+//       console.error(err)
+//       res.status(500).send({
+//         message: "An error occured while getting dishes list"
+//       })
+//     });
+// };
+
+module.exports.publicDishList = async (req, res) => {
   let menuId = req.params.menuId;
-  Dish.findAll({
-    include: [
-      { model: Tag, as: "Tags" },
-      { model: Category, where: { menuId: menuId } },
-      { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
-      { model: Modification, as: "Modifications" }
-    ],
-    order: [[Category, "createdAt", "asc"]],
-  })
-    .then((data) => res.send(data))
-    .catch((err) =>
-      res.status(500).send({
-        message: err.message || "An error occured while getting dishes list",
-      })
-    );
-};
+  try {
+    let menu = await Menu.findOne({
+      where: { id: menuId },
+      include: [
+        {
+          model: Category,
+          include: [
+            { 
+              model: Dish, 
+              as: "Dishes", 
+              include: [
+                { model: Tag, as: "Tags" },
+                { 
+                  model: Modification, 
+                  as: "Modifications",
+                  include: [ { model: Tag, as: "Tags" } ],
+                },
+              ],
+              order: [[Category, "index", "asc"]],
+            },
+          ],
+        },
+      ],
+      order: [[Category, "index", "asc"]],
+    })
+    if(menu !== null) {
+      res.send(menu);
+    } else {
+      res.status(404).send()
+    }
+  }
+  catch(err) {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "An error occured while getting menus list",
+    });
+  };
+}
 
 module.exports.publicRestaurantList = (req, res) => {
   res.send("[]");
