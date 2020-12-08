@@ -857,7 +857,7 @@ module.exports.updateMenu = (req, res) => {
 };
 
 module.exports.toggleFiltering = (req, res) => {
-  let enableFiltering = req.body.enableFiltering === 'true'
+  let enableFiltering = req.body.enableFiltering
   Menu.update(
     {
       enableFiltering: enableFiltering
