@@ -224,7 +224,7 @@ module.exports.updateRestaurant = (req, res) => {
 
 // Dishes
 // TODO: Get user from auth and get restaurant from user
-module.exports.createDish = (req, res) => {
+module.exports.createDish = async (req, res) => {
   const dishData = {
     name: req.body.name,
     description: req.body.description,
@@ -237,20 +237,25 @@ module.exports.createDish = (req, res) => {
     menuId: req.body.menuId,
     price: req.body.price,
   };
-  Dish.create(dishData)
-    .then((dish) => {
-      return dish.setTags(req.body.dishTags)
-    }).then((dish) => {
-      return dish.setModifications(req.body.dishModifications)
-    }).then((dish) => {
-      res.send(dish);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message: err.message || "Dish could not be created",
-      });
+
+  try {
+    let dish = await Dish.create(dishData)
+
+    if(req.body.dishTags) {
+      await dish.setTags(req.body.dishTags)
+    }
+    if(req.body.dishModifications) {
+      await dish.setModifications(req.body.dishModifications)
+    }
+    
+    res.send(dish)
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "Dish could not be created",
     });
+  };
 };
 
 module.exports.bulkCreateDish = async (req, res) => {
@@ -310,8 +315,9 @@ module.exports.bulkCreateDish = async (req, res) => {
     })
   })
 };
+
 // takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
-module.exports.createModification = (req, res) => {
+module.exports.createModification = async (req, res) => {
   const modificationData = {
     restaurantId: req.params.restaurantId,
     name: req.body.name,
@@ -320,25 +326,22 @@ module.exports.createModification = (req, res) => {
   }
 
   // create modification
-  Modification.create(modificationData)
-    .then((modification) => {
-      return modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    })
-    .then((modification) => {
-      return modification.setTags(req.body.removeTags, { through: { addToDish: false } })
-    })
-    .then((modification) => {
-      res.send(modification);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message: "Modification could not be created"
-      });
-    })
+  try {
+    let modification = await Modification.create(modificationData)
+    await modification.setTags(req.body.addTags, { through: { addToDish: true } })
+    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    res.send(modification);
+  }
+  
+  catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: "Modification could not be created"
+    });
+  }
 }
 
-module.exports.updateModification = (req, res) => {
+module.exports.updateModification = async (req, res) => {
   const modificationData = {
     name: req.body.name,
     description: req.body.description,
@@ -346,28 +349,21 @@ module.exports.updateModification = (req, res) => {
   }
 
   let modificationID = req.params.id;
-
-  Modification.findByPk(modificationID)
-    .then((modification) => {
-      return modification.update(modificationData);
-    })
-    .then((modification) => {
-      return modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    })
-    .then((modification) => {
-      return modification.setTags(req.body.removeTags, { through: { addToDish: false } })
-    })
-    .then((modification) => {
-      res.send({
-        message: "Modification successfully updated"
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message: "Modification could not be created"
-      });
-    })
+  try {
+    let modification = await Modification.findByPk(modificationID)
+    await modification.update(modificationData);
+    await modification.setTags(req.body.addTags, { through: { addToDish: true } })
+    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    res.send({
+      message: "Modification successfully updated"
+    });
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: "Modification could not be created"
+    });
+  }
 }
 
 // reads csv and creates menu
@@ -523,53 +519,35 @@ module.exports.getDish = (req, res) => {
     });
 };
 
-module.exports.updateDish = (req, res) => {
-  Dish.findByPk(req.params.id)
-    .then((dish) => {
-      // verify user belongs to restauraunt of dish to update
-      if (dish) {
-        Dish.update(req.body, { where: { id: req.params.id } })
-          .then(() => {
-            dishTags = req.body.dishTags;
-            dish
-              .setTags(dishTags)
-              .then((dish) => {
-                dish.setModifications(req.body.dishModifications).then(() => {
-                  res.status(200).send({
-                    message: "dish update successful",
-                  });
-                })
-              })
-              .catch((err) => {
-                console.error(err);
-                res.status(500).send({
-                  message:
-                    err || "An error occured while updating dish with id=" + id,
-                });
-              });
-          })
-          .catch((err) => {
-            console.error(err);
-            res.status(500).send({
-              message:
-                err.message ||
-                "An error occured while updating dish with id=" + id,
-            });
-          });
-      } else {
-        // sends if dish does not exist, or user does not have access
-        res.status(404).send({
-          message: "Could not find dish to update",
-        });
+module.exports.updateDish = async (req, res) => {
+  try {
+    let dish = await Dish.findByPk(req.params.id)
+    if (dish) {
+      await Dish.update(req.body, { where: { id: req.params.id } })
+
+      dishTags = req.body.dishTags;
+      if(req.body.dishTags) {
+        await dish.setTags(req.body.dishTags)
       }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message || "An error occured while updating dish with id=" + id,
+      if(req.body.dishModifications) {
+        await dish.setModifications(req.body.dishModifications)
+      
+      }
+      res.status(200).send({
+        message: "dish update successful",
       });
-    });
+    } else {
+      // sends if dish does not exist, or user does not have access
+      res.status(404).send({
+        message: "Could not find dish to update",
+      });
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({
+      message: "Error updating dish"
+    })
+  }
 };
 
 module.exports.bulkDeleteDish = (req, res) => {
