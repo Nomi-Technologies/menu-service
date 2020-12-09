@@ -1,5 +1,5 @@
 'use strict';
-const { User, Restaurant, Menu, Dish, Category, Tag } = require('../models');
+const { User, Restaurant, Menu, Dish, Category, Tag, Modification } = require('../models');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -43,9 +43,10 @@ module.exports = {
         menuId: menu.id
       })
   
-      const gluten = await Tag.findOne({where: { name: "Gluten" }});
-      const sesame = await Tag.findOne({where: { name: "Sesame" }});
-      const treenuts = await Tag.findOne({where: { name: "Treenuts" }});
+      const gluten = await Tag.findByName("gluten")
+      const sesame = await Tag.findByName("sesame")
+      const treenuts = await Tag.findByName("treenuts")
+      const egg = await Tag.findByName("egg")
   
       let dishData = {
         name: "Calamari",
@@ -54,7 +55,7 @@ module.exports = {
         price: '$10',
       }
   
-      await Dish.create(dishData).then(dish => dish.setTags([treenuts]));
+      await Dish.create(dishData).then(dish => dish.setTags([treenuts.id]));
   
       dishData = {
         name: "Hamburger",
@@ -63,19 +64,23 @@ module.exports = {
         categoryId: entrees.id
       }
   
-      await Dish.create(dishData).then(dish => {
-        dish.addTag(sesame);
-        dish.addTag(gluten, {
-          through: { removable: true }
-        });
-      });
-  
+      const hamburger = await Dish.create(dishData)
+      await hamburger.setTags([sesame, gluten, egg])
+      let modData = {
+        restaurantId: restaurant.id,
+        name: "Remove cheese",
+        description: "Removes the cheese",
+        price: "0",
+      }
+      let mod = await Modification.create(modData)
+      await mod.setTags([egg.id], { through: { addToDish: false } });
+      await hamburger.addModification(mod)
+      
       menu = await Menu.create({
         name: "Drinks",
         restaurantId: restaurant.id,
         published: true
       })
-    
     
       let Wine = await Category.create({
         name: "Wine",
@@ -110,7 +115,7 @@ module.exports = {
         categoryId: Wine.id
       })
     
-      return Dish.create({
+      await Dish.create({
         name: "Pinot Noir",
         description: "crispy",
         restaurantId: restaurant.id,
@@ -120,13 +125,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction().then(async t => {
-      await queryInterface.bulkDelete('Restaurant', { 
-        uniqueName: 'test-restaurant' 
-      }, {});
-      await queryInterface.bulkDelete('User', { 
-        email: 'admin@test.com' 
-      }, {});
-    });
+    return queryInterface.sequelize.transaction().then(async t => {});
   }
 };

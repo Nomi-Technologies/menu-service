@@ -1,4 +1,4 @@
-const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
@@ -12,7 +12,6 @@ const { Op } = require("sequelize");
 
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
-
 const caseless = require("caseless");
 
 let ExtractJwt = passportJWT.ExtractJwt;
@@ -240,11 +239,11 @@ module.exports.createDish = (req, res) => {
   };
   Dish.create(dishData)
     .then((dish) => {
-      dish.setTags(req.body.dishTags).then(() => {
-        dish.setCategory(req.body.categoryId).then((data) => {
-          res.send(data);
-        });
-      });
+      return dish.setTags(req.body.dishTags)
+    }).then((dish) => {
+      return dish.setModifications(req.body.dishModifications)
+    }).then((dish) => {
+      res.send(dish);
     })
     .catch((err) => {
       console.error(err);
@@ -311,6 +310,65 @@ module.exports.bulkCreateDish = async (req, res) => {
     })
   })
 };
+// takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
+module.exports.createModification = (req, res) => {
+  const modificationData = {
+    restaurantId: req.params.restaurantId,
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price
+  }
+
+  // create modification
+  Modification.create(modificationData)
+    .then((modification) => {
+      return modification.setTags(req.body.addTags, { through: { addToDish: true } })
+    })
+    .then((modification) => {
+      return modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    })
+    .then((modification) => {
+      res.send(modification);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: "Modification could not be created"
+      });
+    })
+}
+
+module.exports.updateModification = (req, res) => {
+  const modificationData = {
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price
+  }
+
+  let modificationID = req.params.id;
+
+  Modification.findByPk(modificationID)
+    .then((modification) => {
+      return modification.update(modificationData);
+    })
+    .then((modification) => {
+      return modification.setTags(req.body.addTags, { through: { addToDish: true } })
+    })
+    .then((modification) => {
+      return modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    })
+    .then((modification) => {
+      res.send({
+        message: "Modification successfully updated"
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: "Modification could not be created"
+      });
+    })
+}
 
 // reads csv and creates menu
 module.exports.uploadMenuCSV = (req, res) => {
@@ -438,10 +496,19 @@ module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
   Dish.findByPk(id, {
-    include: {
-      model: Tag,
-      as: "Tags",
-    },
+    include: 
+    [
+      {
+        model: Tag,
+        as: "Tags",
+        attributes: ["id", "name", "type"]
+      },
+      {
+        model: Modification,
+        as: "Modifications",
+        include: { model: Tag, as: "Tags", attributes: ["id", "name", "type"] }
+      }
+    ],
   })
     .then((dish) => {
       // verify user belongs to restauraunt of dish requested
@@ -451,7 +518,7 @@ module.exports.getDish = (req, res) => {
       console.error(err);
       res.status(500).send({
         message:
-          err.message || "An error occured while getting dish with id=" + id,
+          "An error occured while getting dish with id=" + id,
       });
     });
 };
@@ -466,10 +533,12 @@ module.exports.updateDish = (req, res) => {
             dishTags = req.body.dishTags;
             dish
               .setTags(dishTags)
-              .then(() => {
-                res.status(200).send({
-                  message: "dish update successful",
-                });
+              .then((dish) => {
+                dish.setModifications(req.body.dishModifications).then(() => {
+                  res.status(200).send({
+                    message: "dish update successful",
+                  });
+                })
               })
               .catch((err) => {
                 console.error(err);
@@ -537,13 +606,63 @@ module.exports.deleteDish = (req, res) => {
         .catch((err) => {
           res.status(500).send({
             message:
-              err.message ||
               "An error occured while deleting dish with id=" + req.params.id,
           });
         });
     }
   });
 };
+
+// create a modifiation for a specific dish
+module.exports.createModification = (req, res) => {
+  let dishId = req.params.id
+  let modificationData = {
+    dishId: dishId,
+    ...req.body
+  }
+  
+  // search for dish to verify existence
+  Dish.findByPk(dishId).then(() => {
+    // create modification
+    return Modification.create(modificationData)
+  }).then((modification) => {
+    // set allergens
+    return modification.setTags(req.body.Tags)
+  }).then((modification) => {
+    res.send({
+      message: "Modification successfully added",
+      modification: modification
+    })
+  }).catch((err) => {
+    console.err(err);
+    res.status(500).send({
+      message: "could not create modifcation for dish with id=" + req.params.id
+    })
+  })
+}
+
+module.exports.removeModification = (req, res) => {
+  let dishId = req.params.dishId
+  let modificationId = req.params.modificationId
+  
+  Modification.findOne({
+    where: {
+      id: modificationId,
+      dishId: dishId
+    }
+  }).then((modification) => {
+    return modification.destroy();
+  }).then(() => {
+    res.send({
+      message: "Modification successfully removed"
+    })
+  }).catch((err) => {
+    console.err(err);
+    res.status(500).send({
+      message: "could not remove modifcation for dish with id=" + req.params.id
+    })
+  })
+}
 
 module.exports.dishesByName = (req, res) => {
   let userRestaurantId = req.user.restaurantId;
@@ -738,7 +857,11 @@ module.exports.updateMenu = (req, res) => {
 };
 
 module.exports.toggleFiltering = (req, res) => {
+<<<<<<< HEAD
   let enableFiltering = req.body.enableFiltering;
+=======
+  let enableFiltering = req.body.enableFiltering
+>>>>>>> f202ae63e16330be321e7a3313c59136d89eb029
   Menu.update(
     {
       enableFiltering: enableFiltering
@@ -774,14 +897,30 @@ module.exports.getMenu = (req, res) => {
       {
         model: Category,
         include: [
-          { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+          { 
+            model: Dish, 
+            as: "Dishes", 
+            include: [
+              { model: Tag, as: "Tags" },
+              { 
+                model: Modification, 
+                as: "Modifications",
+                include: [ { model: Tag, as: "Tags" } ],
+              },
+            ] 
+          },
         ],
       },
     ],
     order: [[Category, "updatedAt", "asc"]],
   })
-  .then((data) => {
-    res.send(data);
+  .then((menu) => {
+    if(menu !== null) {
+      res.send(menu);
+    } else {
+      res.status(404).send()
+    }
+    
   })
   .catch((err) => {
     console.error(err);
@@ -917,6 +1056,7 @@ module.exports.getAllMenus = (req, res) => {
       res.send(data);
     })
     .catch((err) => {
+      console.error(err)
       res.status(500).send({
         message: err.message || "An error occured while getting menus list",
       });
