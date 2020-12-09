@@ -44,7 +44,7 @@ module.exports.registerUser = async (req, res) => {
       req.body.email,
       req.body.password,
       req.body.phone,
-      req.body.role,
+      req.body.isAdmin,
       req.body.restaurantId,
       req.body.firstname,
       req.body.lastname
@@ -287,12 +287,12 @@ module.exports.bulkCreateDish = async (req, res) => {
             menuId: menu.id,
             price: originalDish.price,
           };
-  
+
           tagIds = [];
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
-  
+
           let dish = await Dish.create(dishData)
           await dish.setTags(tagIds)
         }
@@ -301,7 +301,7 @@ module.exports.bulkCreateDish = async (req, res) => {
         await menu.destroy()
         reject(error)
       }
-      
+
     })
   }).then((menu) => {
     res.send(menu);
@@ -347,7 +347,7 @@ module.exports.favoriteMenu = (req, res) => {
         message: "Could not favorite menu"
       })
     })
-  } else 
+  } else
   {
     User.findByPk(req.user.id).then((user) => {
       user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
@@ -742,9 +742,9 @@ module.exports.toggleFiltering = (req, res) => {
   Menu.update(
     {
       enableFiltering: enableFiltering
-    }, 
-    { 
-      where: { id: req.params.id } 
+    },
+    {
+      where: { id: req.params.id }
     }
   ).then(() => {
     let message;
@@ -1055,4 +1055,44 @@ module.exports.publicDishList = (req, res) => {
 
 module.exports.publicRestaurantList = (req, res) => {
   res.send("[]");
+};
+
+module.exports.createUserPermissions = (req, res) => {
+  const userPermissionData = {
+    userId: req.user.userId,
+    restaurantId: req.body.restaurantId,
+  };
+
+  UserPermission.create(userPermissionData)
+    .then((userpermission) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "User Permission could not be created",
+      });
+    });
+};
+
+module.exports.deleteUserPermission = (req, res) => {
+  let userId = req.user.userId;
+  let restaurantId = req.user.restaurantId;
+
+  UserPermission.destroy({
+    where: {
+      userId: userId,
+      restaurantId: restaurantId
+    }
+  }).then(
+    res.send({
+      message: "User permission was deleted successfully",
+    })
+  ).catch((err) => {
+    res.status(500).send({
+      message:
+        err.message ||
+        "An error occured while deleting user permission.",
+    });
+  });
 };

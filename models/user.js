@@ -23,9 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1,
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false,
     },
     restaurantId: {
@@ -62,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
     email,
     password,
     phone,
-    role,
+    isAdmin,
     restaurant,
     fname,
     lname
@@ -72,12 +72,12 @@ module.exports = (sequelize, DataTypes) => {
       email: email,
       password: passwordHash,
       phone: phone,
-      role: role,
+      isAdmin: isAdmin,
       restaurantId: restaurant,
       firstname: fname,
       lastname: lname
     };
-  
+
     let created_user = await User.create(user);
     return User.authenticate(email, password);
   };
@@ -90,13 +90,13 @@ module.exports = (sequelize, DataTypes) => {
       throw err
     })
   }
-  
+
   User.getUser = async (obj) => {
     return await User.findOne({
       where: obj,
     });
   };
-  
+
   // used to validate the user
   User.authenticate = async (email, password) => {
     let user = await User.findOne({ where: { email: email } });
