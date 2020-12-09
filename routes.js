@@ -106,7 +106,7 @@ module.exports = (app) => {
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
-  router.create("/user/permissions", controller.createUserPermissions);
+  router.post("/user/permissions", controller.createUserPermissions);
   router.delete("/user/permissions", controller.deleteUserPermission);
 
   app.use("/api", router);
