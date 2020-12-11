@@ -98,7 +98,8 @@ module.exports = (app) => {
   router.get("/menus/:id", controller.getMenu);
   router.post("/menus/:id", controller.duplicateMenu);
   router.put("/menus/:id", controller.updateMenu);
-  router.put("/menus/:id/update-order", controller.updateMenuOrder);
+  router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
+  router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
   router.get("/all-menus", controller.getAllMenus);
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
