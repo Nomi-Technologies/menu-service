@@ -238,11 +238,10 @@ module.exports.createDish = (req, res) => {
     price: req.body.price,
   };
   Dish.create(dishData)
-    .then((dish) => {
-      return dish.setTags(req.body.dishTags)
-    }).then((dish) => {
-      return dish.setModifications(req.body.dishModifications)
-    }).then((dish) => {
+    .then(async (dish) => {
+      await dish.setTags(req.body.dishTags)
+      console.log(req.body.dishModifications);
+      await dish.setModifications(req.body.dishModifications)
       res.send(dish);
     })
     .catch((err) => {
@@ -533,7 +532,7 @@ module.exports.updateDish = (req, res) => {
             dishTags = req.body.dishTags;
             dish
               .setTags(dishTags)
-              .then((dish) => {
+              .then(() => {
                 dish.setModifications(req.body.dishModifications).then(() => {
                   res.status(200).send({
                     message: "dish update successful",
