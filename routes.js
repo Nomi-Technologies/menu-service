@@ -69,6 +69,24 @@ module.exports = (app) => {
 
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
+
+  router.use(function (req, res, next) {
+    let userid = req.params.id;
+
+    UserPermission.findAll({
+      include: [
+          { model: User, as: 'User' },
+          { model: Restaurant, as: 'Restaurant' },
+      ]
+    }).then(() => {
+      next();
+    }).catch(_ => {
+      res.status(500).send({
+        "message": "user does not have proper permissions"
+      })
+    })
+  });
+
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
   router.put("/images/menus/:id", controller.uploadMenuImage);
   router.put("/images/dishes/:id", controller.uploadDishImage);
@@ -106,8 +124,7 @@ module.exports = (app) => {
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
-  router.post("/user/permissions", controller.createUserPermissions);
-  router.delete("/user/permissions", controller.deleteUserPermission);
+  router.post("/user/:id/set-permissions", controller.deleteUserPermission);
 
   app.use("/api", router);
 

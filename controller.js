@@ -496,7 +496,7 @@ module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
   Dish.findByPk(id, {
-    include: 
+    include:
     [
       {
         model: Tag,
@@ -620,7 +620,7 @@ module.exports.createModification = (req, res) => {
     dishId: dishId,
     ...req.body
   }
-  
+
   // search for dish to verify existence
   Dish.findByPk(dishId).then(() => {
     // create modification
@@ -644,7 +644,7 @@ module.exports.createModification = (req, res) => {
 module.exports.removeModification = (req, res) => {
   let dishId = req.params.dishId
   let modificationId = req.params.modificationId
-  
+
   Modification.findOne({
     where: {
       id: modificationId,
@@ -857,11 +857,7 @@ module.exports.updateMenu = (req, res) => {
 };
 
 module.exports.toggleFiltering = (req, res) => {
-<<<<<<< HEAD
   let enableFiltering = req.body.enableFiltering;
-=======
-  let enableFiltering = req.body.enableFiltering
->>>>>>> f202ae63e16330be321e7a3313c59136d89eb029
   Menu.update(
     {
       enableFiltering: enableFiltering
@@ -897,17 +893,17 @@ module.exports.getMenu = (req, res) => {
       {
         model: Category,
         include: [
-          { 
-            model: Dish, 
-            as: "Dishes", 
+          {
+            model: Dish,
+            as: "Dishes",
             include: [
               { model: Tag, as: "Tags" },
-              { 
-                model: Modification, 
+              {
+                model: Modification,
                 as: "Modifications",
                 include: [ { model: Tag, as: "Tags" } ],
               },
-            ] 
+            ]
           },
         ],
       },
@@ -920,7 +916,7 @@ module.exports.getMenu = (req, res) => {
     } else {
       res.status(404).send()
     }
-    
+
   })
   .catch((err) => {
     console.error(err);
@@ -1197,42 +1193,19 @@ module.exports.publicRestaurantList = (req, res) => {
   res.send("[]");
 };
 
-module.exports.createUserPermissions = (req, res) => {
-  const userPermissionData = {
-    userId: req.user.userId,
-    restaurantId: req.body.restaurantId,
-  };
+module.exports.setUserRestaurants = (req, res) => {
+  const restaurantIds = req.body.restaurantIds;
 
-  UserPermission.create(userPermissionData)
-    .then((userpermission) => {
-      res.send(data);
+  User.setRestaurants(restaurantIds)
+    .then((user) => {
+      res.status(200).send({
+        message: "user restaurants have been set",
+      });
     })
     .catch((err) => {
       console.error(err);
       res.status(500).send({
-        message: err.message || "User Permission could not be created",
+        message: err.message || "user restaurants could not be set",
       });
     });
-};
-
-module.exports.deleteUserPermission = (req, res) => {
-  let userId = req.user.userId;
-  let restaurantId = req.user.restaurantId;
-
-  UserPermission.destroy({
-    where: {
-      userId: userId,
-      restaurantId: restaurantId
-    }
-  }).then(
-    res.send({
-      message: "User permission was deleted successfully",
-    })
-  ).catch((err) => {
-    res.status(500).send({
-      message:
-        err.message ||
-        "An error occured while deleting user permission.",
-    });
-  });
 };

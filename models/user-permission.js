@@ -23,11 +23,5 @@ module.exports = (sequelize, DataTypes) => {
     UserPermission.belongsTo(models.Restaurant, { foreignKey: 'restaurantId', targetKey: 'id', as: "Restaurant" });
   };
 
-  UserPermission.getUserPermission = async (obj) => {
-    return await UserPermission.findOne({
-      where: obj,
-    });
-  };
-
   return UserPermission;
 };
