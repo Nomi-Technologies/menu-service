@@ -369,6 +369,20 @@ module.exports.updateModification = (req, res) => {
     })
 }
 
+module.exports.getModifications = (req, res) => {
+  let restaurantId = req.user.restaurantId;
+
+  Modification.findAll({
+    where: { restaurantId: restaurantId }
+  }).then((data) => res.send(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: 'An error occurred while finding all modifications',
+      })
+    });
+}
+
 // reads csv and creates menu
 module.exports.uploadMenuCSV = (req, res) => {
   parseCSV(
