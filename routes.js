@@ -70,6 +70,7 @@ module.exports = (app) => {
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
 
+  // All routes below need user permissions to access the restaurant
   router.use(function (req, res, next) {
     let userid = req.user.id;
 
@@ -130,6 +131,28 @@ module.exports = (app) => {
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
+
+  // All routes below need to be an admin
+  router.use(function (req, res, next) {
+
+    User.findbypk(userid).then((user) => {
+
+      if (user.isAdmin) {
+        next();
+      } else {
+        res.status(500).send({
+          message": "user does not have admin privileges"
+        })
+      }
+
+    }).catch(_ => {
+      res.status(500).send({
+        "message": "failed to find user with userid=" +
+          userid,"
+      })
+    })
+  });
+
   router.post("/user/:id/set-permissions", controller.setUserPermission);
 
   app.use("/api", router);
