@@ -71,18 +71,24 @@ module.exports = (app) => {
   router.use(passport.authenticate("jwt", { session: false }));
 
   router.use(function (req, res, next) {
-    let userid = req.params.id;
+    let userid = req.user.id;
 
-    UserPermission.findAll({
-      include: [
-          { model: User, as: 'User' },
-          { model: Restaurant, as: 'Restaurant' },
-      ]
-    }).then(() => {
-      next();
+    User.findbypk(userid, {
+      include: [{ model: Restaurant, as: 'restaurants', where: { id: req.user.restaurantId } }]
+    }).then((user) => {
+
+      if (user.restaurants.length > 0) {
+        next();
+      } else {
+        res.status(500).send({
+          message": "user does not have proper permissions"
+        })
+      }
+
     }).catch(_ => {
       res.status(500).send({
-        "message": "user does not have proper permissions"
+        "message": "failed to find user with userid=" +
+          userid,"
       })
     })
   });
@@ -124,7 +130,7 @@ module.exports = (app) => {
   router.put("/user/details", controller.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
-  router.post("/user/:id/set-permissions", controller.deleteUserPermission);
+  router.post("/user/:id/set-permissions", controller.setUserPermission);
 
   app.use("/api", router);
 
