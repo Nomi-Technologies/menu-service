@@ -1156,6 +1156,7 @@ module.exports.publicDishList = (req, res) => {
       { model: Tag, as: "Tags" },
       { model: Category, where: { menuId: menuId } },
       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
+      { model: Modification, as: "Modifications" }
     ],
     order: [[Category, "createdAt", "asc"]],
   })
