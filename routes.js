@@ -73,9 +73,7 @@ module.exports = (app) => {
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
   router.put("/images/menus/:id", controller.uploadMenuImage);
   router.put("/images/dishes/:id", controller.uploadDishImage);
-
   router.get("/restaurants/me", controller.getRestaurant);
-  // TODO(tony): change it back to /restaurants/me
   router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
   router.post("/dishes", controller.createDish);
@@ -93,14 +91,17 @@ module.exports = (app) => {
   router.get("/tags", controller.getTags);
   router.post("/menus", controller.createMenu);
   router.post("/menus/bulkCreate", controller.bulkCreateDish);
-  router.get("/menus/:id", controller.getMenu);
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
-  router.put("/menus/:id", controller.updateMenu);
-  router.delete("/menus/:id", controller.deleteMenu);
-  router.post("/menus/:id", controller.duplicateMenu);
+  router.put("/menus/:id/toggle-filtering", controller.toggleFiltering);
   router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
   router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
+  router.delete("/menus/:id", controller.deleteMenu);
+  router.get("/menus/:id", controller.getMenu);
+  router.post("/menus/:id", controller.duplicateMenu);
+  router.put("/menus/:id", controller.updateMenu);
   router.get("/all-menus", controller.getAllMenus);
+  router.post("/modifications", controller.createModification);
+  router.put("/modifications/:id", controller.updateModification);
   router.get("/user/favorite-menus", controller.getFavoriteMenus);
   router.get("/user/details", controller.getUserDetails);
   router.put("/user/details", controller.updateUserDetails);
