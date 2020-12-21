@@ -1,18 +1,15 @@
 const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
-const { getStaticFile, getFile, uploadFile } = require('./util/aws-s3-utils');
-
+const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
 const slug = require("slug");
-
 const { JWT_SECRET } = require("./config.js");
 const jwt = require("jsonwebtoken");
-
 const { Op } = require("sequelize");
-
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
+const { serializeError } = require('serialize-error');
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -291,12 +288,12 @@ module.exports.bulkCreateDish = async (req, res) => {
             menuId: menu.id,
             price: originalDish.price,
           };
-  
+
           tagIds = [];
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
-  
+
           let dish = await Dish.create(dishData)
           await dish.setTags(tagIds)
         }
@@ -305,7 +302,7 @@ module.exports.bulkCreateDish = async (req, res) => {
         await menu.destroy()
         reject(error)
       }
-      
+
     })
   }).then((menu) => {
     res.send(menu);
@@ -401,7 +398,7 @@ module.exports.favoriteMenu = (req, res) => {
         message: "Could not favorite menu"
       })
     })
-  } else 
+  } else
   {
     User.findByPk(req.user.id).then((user) => {
       user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
@@ -839,9 +836,9 @@ module.exports.toggleFiltering = (req, res) => {
   Menu.update(
     {
       enableFiltering: enableFiltering
-    }, 
-    { 
-      where: { id: req.params.id } 
+    },
+    {
+      where: { id: req.params.id }
     }
   ).then(() => {
     let message;
@@ -1082,10 +1079,10 @@ module.exports.fetchAsset = async (req, res) => {
 
 function imageUploadHelper(path, req, res) {
   const headers = caseless(req.headers);
-  uploadFile(path, req.body, headers.get('content-type'))
+  uploadImage(path, req, res, headers.get('content-type'))
     .then((data) => res.send(data))
     .catch((err) => {
-      console.log(err);
+      console.log(JSON.stringify(serializeError(err)));
       res.status(500).send({
         message: `An error occurred while uploading asset to ${path}`
       });
