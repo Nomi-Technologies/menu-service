@@ -1,5 +1,6 @@
-const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, sequelize } = require("./models");
+const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
+const { createDish, createCategory } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
 const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
 const slug = require("slug");
@@ -11,7 +12,6 @@ const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
 const dish = require("./util/menu");
-const { createRequireFromPath } = require("module");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -295,17 +295,8 @@ module.exports.bulkCreateDish = async (req, res) => {
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
-<<<<<<< HEAD
-
-          let dish = await Dish.create(dishData)
-=======
   
-<<<<<<< HEAD
           let dish = await createDish(categoryId, dishData)
->>>>>>> 134cd32... replace create category and create dish with helper method that tracks index
-=======
-          let dish = await Dish.create(dishData)
->>>>>>> cd46a58... finish reordering routes
           await dish.setTags(tagIds)
         }
         resolve(menu);
@@ -529,31 +520,30 @@ module.exports.getDish = (req, res) => {
 
 module.exports.updateDish = async (req, res) => {
   try {
-    let dish = await Dish.findByPk(req.params.id)
-    if (dish) {
-      await Dish.update(req.body, { where: { id: req.params.id } })
+    let result = await Dish.update(req.body, 
+      { 
+        where: { id: req.params.id }, 
+        returning: true,
+        plain: true 
+      }
+    )
+    let dish = result[1] // returned object is always second element in array
 
-      dishTags = req.body.dishTags;
-      if(req.body.dishTags) {
-        await dish.setTags(req.body.dishTags)
-      }
-      if(req.body.dishModifications) {
-        await dish.setModifications(req.body.dishModifications)
-      
-      }
-      res.status(200).send({
-        message: "dish update successful",
-      });
-    } else {
-      // sends if dish does not exist, or user does not have access
-      res.status(404).send({
-        message: "Could not find dish to update",
-      });
+    if(req.body.dishTags !== undefined) {
+      await dish.setTags(req.body.dishTags)
     }
-  } catch (err) {
-    console.log(err)
+
+    if(req.body.dishModifications !== undefined) { 
+      await dish.setModifications(req.body.dishModifications)
+    }
+    
+    res.send({
+      message: "Dish updated successfully"
+    })
+  } catch (error) {
+    console.error(error)
     res.status(500).send({
-      message: "Error updating dish"
+      message: "Dish could not be updated"
     })
   }
 };
@@ -676,16 +666,18 @@ module.exports.dishesByName = (req, res) => {
 };
 
 //Categories
-module.exports.createCategory = (req, res) => {
-  Category.create(req.body)
-    .then((data) => {
-      res.send(data);
+module.exports.createCategory = async (req, res) => {
+  try {
+    createCategory(req.body.menuId, req.body)
+    res.send({
+      message: "Category successfully created"
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Category could not be created",
-      });
-    });
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({
+      message: "Error while creating category"
+    })
+  }
 };
 
 module.exports.updateCategory = (req, res) => {
@@ -842,67 +834,6 @@ module.exports.updateMenu = (req, res) => {
     });
 };
 
-// params: ordering: a list of category objects depicting the current order of the menu
-// note: every category should be passed in, regardless of if categories were reordered or not.
-// let example = [
-//   {
-//     id: 1,
-//     dishes: [
-//       0, 1, 2, 3
-//     ]
-//   },
-// ]
-module.exports.updateCategoryOrder = async (req, res) => {
-  const { order } = req.body
-  const t = await sequelize.transaction()
-
-  try {
-    await Promise.all(order.map(async (categoryId) => {
-      let category = await Category.findByPk(categoryId)
-      category.index = order.indexOf(categoryId)
-      await category.save({ transaction: t })
-    }))
-
-    await t.commit()
-    res.send({
-      message: "category updated successfully"
-    })
-  }
-  catch(error) {
-    console.error(error)
-    await t.rollback()
-    res.status(500).send({
-      message: "error updating category order"
-    })
-  }
-}
-
-module.exports.updateDishOrder = async (req, res) => {
-  const { order } = req.body
-  const t = await sequelize.transaction()
-
-  try {
-    await Promise.all(order.map(async (dishId) => {
-      let dish = await Dish.findByPk(dishId)
-      dish.index = order.indexOf(dishId)
-      await dish.save({ transaction: t })
-    }))
-
-    await t.commit()
-    res.send({
-      message: "category updated successfully"
-    })
-  }
-  catch(error) {
-    console.error(error)
-    await t.rollback()
-    res.status(500).send({
-      message: "error updating category order"
-    })
-    
-  }
-}
-
 module.exports.toggleFiltering = (req, res) => {
   let enableFiltering = req.body.enableFiltering
   Menu.update(
@@ -955,7 +886,7 @@ module.exports.getMenu = (req, res) => {
         ],
       },
     ],
-    order: [[Category, "index", "asc"]],
+    order: [[Category, "updatedAt", "asc"]],
   })
   .then((menu) => {
     if(menu !== null) {
@@ -1059,7 +990,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
       resolve();
     }
     oldMenu.Categories.forEach(c => {
-      Category.create({
+      createCategory(menuId, {
         name: c.dataValues.name,
         menuId: newMenu.dataValues.id,
         description: c.dataValues.description,
@@ -1068,7 +999,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
           resolve();
         }
         c.Dishes.forEach(d => {
-          Dish.create({
+          let dishInfo = {
             name: d.dataValues.name,
             description: d.dataValues.description,
             price: d.dataValues.price,
@@ -1078,7 +1009,10 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
             canRemove: d.dataValues.canRemove,
             notes: d.dataValues.notes,
             tableTalkPoints: d.dataValues.tableTalkPoints,
-          }).then((dCopy) => {
+          }
+
+          createDish(cCopy.dataValues.id, dishInfo)
+          .then((dCopy) => {
             dCopy.setTags(d.Tags);
             resolve();
           })
@@ -1142,7 +1076,7 @@ module.exports.fetchAsset = async (req, res) => {
       res.send(data.Body);
     })
     .catch((err) => {
-      console.error(err);
+      console.log(err);
       res.status(err.statusCode).send({
         message: err.message
       });
@@ -1154,11 +1088,7 @@ function imageUploadHelper(path, req, res) {
   uploadImage(path, req, res, headers.get('content-type'))
     .then((data) => res.send(data))
     .catch((err) => {
-<<<<<<< HEAD
       console.log(JSON.stringify(serializeError(err)));
-=======
-      console.error(err);
->>>>>>> cd46a58... finish reordering routes
       res.status(500).send({
         message: `An error occurred while uploading asset to ${path}`
       });
@@ -1229,6 +1159,7 @@ module.exports.publicDishList = (req, res) => {
       { model: Tag, as: "Tags" },
       { model: Category, where: { menuId: menuId } },
       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
+      { model: Modification, as: "Modifications" }
     ],
     order: [[Category, "createdAt", "asc"]],
   })
