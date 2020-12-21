@@ -1,4 +1,5 @@
 'use strict';
+const { error } = require('console');
 const { Sequelize } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
@@ -8,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
       unique: true
+    },
+    index: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     },
     name: {
       type: DataTypes.STRING,

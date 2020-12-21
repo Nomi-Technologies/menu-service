@@ -27,7 +27,6 @@ fs
   })
   .forEach(file => {
     var model = require(path.join(__dirname, file))(sequelize, Sequelize) // fix with sequelize upgrade
-
     db[model.name] = model;
   });
 
