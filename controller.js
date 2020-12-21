@@ -882,9 +882,9 @@ module.exports.updateDishOrder = async (req, res) => {
   const t = await sequelize.transaction()
 
   try {
-    await Promise.all(order.map(async (dishId, index) => {
+    await Promise.all(order.map(async (dishId) => {
       let dish = await Dish.findByPk(dishId)
-      dish.index = index
+      dish.index = order.indexOf(dishId)
       await dish.save({ transaction: t })
     }))
 
