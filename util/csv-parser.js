@@ -5,7 +5,12 @@ const {
     Restaurant,
     Category,
     Menu
-  } = require("../models");
+} = require("../models");
+
+const {
+    createDish, createCategory
+} = require("./menu")
+
 
 const { Op } = require("sequelize");
 
@@ -38,7 +43,7 @@ let getOrCreateCategory = async (categoryName, menuId) => {
         if(category) {
             return category.id
         } else {
-            newCategory = await Category.create({ name: categoryName, menuId: menuId })
+            newCategory = await createCategory(menuId, { name: categoryName, menuId: menuId })
             return newCategory.id
         }
     } catch (err) {
@@ -96,7 +101,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                         }
                     } else {
                         try {
-                            let newDish = await Dish.create({
+                            let dishInfo = {
                                 name: dish.Name,
                                 description: dish.Description,
                                 price: dish.Price,
@@ -106,7 +111,8 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 restaurantId: restaurantId,
                                 vp: vp,
                                 gfp: gfp
-                            })
+                            }
+                            let newDish = await createDish(categoryId, dishInfo)
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await newDish.setTags(nonModifiableAllergenIds)
                             await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
@@ -169,6 +175,15 @@ let menuToCSV = async (menu) => {
                     row[header.indexOf('Description')] = formatCell(dish.description)
                     row[header.indexOf('Price')] = formatCell(dish.price)
                     row[header.indexOf('Allergens')] = formatCell(dishAllergensToString(dish.Tags))
+
+                    // compile modifiable tags
+                    let modifiableTags = []
+                    dish.Tags.forEach((tag) => {
+                        if(tag.DishTag.removable) {
+                            modifiableTags.push(tag)
+                        }
+                    })
+                    row[header.indexOf('Modifiable')] = formatCell(dishAllergensToString(modifiableTags))
                     row[header.indexOf('GFP')] = dish.GFP ? "X" : ""
                     row[header.indexOf('VP')] = dish.VP ? "X" : ""
                     row[header.indexOf('Table Talk Points')] = formatCell(dish.tableTalkPoints)
