@@ -834,6 +834,67 @@ module.exports.updateMenu = (req, res) => {
     });
 };
 
+// params: ordering: a list of category objects depicting the current order of the menu
+// note: every category should be passed in, regardless of if categories were reordered or not.
+// let example = [
+//   {
+//     id: 1,
+//     dishes: [
+//       0, 1, 2, 3
+//     ]
+//   },
+// ]
+module.exports.updateCategoryOrder = async (req, res) => {
+  const { order } = req.body
+  const t = await sequelize.transaction()
+
+  try {
+    await Promise.all(order.map(async (categoryId) => {
+      let category = await Category.findByPk(categoryId)
+      category.index = order.indexOf(categoryId)
+      await category.save({ transaction: t })
+    }))
+
+    await t.commit()
+    res.send({
+      message: "category updated successfully"
+    })
+  }
+  catch(error) {
+    console.error(error)
+    await t.rollback()
+    res.status(500).send({
+      message: "error updating category order"
+    })
+  }
+}
+
+module.exports.updateDishOrder = async (req, res) => {
+  const { order } = req.body
+  const t = await sequelize.transaction()
+
+  try {
+    await Promise.all(order.map(async (dishId) => {
+      let dish = await Dish.findByPk(dishId)
+      dish.index = order.indexOf(dishId)
+      await dish.save({ transaction: t })
+    }))
+
+    await t.commit()
+    res.send({
+      message: "category updated successfully"
+    })
+  }
+  catch(error) {
+    console.error(error)
+    await t.rollback()
+    res.status(500).send({
+      message: "error updating category order"
+    })
+    
+  }
+}
+
 module.exports.toggleFiltering = (req, res) => {
   let enableFiltering = req.body.enableFiltering
   Menu.update(
