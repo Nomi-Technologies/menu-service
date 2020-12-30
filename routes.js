@@ -5,6 +5,7 @@ const proxy = require("express-http-proxy");
 module.exports = (app) => {
   const controller = require("./controller");
   const { passport } = require("./controller");
+  const userController = require("./src/controllers/user");
 
   var revProxy = express.Router();
   revProxy.all(
@@ -55,6 +56,9 @@ module.exports = (app) => {
   // }));
 
   var router = express.Router();
+
+  router.get("/user/getUserDetails", userController.getUserDetails);
+  router.put("/user/updateUserDetails", userController.updateUserDetails);
 
   router.post("/restaurants/register", controller.createRestaurant);
   router.get("/assets/*", controller.fetchAsset);
