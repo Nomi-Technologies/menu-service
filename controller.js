@@ -1,4 +1,4 @@
-const { Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
 const { createDish, createCategory } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
@@ -646,7 +646,7 @@ module.exports.dishesByName = (req, res) => {
   Dish.findAll({
     where: {
       name: {
-        [Op.iLike]: searchValue,
+        [sequelize.Op.iLike]: searchValue,
       },
       restaurantId: userRestaurantId,
     },
@@ -846,9 +846,9 @@ module.exports.updateMenu = (req, res) => {
 // ]
 module.exports.updateCategoryOrder = async (req, res) => {
   const { order } = req.body
-  const t = await sequelize.transaction()
-
+  
   try {
+    const t = await sequelize.transaction()
     await Promise.all(order.map(async (categoryId) => {
       let category = await Category.findByPk(categoryId)
       category.index = order.indexOf(categoryId)
@@ -856,6 +856,7 @@ module.exports.updateCategoryOrder = async (req, res) => {
     }))
 
     await t.commit()
+
     res.send({
       message: "category updated successfully"
     })
@@ -871,9 +872,9 @@ module.exports.updateCategoryOrder = async (req, res) => {
 
 module.exports.updateDishOrder = async (req, res) => {
   const { order } = req.body
-  const t = await sequelize.transaction()
-
+  
   try {
+    const t = await sequelize.transaction()
     await Promise.all(order.map(async (dishId) => {
       let dish = await Dish.findByPk(dishId)
       dish.index = order.indexOf(dishId)
@@ -942,12 +943,16 @@ module.exports.getMenu = (req, res) => {
                 as: "Modifications",
                 include: [ { model: Tag, as: "Tags" } ],
               },
-            ] 
+            ],
+            order: [[Dish, "index", "asc"]]
           },
         ],
+        order: [
+          [{ model: Dish, as: 'Dishes' }, 'index', 'asc']
+        ]
       },
     ],
-    order: [[Category, "updatedAt", "asc"]],
+    order: [[Category, "index", "asc"]],
   })
   .then((menu) => {
     if(menu !== null) {
@@ -1013,7 +1018,7 @@ module.exports.duplicateMenu = (req, res) => {
           ],
         },
       ],
-      order: [[Category, "updatedAt", "asc"]],
+      order: [[Category, "index", "asc"]],
     }
   )
   .then((oldMenu) => {
@@ -1109,11 +1114,18 @@ module.exports.getMenuAsCSV = (req, res) => {
       {
         model: Category,
         include: [
-          { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+          { 
+            model: Dish, 
+            as: "Dishes", 
+              include: [
+                { model: Tag, as: "Tags" }
+              ] 
+            },
         ],
+        order: [[Dish, "index", "asc"]]
       },
     ],
-    order: [[Category, "updatedAt", "asc"]],
+    order: [[Category, "index", "asc"]],
   }).then((menu) => {
     return menuToCSV(menu)
   }).then((csv) => {
@@ -1222,7 +1234,7 @@ module.exports.publicDishList = (req, res) => {
       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
       { model: Modification, as: "Modifications" }
     ],
-    order: [[Category, "createdAt", "asc"]],
+    order: [[Category, "index", "asc"]],
   })
     .then((data) => res.send(data))
     .catch((err) =>

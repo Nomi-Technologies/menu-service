@@ -109,6 +109,8 @@ module.exports = (app) => {
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
 
+  // /groups/:groupId/restaurants/:restaurantId/menus/:menuId/
+
   app.use("/api", router);
 
   var webApiRouter = express.Router();
