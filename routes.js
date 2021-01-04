@@ -123,6 +123,8 @@ module.exports = (app) => {
   router.get("/menus/:id", controller.getMenu);
   router.post("/menus/:id", controller.duplicateMenu);
   router.put("/menus/:id", controller.updateMenu);
+  router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
+  router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
   router.get("/all-menus", controller.getAllMenus);
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
@@ -132,6 +134,7 @@ module.exports = (app) => {
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
 
+<<<<<<< HEAD
   // All routes below need to be an admin
   router.use(function (req, res, next) {
 
@@ -154,6 +157,9 @@ module.exports = (app) => {
   });
 
   router.post("/user/:id/set-permissions", controller.setUserPermission);
+=======
+  // /groups/:groupId/restaurants/:restaurantId/menus/:menuId/
+>>>>>>> 2ba01999fde22d13354a117a9a6798611a69d7c5
 
   app.use("/api", router);
 

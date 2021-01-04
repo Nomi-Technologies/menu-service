@@ -23,6 +23,8 @@
     "express-http-proxy": "^1.6.0",
     "express-winston": "^4.0.3",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "node": "^14.4.0",
     "node-addon-api": "^3.0.0",
     "nodemon": "^2.0.4",
@@ -32,6 +34,11 @@
     "passport-local": "^1.0.0",
     "pg": "^8.0.0",
     "sequelize": "^6.0.0",
+<<<<<<< HEAD
+=======
+    "sequelize-cli": "^6.0.0",
+    "serialize-error": "^7.0.1",
+>>>>>>> 2ba01999fde22d13354a117a9a6798611a69d7c5
     "slug": "^3.3.0",
     "uuid": "^8.3.0",
     "winston": "^3.3.3"
