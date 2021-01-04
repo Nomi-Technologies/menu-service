@@ -4,6 +4,7 @@ const proxy = require("express-http-proxy");
 
 module.exports = (app) => {
   const controller = require("./controller");
+  const menuController = require("./src/controllers/menu");
   const { passport } = require("./controller");
 
   var revProxy = express.Router();
@@ -11,7 +12,7 @@ module.exports = (app) => {
     "/smart-menu/*",
     proxy("https://nomi-smart-menu.netlify.app", {
       proxyReqPathResolver: (req) => `/${req.params[0]}`,
-    })
+    }menuC
   );
   app.use("/app", revProxy);
 
@@ -88,19 +89,26 @@ module.exports = (app) => {
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
-  router.post("/menus", controller.createMenu);
-  router.post("/menus/bulkCreate", controller.bulkCreateDish);
+
+  /* Menus Routes */
+  router.post("/menus", menuController.createMenu);
+  router.delete("/menus/:id", menuController.deleteMenu);
+  router.get("/menus/:id", menuController.getMenu);
+  router.put("/menus/:id/toggle-filtering", menuController.toggleFiltering);
+  router.put("/menus/:id/update-category-order", menuController.updateCategoryOrder);
+  router.put("/menus/:id/update-dish-order", menuController.updateDishOrder);
+  router.put("/menus/:id", menuController.updateMenu);
+  router.post("/menus/:id", menuController.duplicateMenu);
+  router.post("/menus/bulkCreate", menuController.bulkCreateDish);
+
+  /* Still need to reorg these 3 routes */
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
-  router.put("/menus/:id/toggle-filtering", controller.toggleFiltering);
   router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
   router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
-  router.delete("/menus/:id", controller.deleteMenu);
-  router.get("/menus/:id", controller.getMenu);
-  router.post("/menus/:id", controller.duplicateMenu);
-  router.put("/menus/:id", controller.updateMenu);
-  router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
-  router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
+
+
   router.get("/all-menus", controller.getAllMenus);
+
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
   router.get("/user/favorite-menus", controller.getFavoriteMenus);

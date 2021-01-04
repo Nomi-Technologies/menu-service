@@ -1,8 +1,8 @@
 const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
-const { createDish, createCategory } = require("./util/menu")
-const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
-const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
+const { createDish, createCategory } = require("./src/util/menu")
+const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
+const { getStaticFile, getFile, uploadFile, uploadImage } = require('./src/util/aws-s3-utils');
 const slug = require("slug");
 const { JWT_SECRET } = require("./config.js");
 const jwt = require("jsonwebtoken");
@@ -11,7 +11,7 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
-const dish = require("./util/menu");
+const dish = require("./src/util/menu");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -246,7 +246,7 @@ module.exports.createDish = async (req, res) => {
     if(req.body.dishModifications) {
       await dish.setModifications(req.body.dishModifications)
     }
-    
+
     res.send(dish)
   }
   catch (err) {
@@ -255,64 +255,6 @@ module.exports.createDish = async (req, res) => {
       message: err.message || "Dish could not be created",
     });
   };
-};
-
-module.exports.bulkCreateDish = async (req, res) => {
-  let ids = req.body.ids;
-
-  const menuData = {
-    name: req.body.name,
-    restaurantId: req.user.restaurantId,
-    published: true,
-  };
-
-  Menu.create(menuData).then(async (menu) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        for(let i = 0; i < ids.length; i++) {
-          let id = ids[i];
-          let originalDish = await Dish.findByPk(id, {
-            include: [
-              { model: Category, attributes: ["name"] },
-              { model: Tag, as: "Tags", attributes: ["id"] },
-            ]
-          })
-          let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
-          const dishData = {
-            name: originalDish.name,
-            description: originalDish.description,
-            addons: originalDish.addons,
-            canRemove: originalDish.canRemove,
-            notes: originalDish.notes,
-            tableTalkPoints: originalDish.tableTalkPoints,
-            restaurantId: originalDish.restaurantId,
-            categoryId: categoryId,
-            menuId: menu.id,
-            price: originalDish.price,
-          };
-
-          tagIds = [];
-          originalDish.Tags.forEach((tag) => {
-            tagIds.push(tag.id);
-          });
-  
-          let dish = await createDish(categoryId, dishData)
-          await dish.setTags(tagIds)
-        }
-        resolve(menu);
-      } catch (error) {
-        await menu.destroy()
-        reject(error)
-      }
-
-    })
-  }).then((menu) => {
-    res.send(menu);
-  }).catch(_ => {
-    res.status(500).send({
-      "message": "there was an error creating a new menu with selected dishes"
-    })
-  })
 };
 
 // takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
@@ -331,7 +273,7 @@ module.exports.createModification = async (req, res) => {
     await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
     res.send(modification);
   }
-  
+
   catch (err) {
     console.error(err);
     res.status(500).send({
@@ -364,67 +306,6 @@ module.exports.updateModification = async (req, res) => {
     });
   }
 }
-
-// reads csv and creates menu
-module.exports.uploadMenuCSV = (req, res) => {
-  parseCSV(
-    req.body.data,
-    req.user.restaurantId,
-    req.params.id,
-    req.body.overwrite
-  )
-    .then((completed) => {
-      res.send(completed);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message || "An error occured while processing this request",
-      });
-    });
-};
-
-module.exports.favoriteMenu = (req, res) => {
-  let favorite = req.body.favorite
-  if(favorite === true) {
-    User.findByPk(req.user.id).then((user) => {
-      return user.addFavoriteMenu(req.params.id);
-    }).then(() => {
-      res.send({
-        message: "Successfully favorited menu"
-      })
-    }).catch(err => {
-      console.error(err);
-      res.status(500).send({
-        message: "Could not favorite menu"
-      })
-    })
-  } else
-  {
-    User.findByPk(req.user.id).then((user) => {
-      user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
-        if(favoritedMenu) {
-          return user.removeFavoriteMenu(req.params.id)
-        }
-      }).then(() => {
-        res.send({
-          message: "Successfully unfavorited menu"
-        })
-      }).catch(err => {
-        console.error(err);
-        res.status(500).send({
-          message: "Could not unfavorite menu"
-        })
-      })
-    }).catch(err => {
-      console.error(err);
-      res.status(500).send({
-        message: "Could not unfavorite menu"
-      })
-    })
-  }
-};
 
 module.exports.getFavoriteMenus = (req, res) => {
   User.findByPk(req.user.id).then((user) => {
@@ -491,7 +372,7 @@ module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
   Dish.findByPk(id, {
-    include: 
+    include:
     [
       {
         model: Tag,
@@ -520,11 +401,11 @@ module.exports.getDish = (req, res) => {
 
 module.exports.updateDish = async (req, res) => {
   try {
-    let result = await Dish.update(req.body, 
-      { 
-        where: { id: req.params.id }, 
+    let result = await Dish.update(req.body,
+      {
+        where: { id: req.params.id },
         returning: true,
-        plain: true 
+        plain: true
       }
     )
     let dish = result[1] // returned object is always second element in array
@@ -533,10 +414,10 @@ module.exports.updateDish = async (req, res) => {
       await dish.setTags(req.body.dishTags)
     }
 
-    if(req.body.dishModifications !== undefined) { 
+    if(req.body.dishModifications !== undefined) {
       await dish.setModifications(req.body.dishModifications)
     }
-    
+
     res.send({
       message: "Dish updated successfully"
     })
@@ -596,7 +477,7 @@ module.exports.createModification = (req, res) => {
     dishId: dishId,
     ...req.body
   }
-  
+
   // search for dish to verify existence
   Dish.findByPk(dishId).then(() => {
     // create modification
@@ -620,7 +501,7 @@ module.exports.createModification = (req, res) => {
 module.exports.removeModification = (req, res) => {
   let dishId = req.params.dishId
   let modificationId = req.params.modificationId
-  
+
   Modification.findOne({
     where: {
       id: modificationId,
@@ -777,318 +658,6 @@ module.exports.getAllCategoriesByMenu = (req, res) => {
 };
 
 //Menus
-module.exports.createMenu = async (req, res) => {
-  const menuData = {
-    name: req.body.name,
-    restaurantId: req.user.restaurantId,
-    published: true,
-  };
-
-  try {
-    const menu = await Menu.create(menuData)
-    if(req.body.csv) {
-      try {
-        await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
-      } catch (err) {
-        // if there's an error, clean up the menu that was created
-        await Menu.destroy({where: {id: menu.id}})
-        res.status(500).send({
-          message: err.message || "Menu could not be created with supplied .csv file",
-        });
-        return
-      }
-    }
-
-    res.send(menu)
-  } catch(err) {
-    res.status(500).send({
-      message: err.message || "Menu could not be created",
-    });
-  }
-};
-
-module.exports.updateMenu = (req, res) => {
-  let userRestaurantId = req.user.restaurantId;
-  Menu.findByPk(req.params.id)
-    .then((menu) => {
-      // verify menu belongs to restauraunt of menu to update
-      if (menu && menu.restaurantId == userRestaurantId) {
-        Menu.update(req.body, { where: { id: req.params.id } }).then(() => {
-          res.status(200).send({
-            message: "update sucessful",
-          });
-        });
-      } else {
-        // sends if dish does not exist, or user does not have access
-        res.status(404).send({
-          message: "Could not find menu to update",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured while updating menu with id=" + req.params.id,
-      });
-    });
-};
-
-// params: ordering: a list of category objects depicting the current order of the menu
-// note: every category should be passed in, regardless of if categories were reordered or not.
-// let example = [
-//   {
-//     id: 1,
-//     dishes: [
-//       0, 1, 2, 3
-//     ]
-//   },
-// ]
-module.exports.updateCategoryOrder = async (req, res) => {
-  const { order } = req.body
-  
-  try {
-    const t = await sequelize.transaction()
-    await Promise.all(order.map(async (categoryId) => {
-      let category = await Category.findByPk(categoryId)
-      category.index = order.indexOf(categoryId)
-      await category.save({ transaction: t })
-    }))
-
-    await t.commit()
-
-    res.send({
-      message: "category updated successfully"
-    })
-  }
-  catch(error) {
-    console.error(error)
-    await t.rollback()
-    res.status(500).send({
-      message: "error updating category order"
-    })
-  }
-}
-
-module.exports.updateDishOrder = async (req, res) => {
-  const { order } = req.body
-  
-  try {
-    const t = await sequelize.transaction()
-    await Promise.all(order.map(async (dishId) => {
-      let dish = await Dish.findByPk(dishId)
-      dish.index = order.indexOf(dishId)
-      await dish.save({ transaction: t })
-    }))
-
-    await t.commit()
-    res.send({
-      message: "category updated successfully"
-    })
-  }
-  catch(error) {
-    console.error(error)
-    await t.rollback()
-    res.status(500).send({
-      message: "error updating category order"
-    })
-    
-  }
-}
-
-module.exports.toggleFiltering = (req, res) => {
-  let enableFiltering = req.body.enableFiltering
-  Menu.update(
-    {
-      enableFiltering: enableFiltering
-    },
-    {
-      where: { id: req.params.id }
-    }
-  ).then(() => {
-    let message;
-    if(enableFiltering === true) {
-      message = "filtered enabled"
-    } else {
-      message = "filtering disabled"
-    }
-    res.status(200).send({
-      message: message
-    })
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "An error occured while updating filtering",
-    });
-  });
-}
-
-module.exports.getMenu = (req, res) => {
-  const id = req.params.id;
-  let userRestaurantId = req.user.restaurantId;
-  Menu.findOne({
-    where: { restaurantId: userRestaurantId, id: id },
-    include: [
-      {
-        model: Category,
-        include: [
-          { 
-            model: Dish, 
-            as: "Dishes", 
-            include: [
-              { model: Tag, as: "Tags" },
-              { 
-                model: Modification, 
-                as: "Modifications",
-                include: [ { model: Tag, as: "Tags" } ],
-              },
-            ],
-            order: [[Dish, "index", "asc"]]
-          },
-        ],
-        order: [
-          [{ model: Dish, as: 'Dishes' }, 'index', 'asc']
-        ]
-      },
-    ],
-    order: [[Category, "index", "asc"]],
-  })
-  .then((menu) => {
-    if(menu !== null) {
-      res.send(menu);
-    } else {
-      res.status(404).send()
-    }
-    
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "An error occured while getting menus list",
-    });
-  });
-};
-
-module.exports.deleteMenu = (req, res) => {
-  let userRestaurantId = req.user.restaurantId;
-  Menu.findByPk(req.params.id)
-    .then((menu) => {
-      // verify user belongs to restauraunt of menu to update
-      if (menu && menu.restaurantId == userRestaurantId) {
-        Menu.destroy({
-          where: { id: req.params.id },
-        })
-          .then(
-            res.send({
-              message: "menu was deleted successfully",
-            })
-          )
-          .catch((err) => {
-            res.status(500).send({
-              message:
-                err.message ||
-                "An error occured while deleting menu with id=" + req.params.id,
-            });
-          });
-      } else {
-        // sends if menu does not exist, or user does not have access
-        res.status(404).send({
-          message: "Could not find menu to update",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured while updating menu with id=" + req.params.id,
-      });
-    });
-};
-
-module.exports.duplicateMenu = (req, res) => {
-  let userRestaurantId = req.user.restaurantId;
-  Menu.findByPk(req.params.id,
-    {include: [
-        {
-          model: Category,
-          include: [
-            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
-          ],
-        },
-      ],
-      order: [[Category, "index", "asc"]],
-    }
-  )
-  .then((oldMenu) => {
-    // verify user belongs to restauraunt of menu to update
-    if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
-      Menu.create({
-        name: oldMenu.dataValues.name + ' Copy',
-        restaurantId: req.user.restaurantId,
-        published: true
-      }).then((newMenu) => {
-          //duplicate all categories with menuId = menu.dataValues.id, use new menuId
-          duplicateCategoriesAndDishes(oldMenu, newMenu)
-          .then(() => {
-            res.send({
-              message: "menu was duplicated successfully",
-              menu: {
-                id: newMenu.dataValues.id
-              }
-            })
-          })
-      })
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message:
-        err.message ||
-        "An error occured while duplicating menu",
-    });
-  });
-};
-const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
-  return new Promise((resolve, reject) => {
-    if(oldMenu.Categories.length === 0) {
-      resolve();
-    }
-    oldMenu.Categories.forEach(c => {
-      createCategory(menuId, {
-        name: c.dataValues.name,
-        menuId: newMenu.dataValues.id,
-        description: c.dataValues.description,
-      }).then((cCopy) => {
-        if(c.Dishes.length == 0) {
-          resolve();
-        }
-        c.Dishes.forEach(d => {
-          let dishInfo = {
-            name: d.dataValues.name,
-            description: d.dataValues.description,
-            price: d.dataValues.price,
-            categoryId: cCopy.dataValues.id,
-            restaurantId: d.dataValues.restaurantId,
-            addons: d.dataValues.addons,
-            canRemove: d.dataValues.canRemove,
-            notes: d.dataValues.notes,
-            tableTalkPoints: d.dataValues.tableTalkPoints,
-          }
-
-          createDish(cCopy.dataValues.id, dishInfo)
-          .then((dCopy) => {
-            dCopy.setTags(d.Tags);
-            resolve();
-          })
-        })
-      }).catch((err) => {
-        reject(err)
-      })
-    })
-  })
-}
 
 module.exports.getAllMenus = (req, res) => {
   let userRestaurantId = req.user.restaurantId;
@@ -1114,12 +683,12 @@ module.exports.getMenuAsCSV = (req, res) => {
       {
         model: Category,
         include: [
-          { 
-            model: Dish, 
-            as: "Dishes", 
+          {
+            model: Dish,
+            as: "Dishes",
               include: [
                 { model: Tag, as: "Tags" }
-              ] 
+              ]
             },
         ],
         order: [[Dish, "index", "asc"]]
@@ -1139,6 +708,67 @@ module.exports.getMenuAsCSV = (req, res) => {
     })
   })
 }
+
+// reads csv and creates menu
+module.exports.uploadMenuCSV = (req, res) => {
+  parseCSV(
+    req.body.data,
+    req.user.restaurantId,
+    req.params.id,
+    req.body.overwrite
+  )
+    .then((completed) => {
+      res.send(completed);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message:
+          err.message || "An error occured while processing this request",
+      });
+    });
+};
+
+module.exports.favoriteMenu = (req, res) => {
+  let favorite = req.body.favorite
+  if(favorite === true) {
+    User.findByPk(req.user.id).then((user) => {
+      return user.addFavoriteMenu(req.params.id);
+    }).then(() => {
+      res.send({
+        message: "Successfully favorited menu"
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not favorite menu"
+      })
+    })
+  } else
+  {
+    User.findByPk(req.user.id).then((user) => {
+      user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
+        if(favoritedMenu) {
+          return user.removeFavoriteMenu(req.params.id)
+        }
+      }).then(() => {
+        res.send({
+          message: "Successfully unfavorited menu"
+        })
+      }).catch(err => {
+        console.error(err);
+        res.status(500).send({
+          message: "Could not unfavorite menu"
+        })
+      })
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send({
+        message: "Could not unfavorite menu"
+      })
+    })
+  }
+};
 
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
