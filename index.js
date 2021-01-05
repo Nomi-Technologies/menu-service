@@ -1,4 +1,4 @@
-const db = require('./models');
+const db = require('./src/models');
 const express = require('express')
 const bodyParser = require('body-parser')
 

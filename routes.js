@@ -6,7 +6,7 @@ module.exports = (app) => {
   const controller = require("./controller");
   const menuController = require("./src/controllers/menu");
   const { passport } = require("./controller");
-  
+
   var revProxy = express.Router();
   revProxy.all(
     "/smart-menu/*",
