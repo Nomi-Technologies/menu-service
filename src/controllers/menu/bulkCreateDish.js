@@ -2,8 +2,6 @@ const menuLogic = require('../../logic/menu');
 const { createDish } = require("../../util/menu")
 const { getOrCreateCategory } = require("../../util/csv-parser");
 
-
-
 async function bulkCreateDish(req, res) {
   let ids = req.body.ids;
 
@@ -57,4 +55,4 @@ async function bulkCreateDish(req, res) {
   })
 };
 
-module.exports = bulkCreateDishMenu;
+module.exports = bulkCreateDish;

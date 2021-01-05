@@ -20,3 +20,5 @@ async function uploadMenuCSV(req, res) {
       });
     });
 };
+
+module.exports = uploadMenuCSV;

@@ -16,3 +16,5 @@ async function getMenuAsCSV(req, res) {
     })
   })
 }
+
+module.exports = getMenuAsCSV;

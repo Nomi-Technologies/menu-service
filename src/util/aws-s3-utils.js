@@ -6,7 +6,7 @@ const {
   ENV_SPEC_BUCKET_NAME,
   ACCESS_KEY_ID,
   SECRET_ACCESS_KEY,
-} = require("../config.js");
+} = require("../../config.js");
 
 const aws = require("aws-sdk");
 aws.config.update({

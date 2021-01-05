@@ -6,14 +6,14 @@ module.exports = (app) => {
   const controller = require("./controller");
   const menuController = require("./src/controllers/menu");
   const { passport } = require("./controller");
-
+  
   var revProxy = express.Router();
   revProxy.all(
     "/smart-menu/*",
     proxy("https://nomi-smart-menu.netlify.app", {
       proxyReqPathResolver: (req) => `/${req.params[0]}`,
-    }menuC
-  );
+    }
+  ));
   app.use("/app", revProxy);
 
   // use cors only other than reverse proxy, otherwise web browsers won't be able to

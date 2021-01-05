@@ -41,3 +41,5 @@ async function favoriteMenu(req, res) {
     })
   }
 };
+
+module.exports = favoriteMenu;
