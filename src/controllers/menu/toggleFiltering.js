@@ -3,7 +3,7 @@ const menuLogic = require('../../logic/menu');
 async function toggleFiltering(req, res) {
   let enableFiltering = req.body.enableFiltering;
 
-  updateMenuById(
+  menuLogic.updateMenuById(
     {
       enableFiltering: enableFiltering
     },

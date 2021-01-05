@@ -3,7 +3,7 @@ const menuLogic = require('../../logic/menu');
 async function getMenu(req, res) {
   const id = req.params.id;
   let userRestaurantId = req.user.restaurantId;
-  getMenuByIdAndRestaurantId(id, userRestaurantId)
+  menuLogic.getMenuByIdAndRestaurantId(id, userRestaurantId)
   .then((menu) => {
     if(menu !== null) {
       res.send(menu);

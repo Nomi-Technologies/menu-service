@@ -2,17 +2,17 @@ const menuLogic = require('../../logic/menu');
 
 async function duplicateMenu(req, res) {
   let userRestaurantId = req.user.restaurantId;
-  getMenuWithCategoryById(req.params.id)
+  menuLogic.getMenuWithCategoryById(req.params.id)
   .then((oldMenu) => {
     // verify user belongs to restauraunt of menu to update
     if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
-      createMenu({
+      menuLogic.createMenu({
         name: oldMenu.dataValues.name + ' Copy',
         restaurantId: req.user.restaurantId,
         published: true
       }).then((newMenu) => {
           //duplicate all categories with menuId = menu.dataValues.id, use new menuId
-          duplicateCategoriesAndDishes(oldMenu, newMenu)
+          menuLogic.duplicateCategoriesAndDishes(oldMenu, newMenu)
           .then(() => {
             res.send({
               message: "menu was duplicated successfully",

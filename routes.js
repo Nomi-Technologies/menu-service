@@ -91,21 +91,18 @@ module.exports = (app) => {
   router.get("/tags", controller.getTags);
 
   /* Menus Routes */
+  router.post("/menus/bulkCreate", menuController.bulkCreateDish);
   router.post("/menus", menuController.createMenu);
   router.delete("/menus/:id", menuController.deleteMenu);
+  router.post("/menus/:id", menuController.duplicateMenu);
+  router.post("/menus/:id/favorite-menu", menuController.favoriteMenu);
   router.get("/menus/:id", menuController.getMenu);
+  router.get("/menus/:id/csv", menuController.getMenuAsCSV);
   router.put("/menus/:id/toggle-filtering", menuController.toggleFiltering);
   router.put("/menus/:id/update-category-order", menuController.updateCategoryOrder);
   router.put("/menus/:id/update-dish-order", menuController.updateDishOrder);
   router.put("/menus/:id", menuController.updateMenu);
-  router.post("/menus/:id", menuController.duplicateMenu);
-  router.post("/menus/bulkCreate", menuController.bulkCreateDish);
-
-  /* Still need to reorg these 3 routes */
-  router.get("/menus/:id/csv", controller.getMenuAsCSV);
-  router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
-  router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
-
+  router.post("/menus/:id/uploadCSV", menuController.uploadMenuCSV);
 
   router.get("/all-menus", controller.getAllMenus);
 

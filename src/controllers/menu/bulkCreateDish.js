@@ -4,7 +4,7 @@ const { getOrCreateCategory } = require("../../util/csv-parser");
 
 
 
-module.exports.bulkCreateDish = async (req, res) => {
+async function bulkCreateDish(req, res) {
   let ids = req.body.ids;
 
   const menuData = {
@@ -13,12 +13,12 @@ module.exports.bulkCreateDish = async (req, res) => {
     published: true,
   };
 
-  createMenu(menuData).then(async (menu) => {
+  menuLogic.createMenu(menuData).then(async (menu) => {
     return new Promise(async (resolve, reject) => {
       try {
         for(let i = 0; i < ids.length; i++) {
           let id = ids[i];
-          let originalDish = await getDishById(id);
+          let originalDish = await menuLogic.getDishById(id);
           let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
           const dishData = {
             name: originalDish.name,
@@ -56,3 +56,5 @@ module.exports.bulkCreateDish = async (req, res) => {
     })
   })
 };
+
+module.exports = bulkCreateDishMenu;

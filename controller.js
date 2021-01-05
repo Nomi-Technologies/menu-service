@@ -657,8 +657,6 @@ module.exports.getAllCategoriesByMenu = (req, res) => {
     });
 };
 
-//Menus
-
 module.exports.getAllMenus = (req, res) => {
   let userRestaurantId = req.user.restaurantId;
   Menu.findAll({
@@ -673,101 +671,6 @@ module.exports.getAllMenus = (req, res) => {
         message: err.message || "An error occured while getting menus list",
       });
     });
-};
-
-module.exports.getMenuAsCSV = (req, res) => {
-  let menuId = req.params.id;
-  Menu.findOne({
-    where: { id: menuId },
-    include: [
-      {
-        model: Category,
-        include: [
-          {
-            model: Dish,
-            as: "Dishes",
-              include: [
-                { model: Tag, as: "Tags" }
-              ]
-            },
-        ],
-        order: [[Dish, "index", "asc"]]
-      },
-    ],
-    order: [[Category, "index", "asc"]],
-  }).then((menu) => {
-    return menuToCSV(menu)
-  }).then((csv) => {
-    res.send({
-      csv: csv
-    })
-  }).catch((err) => {
-    console.error(err);
-    res.status(500).send({
-      message: "Could not get menu as CSV"
-    })
-  })
-}
-
-// reads csv and creates menu
-module.exports.uploadMenuCSV = (req, res) => {
-  parseCSV(
-    req.body.data,
-    req.user.restaurantId,
-    req.params.id,
-    req.body.overwrite
-  )
-    .then((completed) => {
-      res.send(completed);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message || "An error occured while processing this request",
-      });
-    });
-};
-
-module.exports.favoriteMenu = (req, res) => {
-  let favorite = req.body.favorite
-  if(favorite === true) {
-    User.findByPk(req.user.id).then((user) => {
-      return user.addFavoriteMenu(req.params.id);
-    }).then(() => {
-      res.send({
-        message: "Successfully favorited menu"
-      })
-    }).catch(err => {
-      console.error(err);
-      res.status(500).send({
-        message: "Could not favorite menu"
-      })
-    })
-  } else
-  {
-    User.findByPk(req.user.id).then((user) => {
-      user.hasFavoriteMenu(req.params.id).then((favoritedMenu) => {
-        if(favoritedMenu) {
-          return user.removeFavoriteMenu(req.params.id)
-        }
-      }).then(() => {
-        res.send({
-          message: "Successfully unfavorited menu"
-        })
-      }).catch(err => {
-        console.error(err);
-        res.status(500).send({
-          message: "Could not unfavorite menu"
-        })
-      })
-    }).catch(err => {
-      console.error(err);
-      res.status(500).send({
-        message: "Could not unfavorite menu"
-      })
-    })
-  }
 };
 
 module.exports.fetchAsset = async (req, res) => {

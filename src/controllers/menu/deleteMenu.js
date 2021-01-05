@@ -2,11 +2,11 @@ const menuLogic = require('../../logic/menu');
 
 async function deleteMenu(req, res) {
   let userRestaurantId = req.user.restaurantId;
-  getMenuById(req.params.id)
+  menuLogic.getMenuById(req.params.id)
     .then((menu) => {
       // verify user belongs to restauraunt of menu to update
       if (menu && menu.restaurantId == userRestaurantId) {
-        destroyMenuById(req.params.id)
+        menuLogic.destroyMenuById(req.params.id)
           .then(
             res.send({
               message: "menu was deleted successfully",

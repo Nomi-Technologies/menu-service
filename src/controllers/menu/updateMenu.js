@@ -2,11 +2,11 @@ const menuLogic = require('../../logic/menu');
 
 async function updateMenu(req, res) {
   let userRestaurantId = req.user.restaurantId;
-  getMenuById(req.params.id)
+  menuLogic.getMenuById(req.params.id)
     .then((menu) => {
       // verify menu belongs to restauraunt of menu to update
       if (menu && menu.restaurantId == userRestaurantId) {
-        updateMenuById(req.body, req.params.id).then(() => {
+        menuLogic.updateMenuById(req.body, req.params.id).then(() => {
           res.status(200).send({
             message: "update sucessful",
           });

@@ -8,13 +8,13 @@ async function createMenu(req, res) {
   };
 
   try {
-    const menu = await createMenu(menuData);
+    const menu = await menuLogic.createMenu(menuData);
     if(req.body.csv) {
       try {
         await parseCSV(req.body.csv, req.user.restaurantId, menu.id, req.body.overwrite)
       } catch (err) {
         // if there's an error, clean up the menu that was created
-        await destroyMenuById(menu.id);
+        await menuLogic.destroyMenuById(menu.id);
         res.status(500).send({
           message: err.message || "Menu could not be created with supplied .csv file",
         });
