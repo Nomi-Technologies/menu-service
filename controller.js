@@ -1,4 +1,4 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./src/models");
 
 const { createDish, createCategory } = require("./src/util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
