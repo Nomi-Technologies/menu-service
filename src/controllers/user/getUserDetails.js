@@ -2,6 +2,7 @@ const userLogic = require('../../logic/user');
 
 async function getUserDetails(req, res) {
   const email = req.user.email;
+
   userLogic.getUserByEmail(email)
   .then((user) => {
     res.send(user);
