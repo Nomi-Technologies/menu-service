@@ -57,9 +57,6 @@ module.exports = (app) => {
 
   var router = express.Router();
 
-  router.get("/user/getUserDetails", userController.getUserDetails);
-  router.put("/user/updateUserDetails", userController.updateUserDetails);
-
   router.post("/restaurants/register", controller.createRestaurant);
   router.get("/assets/*", controller.fetchAsset);
 
@@ -76,9 +73,11 @@ module.exports = (app) => {
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
   router.put("/images/menus/:id", controller.uploadMenuImage);
   router.put("/images/dishes/:id", controller.uploadDishImage);
+  
   router.get("/restaurants/me", controller.getRestaurant);
   router.put("/restaurants/:id", controller.updateRestaurant);
   router.post("/restaurants/register", controller.createRestaurant);
+  
   router.post("/dishes", controller.createDish);
   router.get("/dishes/:id", controller.getDish);
   router.put("/dishes/:id", controller.updateDish);
@@ -86,12 +85,14 @@ module.exports = (app) => {
   router.get("/dishes-by-category", controller.dishesByCategory);
   router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
   router.get("/dishes-by-name", controller.dishesByName);
+  
   router.post("/categories", controller.createCategory);
   router.get("/categories/:id", controller.getCategory);
   router.get("/categories-by-menu/:menuId", controller.getAllCategoriesByMenu);
   router.put("/categories/:id", controller.updateCategory);
   router.delete("/categories/:id", controller.deleteCategory);
   router.get("/tags", controller.getTags);
+
   router.post("/menus", controller.createMenu);
   router.post("/menus/bulkCreate", controller.bulkCreateDish);
   router.get("/menus/:id/csv", controller.getMenuAsCSV);
@@ -105,11 +106,13 @@ module.exports = (app) => {
   router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
   router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
   router.get("/all-menus", controller.getAllMenus);
+
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
+  
   router.get("/user/favorite-menus", controller.getFavoriteMenus);
-  router.get("/user/details", controller.getUserDetails);
-  router.put("/user/details", controller.updateUserDetails);
+  router.get("/user/details", userController.getUserDetails);
+  router.put("/user/details", userController.updateUserDetails);
   router.post("/user/password", controller.updatePassword);
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
 
