@@ -1,7 +1,7 @@
 const { User } = require('../../models');
 
-async function getUserById(userId) {
-  return User.findOne({ where: { id: userId } })
+async function getUserById(id) {
+  return User.getUser({ id })
 };
 
 module.exports = getUserById;
