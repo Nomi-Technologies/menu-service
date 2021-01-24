@@ -52,7 +52,7 @@ module.exports = {
         name: "Calamari",
         restaurantId: restaurant.id,
         categoryId: apps.id,
-        price: '$10',
+        price: '10',
       }
   
       await Dish.create(dishData).then(dish => dish.setTags([treenuts.id]));
@@ -61,18 +61,25 @@ module.exports = {
         name: "Hamburger",
         description: "Very juicy",
         restaurantId: restaurant.id,
-        categoryId: entrees.id
+        categoryId: entrees.id,
+        price: '5',
       }
   
       const hamburger = await Dish.create(dishData)
       await hamburger.setTags([sesame, gluten, egg])
-      let modData = {
+      let addMeatMod = await Modification.create({
+        restaurantId: restaurant.id,
+        name: "Add Meat",
+        description: "Adds more meat",
+        price: "2",
+      })
+      await hamburger.addModification(addMeatMod);
+      let mod = await Modification.create({
         restaurantId: restaurant.id,
         name: "Remove cheese",
         description: "Removes the cheese",
         price: "0",
-      }
-      let mod = await Modification.create(modData)
+      })
       await mod.setTags([egg.id], { through: { addToDish: false } });
       await hamburger.addModification(mod)
       
