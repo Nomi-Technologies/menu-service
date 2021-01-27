@@ -9,15 +9,10 @@ const expect = chai.expect;
 
 const TEST_EMAIL = 'admin@test.com';
 
-beforeEach(async () => {  
-    sinon.restore()
-});
-
-afterEach(async () => {  
-    sinon.restore()
-});
-
 describe('logic.user.getUserByEmail', () => {
+	afterEach(async () => {  
+		sinon.restore();
+	});
 	it('Should return User object given valid email', async () => {
 		const getUserSpy = sinon.spy(User, 'getUser');
 		const data = await userLogic.getUserByEmail(TEST_EMAIL);

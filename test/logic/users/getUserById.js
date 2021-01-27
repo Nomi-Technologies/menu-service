@@ -9,15 +9,10 @@ const expect = chai.expect;
 
 const TEST_ID = '9d026dae-98d5-4e64-8be8-17d9bd07b797';
 
-beforeEach(async () => {  
-    sinon.restore()
-});
-
-afterEach(async () => {  
-    sinon.restore()
-});
-
 describe('logic.user.getUserById', () => {
+	afterEach(async () => {  
+		sinon.restore()
+	});
 	it('Should return User object given valid id', async () => {
 		const getUserSpy = sinon.spy(User, 'getUser');
 		const data = await userLogic.getUserById(TEST_ID);
