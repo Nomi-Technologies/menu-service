@@ -5,10 +5,15 @@ async function createModification(req, res) {
   const dishId = req.params.id
   const modificationData = {
     dishId,
-    ...req.body
+    restaurantId: req.params.restaurantId,
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
   }
   const extraParams = {
     tags: req.body.Tags || null,
+    addTags: req.body.addTags || null,
+    removeTags: req.body.removeTags || null,
   }
   
   try {
@@ -16,7 +21,7 @@ async function createModification(req, res) {
     if(dish){
       const modifcation = modificationLogic.createModification(modificationData, extraParams);
       res.send({
-        modification,
+        modification: modifcation,
         message: "Modification successfully added",
       });
     }

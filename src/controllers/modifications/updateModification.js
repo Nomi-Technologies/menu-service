@@ -1,12 +1,20 @@
-const restaurantLogic = require('../../logic/restaurants');
+const modificationLogic = require('../../logic/restaurants');
 
-async function updateRestaurant(req, res) {
-  const userRestaurantId = req.params.id;
-  const newDetails = req.body;
-  
+async function updateModification(req, res) {
+  const modificationId = req.params.id;
+  const modificationData = {
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price
+  }
+  const extraParams = {
+    tags: req.body.Tags || null,
+    addTags: req.body.addTags || null,
+    removeTags: req.body.removeTags || null,
+  }
   try {
-    const restaurant = await restaurantLogic.getRestaurantById(userRestaurantId);
-    await restaurantLogic.updateRestaurant(restaurant, newDetails);
+    const modification = await restaurantLogic.getModificationById(modificationId);
+    await modificationLogic.updateModification(modification, modificationData, extraParams);
     res.status(200).send({
       message: "update sucessful",
     });
@@ -14,9 +22,9 @@ async function updateRestaurant(req, res) {
   catch(err) {
     console.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while updating restaurant with restaurant_id=${userRestaurantId}`,
+      message: err.message || `An error occured while updating modification with modificationId=${modificationId}`,
     });
   }
 };
 
-module.exports = updateRestaurant;
+module.exports = updateModification;

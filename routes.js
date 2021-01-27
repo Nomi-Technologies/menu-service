@@ -5,10 +5,12 @@ const proxy = require("express-http-proxy");
 module.exports = (app) => {
   const controller = require("./controller");
   const { passport } = require("./controller");
-  const userController = require("./src/controllers/users");
-  const restaurantController = require("./src/controllers/restaurants");
   const categoryController = require("./src/controllers/categories");
   const dishController = require("./src/controllers/dishes");
+  const modificationController = require("./src/controllers/modifications");
+  const restaurantController = require("./src/controllers/restaurants");
+  const tagController = require("./src/controllers/tags");
+  const userController = require("./src/controllers/users");
 
 
   var revProxy = express.Router();
@@ -95,7 +97,7 @@ module.exports = (app) => {
   router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
   router.put("/categories/:id", categoryController.updateCategory);
   router.delete("/categories/:id", categoryController.deleteCategory);
-  router.get("/tags", controller.getTags);
+  router.get("/tags", tagController.getTags);
 
   router.post("/menus", controller.createMenu);
   router.post("/menus/bulkCreate", controller.bulkCreateDish);
@@ -112,8 +114,8 @@ module.exports = (app) => {
   router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
   router.get("/all-menus", controller.getAllMenus);
 
-  router.post("/modifications", controller.createModification);
-  router.put("/modifications/:id", controller.updateModification);
+  router.post("/modifications", modificationController.createModification);
+  router.put("/modifications/:id", modificationController.updateModification);
   
   router.get("/user/favorite-menus", userController.getFavoriteMenus);
   router.get("/user/details", userController.getUserDetails);
