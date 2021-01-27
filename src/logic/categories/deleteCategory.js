@@ -1,5 +1,5 @@
-async function updateCategory(category) {
+async function deleteCategory(category) {
   return category.destroy();
 };
 
-module.exports = updateCategory;
+module.exports = deleteCategory;

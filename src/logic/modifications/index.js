@@ -1,9 +1,13 @@
-const createRestaurant = require('./createRestaurant');
-const getRestaurant = require('./getRestaurant');
-const updateRestaurant = require('./updateRestaurant');
+const createModification = require('./createModification');
+const deleteModification = require('./deleteModification');
+const getModificationByDishId = require('./getModificationByDishId');
+const getModificationById = require('./getModificationById');
+const updateModification = require('./updateModification');
 
 module.exports = {
-    createRestaurant,
-    getRestaurant,
-    updateRestaurant,
+    createModification,
+    deleteModification,
+    getModificationByDishId,
+    getModificationById,
+    updateModification,
 }
