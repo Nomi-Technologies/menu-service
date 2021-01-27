@@ -5,7 +5,11 @@ const proxy = require("express-http-proxy");
 module.exports = (app) => {
   const controller = require("./controller");
   const { passport } = require("./controller");
-  const userController = require("./src/controllers/user");
+  const userController = require("./src/controllers/users");
+  const restaurantController = require("./src/controllers/restaurants");
+  const categoryController = require("./src/controllers/categories");
+  const dishController = require("./src/controllers/dishes");
+
 
   var revProxy = express.Router();
   revProxy.all(
@@ -57,12 +61,12 @@ module.exports = (app) => {
 
   var router = express.Router();
 
-  router.post("/restaurants/register", controller.createRestaurant);
+  router.post("/restaurants/register", restaurantController.createRestaurant);
   router.get("/assets/*", controller.fetchAsset);
 
-  router.post("/user/register", controller.registerUser);
-  router.get("/user/check-email", controller.checkEmail);
-  router.post("/user/login", controller.loginUser);
+  router.post("/user/register", userController.registerUser);
+  router.get("/user/check-email", userController.checkEmail);
+  router.post("/user/login", userController.loginUser);
 
   router.get("/images/restaurants/:id", controller.getRestaurantImage);
   router.get("/images/menus/:id", controller.getMenuImage);
@@ -74,23 +78,23 @@ module.exports = (app) => {
   router.put("/images/menus/:id", controller.uploadMenuImage);
   router.put("/images/dishes/:id", controller.uploadDishImage);
   
-  router.get("/restaurants/me", controller.getRestaurant);
-  router.put("/restaurants/:id", controller.updateRestaurant);
-  router.post("/restaurants/register", controller.createRestaurant);
+  router.get("/restaurants/me", restaurantController.getRestaurant);
+  router.put("/restaurants/:id", restaurantController.updateRestaurant);
+  router.post("/restaurants/register", restaurantController.createRestaurant);
   
-  router.post("/dishes", controller.createDish);
-  router.get("/dishes/:id", controller.getDish);
-  router.put("/dishes/:id", controller.updateDish);
-  router.delete("/dishes/:id", controller.deleteDish);
-  router.get("/dishes-by-category", controller.dishesByCategory);
+  router.post("/dishes", dishController.createDish);
+  router.get("/dishes/:id", dishController.getDish);
+  router.put("/dishes/:id", dishController.updateDish);
+  router.delete("/dishes/:id", dishController.deleteDish);
+  router.get("/dishes-by-category", dishController.getDishesByCategory);
+  router.get("/dishes-by-name", dishController.getDishesByName);
   router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
-  router.get("/dishes-by-name", controller.dishesByName);
   
-  router.post("/categories", controller.createCategory);
-  router.get("/categories/:id", controller.getCategory);
-  router.get("/categories-by-menu/:menuId", controller.getAllCategoriesByMenu);
-  router.put("/categories/:id", controller.updateCategory);
-  router.delete("/categories/:id", controller.deleteCategory);
+  router.post("/categories", categoryController.createCategory);
+  router.get("/categories/:id", categoryController.getCategory);
+  router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
+  router.put("/categories/:id", categoryController.updateCategory);
+  router.delete("/categories/:id", categoryController.deleteCategory);
   router.get("/tags", controller.getTags);
 
   router.post("/menus", controller.createMenu);
@@ -105,16 +109,16 @@ module.exports = (app) => {
   router.put("/menus/:id", controller.updateMenu);
   router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
   router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
+  router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
   router.get("/all-menus", controller.getAllMenus);
 
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
   
-  router.get("/user/favorite-menus", controller.getFavoriteMenus);
+  router.get("/user/favorite-menus", userController.getFavoriteMenus);
   router.get("/user/details", userController.getUserDetails);
   router.put("/user/details", userController.updateUserDetails);
-  router.post("/user/password", controller.updatePassword);
-  router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
+  router.post("/user/password", userController.updatePassword);
 
   app.use("/api", router);
 
