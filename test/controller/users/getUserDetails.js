@@ -16,7 +16,7 @@ let token;
 
 describe('controller.user.getUserDetails', () => {
 	describe('controller.user.getUserDetails Authenticated Requests', () => {
-		beforeEach(async () => {  
+		before(async () => {  
 			const res = await chai.request(app)
 			.post('/api/user/login')
 			.send(TEST_USER);
@@ -31,7 +31,7 @@ describe('controller.user.getUserDetails', () => {
 		});
 	});
 	describe('controller.user.getUserDetails Unauthenticated Requests', () => {
-		beforeEach(async () => {  
+		before(async () => {  
 			token = null;
 		});
 		it('Should return error if user is not logged in', async () => {
