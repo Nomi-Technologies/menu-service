@@ -315,6 +315,20 @@ module.exports.bulkCreateDish = async (req, res) => {
   })
 };
 
+module.exports.getModifications = (req, res) => {
+  let restaurantId = req.user.restaurantId;
+
+  Modification.findAll({
+    where: { restaurantId: restaurantId }
+  }).then((data) => res.send(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: 'An error occurred while finding all modifications',
+      })
+    });
+}
+
 // takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
 module.exports.createModification = async (req, res) => {
   const modificationData = {

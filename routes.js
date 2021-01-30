@@ -101,6 +101,7 @@ module.exports = (app) => {
   router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
   router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
   router.get("/all-menus", controller.getAllMenus);
+  router.get("/modifications", controller.getModifications);
   router.post("/modifications", controller.createModification);
   router.put("/modifications/:id", controller.updateModification);
   router.get("/user/favorite-menus", controller.getFavoriteMenus);
