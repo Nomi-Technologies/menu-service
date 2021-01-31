@@ -1,4 +1,4 @@
-const userLogic = require('../../../src/logic/user');
+const userLogic = require('../../../src/logic/users');
 const sinon = require('sinon');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');

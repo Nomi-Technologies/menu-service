@@ -1,10 +1,10 @@
-const getUserById = require('./getUserById');
+const { User } = require('../../models');
 
 async function updateUserById(userId, newDetails) {
-  getUserById(userId)
-  .then((user) => {
-    // verify user belongs to restauraunt of dish to update
-    return user.update(newDetails)
+  return User.update(newDetails, {
+    where: { 
+      id: userId 
+    }
   });
 };
 
