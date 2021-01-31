@@ -1,6 +1,23 @@
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require('uuid');
 const { User } = require('../../models');
+const { JWT_SECRET } = require('../../config.js');
+const jwt = require('jsonwebtoken');
+
+async function addFavoriteMenuByUserId(userId, menuId) {
+    const user = await User.findByPk(userId);
+    return user.addFavoriteMenu(menuId);
+}
+
+async function authenticateTestUser({ email, password }) {
+    const authenticatedUser = await User.authenticate(email, password);
+    if(authenticatedUser) {
+        const payload = { email: authenticatedUser.email };
+        const token = jwt.sign(payload, JWT_SECRET);
+        return token;
+    }
+    return null;
+}
 
 async function createTestUser(user) {
     // copy user object into testUser so that we can retain the password in the original user object.
@@ -32,21 +49,17 @@ function generateTestUserData(user={}) {
         phone: user.phone || Math.random().toString(),
         role: user.role || 1,
         restaurantId: user.restaurantId || uuidv4(),
-        firstname: user.firstname || Math.random().toString(),
-        lastname: user.lastname || Math.random().toString()
+        firstName: user.firstName || Math.random().toString(),
+        lastName: user.lastName || Math.random().toString()
     };
     return testUser;
 }
 
-async function registerTestUser(user) {
-    await createTestUser(user);
-    return User.authenticate(user.email, user.password);
-}
-
 module.exports = {
+    addFavoriteMenuByUserId,
+    authenticateTestUser,
     createTestUser,
     deleteTestUser,
     deleteTestUserById,
     generateTestUserData,
-    registerTestUser,
 }
