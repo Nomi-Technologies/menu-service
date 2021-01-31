@@ -1,4 +1,4 @@
-const getDishById = require('./getRestaurantById');
+const getDishById = require('./getDishById');
 
 async function updateDishtById(dishId, newDetails) {
   getDishById(dishId)
