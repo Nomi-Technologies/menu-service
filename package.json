@@ -7,6 +7,8 @@
     "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
+    "test-controller-custom": "mocha 'test/controller/users/getFavoriteMenus.js'",
+    "test-logic-custom": "mocha 'test/logic/**/*.js'",
     "start": "node .",
     "develop": "nodemon .",
     "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"
