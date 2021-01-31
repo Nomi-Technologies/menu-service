@@ -97,7 +97,7 @@ module.exports = (app) => {
   router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
   router.put("/categories/:id", categoryController.updateCategory);
   router.delete("/categories/:id", categoryController.deleteCategory);
-  router.get("/tags", tagController.getTags);
+  router.get("/tags", tagController.getAllTags);
 
   router.post("/menus", controller.createMenu);
   router.post("/menus/bulkCreate", controller.bulkCreateDish);
