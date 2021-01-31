@@ -6,10 +6,10 @@ async function updatePassword(req, res) {
   const newPassword = req.body.newPassword;
   
   try {
-    const user = user.getUserById(userId);
+    const user = await userLogic.getUserById(userId);
     await userLogic.updateUserPassword(user, suppliedPassword, newPassword);
     res.send({
-      message: "password updated succesffuly"
+      message: "password updated successfully"
     });
   }
   catch(err) {

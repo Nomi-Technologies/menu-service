@@ -13,7 +13,7 @@ async function registerUser(req, res) {
 
   try {
     const registeredUser = await userLogic.registerUser(user);
-    res.send("User " + registeredUser.email + " was successfully created!");
+    res.send(`User ${registeredUser.email} was successfully created!`);
   } 
   catch(err) {
     console.error(err);

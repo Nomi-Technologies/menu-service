@@ -74,8 +74,8 @@ module.exports = (sequelize, DataTypes) => {
       phone: phone,
       role: role,
       restaurantId: restaurant,
-      firstname: fname,
-      lastname: lname
+      firstName: fname,
+      lastName: lname
     };
   
     let created_user = await User.create(user);
