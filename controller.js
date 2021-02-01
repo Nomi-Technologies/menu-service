@@ -603,34 +603,6 @@ module.exports.deleteDish = (req, res) => {
   });
 };
 
-// create a modifiation for a specific dish
-module.exports.createModification = (req, res) => {
-  let dishId = req.params.id
-  let modificationData = {
-    dishId: dishId,
-    ...req.body
-  }
-  
-  // search for dish to verify existence
-  Dish.findByPk(dishId).then(() => {
-    // create modification
-    return Modification.create(modificationData)
-  }).then((modification) => {
-    // set allergens
-    return modification.setTags(req.body.Tags)
-  }).then((modification) => {
-    res.send({
-      message: "Modification successfully added",
-      modification: modification
-    })
-  }).catch((err) => {
-    console.err(err);
-    res.status(500).send({
-      message: "could not create modifcation for dish with id=" + req.params.id
-    })
-  })
-}
-
 module.exports.removeModification = (req, res) => {
   let dishId = req.params.dishId
   let modificationId = req.params.modificationId
