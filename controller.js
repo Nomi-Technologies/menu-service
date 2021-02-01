@@ -366,7 +366,8 @@ module.exports.updateModification = async (req, res) => {
     let modification = await Modification.findByPk(modificationID)
     await modification.update(modificationData);
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    // .setTags will override the operation above
+    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
     res.send({
       message: "Modification successfully updated"
     });
