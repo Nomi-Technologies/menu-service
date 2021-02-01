@@ -521,7 +521,13 @@ module.exports.getDish = (req, res) => {
   })
     .then((dish) => {
       // verify user belongs to restauraunt of dish requested
-      res.send(dish);
+      const plainDish = dish.toJSON();
+      plainDish.Modifications.forEach((modification) => {
+        modification['addTags'] = modification.Tags?.filter((tag) => tag.ModificationTag.addToDish);
+        modification['removeTags'] = modification.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
+        delete modification['Tags'];
+      });
+      res.send(plainDish);
     })
     .catch((err) => {
       console.error(err);
