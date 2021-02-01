@@ -334,7 +334,6 @@ module.exports.createModification = async (req, res) => {
   const modificationData = {
     restaurantId: req.params.restaurantId,
     name: req.body.name,
-    description: req.body.description,
     price: req.body.price
   }
 
@@ -342,7 +341,7 @@ module.exports.createModification = async (req, res) => {
   try {
     let modification = await Modification.create(modificationData)
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
     res.send(modification);
   }
   
@@ -357,7 +356,6 @@ module.exports.createModification = async (req, res) => {
 module.exports.updateModification = async (req, res) => {
   const modificationData = {
     name: req.body.name,
-    description: req.body.description,
     price: req.body.price
   }
 
