@@ -12,7 +12,7 @@ async function createRestaurant(req, res) {
   };
   
   try {
-    const data = restaurantLogic.createRestaurant(restaurant);
+    const data = await restaurantLogic.createRestaurant(restaurant);
     res.send(data);
   }
   catch(err) {

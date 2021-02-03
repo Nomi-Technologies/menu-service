@@ -6,9 +6,10 @@ async function updateRestaurant(req, res) {
   
   try {
     const restaurant = await restaurantLogic.getRestaurantById(userRestaurantId);
-    await restaurantLogic.updateRestaurant(restaurant, newDetails);
+    const restaurantUpdated = await restaurantLogic.updateRestaurant(restaurant, newDetails);
     res.status(200).send({
-      message: "update sucessful",
+      message: 'update sucessful',
+      restaurant: restaurantUpdated,
     });
   }
   catch(err) {

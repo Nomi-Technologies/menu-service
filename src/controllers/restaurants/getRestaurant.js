@@ -4,7 +4,7 @@ const restaurantLogic = require('../../logic/restaurants');
 async function getRestaurant(req, res) {
   const userRestaurantId = req.user.restaurantId;
   try {
-    const restaurant = restaurantLogic.getRestaurantById(userRestaurantId);
+    const restaurant = await restaurantLogic.getRestaurantById(userRestaurantId);
     res.send(restaurant);
   }
   catch(err) {

@@ -17,9 +17,9 @@ async function createModification(req, res) {
   }
   
   try {
-    const dish = dishLogic.getDishById(dishId);
+    const dish = await dishLogic.getDishById(dishId);
     if(dish){
-      const modifcation = modificationLogic.createModification(modificationData, extraParams);
+      const modifcation = await modificationLogic.createModification(modificationData, extraParams);
       res.send({
         modification: modifcation,
         message: "Modification successfully added",

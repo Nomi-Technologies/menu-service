@@ -5,7 +5,7 @@ async function getDish(req, res) {
   const dishId = req.params.id;
 
   try {
-    const dish = dishLogic.getDishById(dishId);
+    const dish = await dishLogic.getDishById(dishId);
     res.send(dish);
   }
   catch(err) {

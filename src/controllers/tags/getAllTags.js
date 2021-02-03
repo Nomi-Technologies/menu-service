@@ -2,7 +2,7 @@ const tagLogic = require('../../logic/tags');
 
 async function getAllTags(req, res) {
   try {
-    const tags = tagLogic.getAllTags();
+    const tags = await tagLogic.getAllTags();
     res.send(tags);
   }
   catch(err) {

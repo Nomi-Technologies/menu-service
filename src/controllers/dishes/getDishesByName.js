@@ -6,7 +6,7 @@ async function getDishesByName(req, res) {
   const menuId = req.query.menuId;
 
   try {
-    const dishesByName = dishLogic.getDishesByName(userRestaurantId, menuId, searchValue);
+    const dishesByName = await dishLogic.getDishesByName(userRestaurantId, menuId, searchValue);
     res.send(dishesByName);
   }
   catch(err) {

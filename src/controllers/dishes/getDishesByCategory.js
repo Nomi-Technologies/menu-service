@@ -4,7 +4,7 @@ async function getDishesByCategory(req, res) {
   const userRestaurantId = req.user.restaurantId;
 
   try {
-    const dishesByCategory = dishLogic.getDishesByCategory(userRestaurantId);
+    const dishesByCategory = await dishLogic.getDishesByCategory(userRestaurantId);
     res.send(dishesByCategory);
   }
   catch(err) {
