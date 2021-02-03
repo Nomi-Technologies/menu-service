@@ -1,4 +1,3 @@
-const bulkCreateDish = require("./bulkCreateDish.js");
 const createMenu = require("./createMenu.js");
 const deleteMenu = require("./deleteMenu.js");
 const duplicateMenu = require("./duplicateMenu.js");
@@ -12,7 +11,6 @@ const updateMenu = require("./updateMenu.js");
 const uploadMenuCSV = require("./uploadMenuCSV.js");
 
 module.exports = {
-  bulkCreateDish,
   createMenu,
   deleteMenu,
   duplicateMenu,
