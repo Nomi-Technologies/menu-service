@@ -1,3 +1,4 @@
+const addFavoriteMenuByUser = require('./addFavoriteMenuByUser');
 const getFavoriteMenusByUser = require('./getFavoriteMenusByUser');
 const getUserByEmail = require('./getUserByEmail');
 const getUserById = require('./getUserById');
@@ -8,6 +9,7 @@ const updateUserById = require('./updateUserById');
 const updateUserPassword = require('./updateUserPassword');
 
 module.exports = {
+  addFavoriteMenuByUser,
   getFavoriteMenusByUser,
   getUserByEmail,
   getUserById,

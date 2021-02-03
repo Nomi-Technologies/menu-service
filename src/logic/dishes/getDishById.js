@@ -1,10 +1,13 @@
-const { Dish } = require('../../models');
+const { Dish, Category, Tag, Modification } = require('../../models');
 
 // gets restaurant information based on authentication
 async function getDishById(id) {
   return Dish.findByPk(id, {
-    include: 
-    [
+    include: [
+      { 
+        model: Category, 
+        attributes: ["name"] 
+      },
       {
         model: Tag,
         as: "Tags",
