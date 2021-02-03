@@ -7,6 +7,7 @@ module.exports = (app) => {
   const { passport } = require("./controller");
   const categoryController = require("./src/controllers/categories");
   const dishController = require("./src/controllers/dishes");
+  const menuController = require("./src/controllers/menus");
   const modificationController = require("./src/controllers/modifications");
   const restaurantController = require("./src/controllers/restaurants");
   const tagController = require("./src/controllers/tags");
@@ -99,20 +100,20 @@ module.exports = (app) => {
   router.delete("/categories/:id", categoryController.deleteCategory);
   router.get("/tags", tagController.getAllTags);
 
-  router.post("/menus", controller.createMenu);
-  router.post("/menus/bulkCreate", controller.bulkCreateDish);
-  router.get("/menus/:id/csv", controller.getMenuAsCSV);
-  router.put("/menus/:id/toggle-filtering", controller.toggleFiltering);
-  router.post("/menus/:id/uploadCSV", controller.uploadMenuCSV);
-  router.post("/menus/:id/favorite-menu", controller.favoriteMenu);
-  router.delete("/menus/:id", controller.deleteMenu);
-  router.get("/menus/:id", controller.getMenu);
-  router.post("/menus/:id", controller.duplicateMenu);
-  router.put("/menus/:id", controller.updateMenu);
-  router.put("/menus/:id/update-category-order", controller.updateCategoryOrder);
-  router.put("/menus/:id/update-dish-order", controller.updateDishOrder);
-  router.delete("/menus/:id/dishes/bulkDelete", controller.bulkDeleteDish);
-  router.get("/all-menus", controller.getAllMenus);
+  router.post("/menus", menuController.createMenu);
+  router.post("/menus/bulkCreate", menuController.bulkCreateDish);
+  router.get("/menus/:id/csv", menuController.getMenuAsCSV);
+  router.put("/menus/:id/toggle-filtering", menuController.toggleFiltering);
+  router.post("/menus/:id/uploadCSV", menuController.uploadMenuCSV);
+  router.post("/menus/:id/favorite-menu", menuController.favoriteMenu);
+  router.delete("/menus/:id", menuController.deleteMenu);
+  router.get("/menus/:id", menuController.getMenu);
+  router.post("/menus/:id", menuController.duplicateMenu);
+  router.put("/menus/:id", menuController.updateMenu);
+  router.put("/menus/:id/update-category-order", menuController.updateCategoryOrder);
+  router.put("/menus/:id/update-dish-order", menuController.updateDishOrder);
+  router.delete("/menus/:id/dishes/bulkDelete", menuController.bulkDeleteDish);
+  router.get("/all-menus", menuController.getAllMenus);
 
   router.post("/modifications", modificationController.createModification);
   router.put("/modifications/:id", modificationController.updateModification);
