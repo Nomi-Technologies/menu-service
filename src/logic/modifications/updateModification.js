@@ -1,6 +1,6 @@
 const restaurantLogic = require('../../logic/restaurants');
 
-async function updateModification(modification, modificationData, { tags, addTags, removeTags}) {
+async function updateModification(modification, modificationData, { addTags, removeTags }) {
   await modification.update(modificationData);
   await modification.setTags(addTags, { through: { addToDish: true } });
   // .setTags will override the operation above
