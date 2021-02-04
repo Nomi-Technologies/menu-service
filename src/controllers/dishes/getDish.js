@@ -1,16 +1,14 @@
 const dishLogic = require('../../logic/dishes');
+const modConverter = require('../../util/mod-tag-converter');
 
 // gets restaurant information based on authentication
 async function getDish(req, res) {
   const dishId = req.params.id;
 
   try {
-    const dish = await dishLogic.getDishById(dishId);const plainDish = dish.toJSON();
-    plainDish.Modifications.forEach((modification) => {
-      modification['addTags'] = modification.Tags?.filter((tag) => tag.ModificationTag.addToDish);
-      modification['removeTags'] = modification.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
-      delete modification['Tags'];
-    });
+    const dish = await dishLogic.getDishById(dishId);
+    const plainDish = dish.toJSON();
+    plainDish.Modifications = plainDish.Modifications.map((mod) => modConverter(mod));
     res.send(plainDish);
   }
   catch(err) {

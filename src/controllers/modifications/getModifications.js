@@ -1,4 +1,5 @@
 const modificationLogic = require('../../logic/modifications');
+const modConverter = require('../../util/mod-tag-converter');
 
 async function getModifications(req, res) {
   const restaurantId = req.user.restaurantId;
@@ -7,10 +8,7 @@ async function getModifications(req, res) {
     const modifications = await modificationLogic.getAllModifications(restaurantId);
     plainModifications = modifications.map((modification) => {
       const plainMod = modification.toJSON();
-      plainMod['addTags'] = plainMod.Tags?.filter((tag) => tag.ModificationTag.addToDish);
-      plainMod['removeTags'] = plainMod.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
-      delete plainMod['Tags'];
-      return plainMod;
+      return modConverter(plainMod);
     })
     res.send(plainModifications);
   } catch (err) {
