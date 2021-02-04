@@ -1,6 +1,7 @@
 const createMenu = require("./createMenu.js");
 const deleteMenuById = require("./deleteMenuById.js");
 const duplicateCategoriesAndDishes = require("./duplicateCategoriesAndDishes.js");
+const getAllMenusByRestaurantId = require("./getAllMenusByRestaurantId.js");
 const getMenuById = require("./getMenuById.js");
 const getMenuByIdAndRestaurantId = require("./getMenuByIdAndRestaurantId.js");
 const getMenuWithCategoryById = require("./getMenuWithCategoryById.js");
@@ -11,6 +12,7 @@ module.exports = {
   createMenu,
   deleteMenuById,
   duplicateCategoriesAndDishes,
+  getAllMenusByRestaurantId,
   getMenuById,
   getMenuByIdAndRestaurantId,
   getMenuWithCategoryById,
