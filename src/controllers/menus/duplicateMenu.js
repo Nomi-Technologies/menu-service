@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 
 async function duplicateMenu(req, res) {
   const userRestaurantId = req.user.restaurantId;

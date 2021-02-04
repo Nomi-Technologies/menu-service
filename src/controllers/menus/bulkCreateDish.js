@@ -1,5 +1,5 @@
 const menuLogic = require('../../logic/menus');
-const dishLogic = require('../../logic/menus');
+const dishLogic = require('../../logic/dishes');
 const { getOrCreateCategory } = require("../../util/csv-parser");
 
 async function bulkCreateDish(req, res) {

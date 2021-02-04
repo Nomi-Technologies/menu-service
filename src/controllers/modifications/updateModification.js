@@ -1,19 +1,17 @@
-const modificationLogic = require('../../logic/restaurants');
+const modificationLogic = require('../../logic/modifications');
 
 async function updateModification(req, res) {
   const modificationId = req.params.id;
   const modificationData = {
     name: req.body.name,
-    description: req.body.description,
     price: req.body.price
   }
   const extraParams = {
-    tags: req.body.Tags || null,
     addTags: req.body.addTags || null,
     removeTags: req.body.removeTags || null,
   }
   try {
-    const modification = await restaurantLogic.getModificationById(modificationId);
+    const modification = await modificationLogic.getModificationById(modificationId);
     await modificationLogic.updateModification(modification, modificationData, extraParams);
     res.status(200).send({
       message: "update sucessful",

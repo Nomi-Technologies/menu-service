@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 const { menuToCSV } = require('../../util/csv-parser');
 
 async function getMenuAsCSV(req, res) {

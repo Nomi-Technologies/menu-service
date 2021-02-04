@@ -1,17 +1,10 @@
-const { Dish } = require('../../models');
 const { Modification } = require('../../models');
 
-async function createModification(modificationData, { tags, addTags, removeTags}) {
-  const modification = Modification.create(modificationData);
-  if(tags){
-    await modification.setTags(tags);
-  }
-  if(addTags){
-    await modification.setTags(addTags, { through: { addToDish: true } });
-  }
-  if(removeTags){
-    await modification.setTags(removeTags, { through: { addToDish: false } });
-  }
+async function createModification(modificationData, { addTags, removeTags}) {
+  const modification = await Modification.create(modificationData);
+  await modification.setTags(addTags, { through: { addToDish: true } });
+  // .setTags will override the operation above
+  await modification.addTags(removeTags, { through: { addToDish: false } });
   return modification;
 };
 

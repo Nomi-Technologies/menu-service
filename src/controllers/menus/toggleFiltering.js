@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 
 async function toggleFiltering(req, res) {
   const enableFiltering = req.body.enableFiltering;

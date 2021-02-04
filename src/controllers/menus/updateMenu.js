@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 
 async function updateMenu(req, res) {
   const userRestaurantId = req.user.restaurantId;
