@@ -78,43 +78,6 @@ module.exports.loginUser = async (req, res) => {
       res.status(401).json({ msg: "Could not authentiate user" });
     }
   }
-};``
-
-module.exports.getUserDetails = async (req, res) => {
-  User.getUser({ email: req.user.email })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured creating while processing this request",
-      });
-    });
-};
-
-module.exports.updateUserDetails = async (req, res) => {
-  userId = req.user.id;
-  User.findOne({ where: { id: userId } })
-    .then((user) => {
-      // verify user belongs to restauraunt of dish to update
-      User.update(req.body, { where: { id: userId } }).then(() => {
-        res.status(200).send({
-          message: "update sucessful",
-          user: user,
-        });
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured while updating user with userId=" + userId,
-      });
-    });
 };
 
 module.exports.updatePassword = async (req, res) => {
