@@ -113,7 +113,7 @@ module.exports = (app) => {
   router.put("/menus/:id/update-category-order", menuController.updateCategoryOrder);
   router.put("/menus/:id/update-dish-order", menuController.updateDishOrder);
   router.delete("/menus/:id/dishes/bulkDelete", menuController.bulkDeleteDish);
-  router.get("/all-menus", controller.getAllMenus);
+  router.get("/all-menus", menuController.getAllMenus);
 
   router.post("/modifications", modificationController.createModification);
   router.put("/modifications/:id", modificationController.updateModification);
