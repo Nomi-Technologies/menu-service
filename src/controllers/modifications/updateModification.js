@@ -11,7 +11,7 @@ async function updateModification(req, res) {
     removeTags: req.body.removeTags || null,
   }
   try {
-    const modification = await restaurantLogic.getModificationById(modificationId);
+    const modification = await modificationLogic.getModificationById(modificationId);
     await modificationLogic.updateModification(modification, modificationData, extraParams);
     res.status(200).send({
       message: "update sucessful",

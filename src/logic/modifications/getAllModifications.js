@@ -1,8 +1,13 @@
-const { Modification } = require('../../models');
+const { Modification, Tag } = require('../../models');
 
 async function getAllModifications(restaurantId) {
   return Modification.findAll({
-    where: { restaurantId }
+    where: { restaurantId },
+    include: {
+      model: Tag,
+      as: 'Tags',
+      attributes: ['id', 'name', 'type'],
+    }
   });
 }
 

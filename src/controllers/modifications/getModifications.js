@@ -5,7 +5,14 @@ async function getModifications(req, res) {
 
   try {
     const modifications = await modificationLogic.getAllModifications(restaurantId);
-    res.send(modifications);
+    plainModifications = modifications.map((modification) => {
+      const plainMod = modification.toJSON();
+      plainMod['addTags'] = plainMod.Tags?.filter((tag) => tag.ModificationTag.addToDish);
+      plainMod['removeTags'] = plainMod.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
+      delete plainMod['Tags'];
+      return plainMod;
+    })
+    res.send(plainModifications);
   } catch (err) {
     console.log(err);
     res.status(500).send({

@@ -1,4 +1,4 @@
-const { Menu } = require('../../models');
+const { Menu, Category, Dish, Tag, Modification } = require('../../models');
 
 async function getMenuByIdAndRestaurantId(menuId, restaurantId) {
   return Menu.findOne({
