@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Nomi API!" })
 });
 
-app.listen(port, () => {
+app.server = app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 });
 

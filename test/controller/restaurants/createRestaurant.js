@@ -16,7 +16,8 @@ const TEST_RESTAURANT = generateTestRestaurantData();
 
 describe('controller.restauarants.createRestaurant', () => {
 	after(async () => {
-		await deleteTestRestaurantById(TEST_RESTAURANT.id);
+    await deleteTestRestaurantById(TEST_RESTAURANT.id);
+    app.server.close();
 	});
 	it('Should create restaurant', async () => {
 		const res = await chai.request(app)

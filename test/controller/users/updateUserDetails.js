@@ -27,6 +27,7 @@ describe('controller.user.updateUserDetails', () => {
 			deleteTestUserById(TEST_USER.id),
 			deleteTestRestaurantById(TEST_RESTAURANT.id),
 		]);
+		app.server.close();
 	});
 	describe('controller.user.updateUserDetails Authenticated Requests', () => {
 		beforeEach(async () => {  

@@ -34,6 +34,7 @@ describe('controller.users.getFavoriteMenus', () => {
 			deleteTestMenuById(TEST_MENU.id),
 			deleteTestRestaurantById(TEST_RESTAURANT.id),
 		]);
+		app.server.close();
 	});
 	describe('controller.users.getFavoriteMenus Authenticated Requests', () => {
 		beforeEach(async () => {  

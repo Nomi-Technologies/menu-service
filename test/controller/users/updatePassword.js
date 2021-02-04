@@ -27,6 +27,7 @@ describe('controller.user.updatePassword', () => {
 			deleteTestUserById(TEST_USER.id),
 			deleteTestRestaurantById(TEST_RESTAURANT.id),
 		]);
+		app.server.close();
 	});
 	describe('controller.user.updatePassword Authenticated Requests', () => {
 		beforeEach(async () => {  

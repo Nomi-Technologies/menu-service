@@ -19,6 +19,9 @@ const TEST_USER = {
 let token;
 
 describe('controller.users.getUserDetails', () => {
+	after(async () => {  
+		app.server.close();
+	});
 	describe('controller.users.getUserDetails Authenticated Requests', () => {
 		before(async () => {  
 			token = await authenticateTestUser(TEST_USER);

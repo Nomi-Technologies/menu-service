@@ -17,6 +17,9 @@ const TEST_USER = {
 };
 
 describe('controller.users.getUserDetails', () => {
+	after(async () => {  
+		app.server.close();
+	});
 	it('Should return user token', async () => {
 		const res = await chai.request(app)
 		.post(endpoint)

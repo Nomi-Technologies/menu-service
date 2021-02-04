@@ -25,6 +25,7 @@ describe('controller.user.registerUser', () => {
 			deleteTestUserById(TEST_USER.id),
 			deleteTestRestaurantById(TEST_RESTAURANT.id),
 		]);
+		app.server.close();
 	});
 	it('Should register user', async () => {
 		const res = await chai.request(app)

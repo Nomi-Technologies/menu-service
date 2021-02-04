@@ -28,6 +28,7 @@ describe('controller.users.getRestaurant', () => {
 			deleteTestUserById(TEST_USER.id),
 			deleteTestRestaurantById(TEST_RESTAURANT.id),
 		]);
+		app.server.close();
 	});
 	context('Authenticated Requests', () => {
 		before(async () => {  
