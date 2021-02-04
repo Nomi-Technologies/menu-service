@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 
 // params: ordering: a list of category objects depicting the current order of the menu
 // note: every category should be passed in, regardless of if categories were reordered or not.

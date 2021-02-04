@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 
 async function updateDishOrder(req, res) {
   const { order } = req.body;

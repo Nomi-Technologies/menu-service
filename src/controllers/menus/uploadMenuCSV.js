@@ -1,4 +1,4 @@
-const menuLogic = require('../../logic/menu');
+const menuLogic = require('../../logic/menus');
 const { parseCSV } = require("../../util/csv-parser");
 
 // reads csv and creates menu

@@ -1,4 +1,4 @@
-const modificationLogic = require('../../logic/restaurants');
+const modificationLogic = require('../../logic/modifications');
 
 async function updateModification(req, res) {
   const modificationId = req.params.id;
