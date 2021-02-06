@@ -22,7 +22,7 @@ describe('controller.users.getUserDetails', () => {
 	after(async () => {  
 		app.server.close();
 	});
-	describe('controller.users.getUserDetails Authenticated Requests', () => {
+	context('Authenticated Requests', () => {
 		before(async () => {  
 			token = await authenticateTestUser(TEST_USER);
 			expect(token).to.not.be.null;
@@ -34,7 +34,7 @@ describe('controller.users.getUserDetails', () => {
 			expect(res).to.have.status(200);
 		});
 	});
-	describe('controller.users.getUserDetails Unauthenticated Requests', () => {
+	context('Unauthenticated Requests', () => {
 		before(async () => {  
 			token = null;
 		});

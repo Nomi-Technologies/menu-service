@@ -36,7 +36,7 @@ describe('controller.users.getFavoriteMenus', () => {
 		]);
 		app.server.close();
 	});
-	describe('controller.users.getFavoriteMenus Authenticated Requests', () => {
+	context('Authenticated Requests', () => {
 		beforeEach(async () => {  
 			token = await authenticateTestUser(TEST_USER);
 			expect(token).to.not.be.null;
@@ -50,7 +50,7 @@ describe('controller.users.getFavoriteMenus', () => {
 			expect(res.body[0]).to.have.property('FavoriteMenu');
 		});
 	});
-	describe('controller.users.getFavoriteMenus Unauthenticated Requests', () => {
+	context('Unauthenticated Requests', () => {
 		before(async () => {  
 			token = null;
 		});

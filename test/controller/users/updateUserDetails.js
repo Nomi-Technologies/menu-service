@@ -29,7 +29,7 @@ describe('controller.user.updateUserDetails', () => {
 		]);
 		app.server.close();
 	});
-	describe('controller.user.updateUserDetails Authenticated Requests', () => {
+	context('Authenticated Requests', () => {
 		beforeEach(async () => {  
 			token = await authenticateTestUser(TEST_USER);
 			expect(token).to.not.be.null;
@@ -53,7 +53,7 @@ describe('controller.user.updateUserDetails', () => {
 			expect(user.phone).to.equal(newUserDetails.phone);
 		});
 	});
-	describe('controller.user.updateUserDetails Unauthenticated Requests', () => {
+	context('Unauthenticated Requests', () => {
 		before(async () => {  
 			token = null;
 		});

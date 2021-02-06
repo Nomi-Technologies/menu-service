@@ -29,7 +29,7 @@ describe('controller.user.updatePassword', () => {
 		]);
 		app.server.close();
 	});
-	describe('controller.user.updatePassword Authenticated Requests', () => {
+	context('Authenticated Requests', () => {
 		beforeEach(async () => {  
 			token = await authenticateTestUser(TEST_USER);
 			expect(token).to.not.be.null;
@@ -46,7 +46,7 @@ describe('controller.user.updatePassword', () => {
 			expect(res.body.message).to.equal('password updated successfully')
 		});
 	});
-	describe('controller.user.updatePassword Unauthenticated Requests', () => {
+	context('Unauthenticated Requests', () => {
 		before(async () => {  
 			token = null;
 		});
