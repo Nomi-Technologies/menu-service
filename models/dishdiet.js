@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
   DishDiet.init({
     dishId: DataTypes.UUID,
     dietId: DataTypes.UUID
-    //need another column to differentiate a dish that has a diet vs. a dish that is possible to have a diet with modifications
   }, {
     sequelize,
     modelName: 'DishDiet',
