@@ -15,12 +15,13 @@ jobs:
           command: npm run lint
 
 workflows:
-  eslint:
+  test-and-hold:
     jobs:
       - lint
-  node-tests:
-    jobs:
-      - node/test
+      - node/test:
+          requires:
+            - lint
+
   # deploy:
   #   jobs:
   #     - heroku/deploy-via-git:
