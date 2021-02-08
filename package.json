@@ -4,14 +4,15 @@
   "description": "Backend API for nomi",
   "main": "index.js",
   "scripts": {
+    "develop": "nodemon .",
+    "lint": "eslint ./src ./test",
+    "lint-fix": "eslint ./src ./test --fix",
+    "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all",
+    "start": "node .",
     "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
-    "test-controller-custom": "mocha 'test/controller/users/getFavoriteMenus.js'",
-    "test-logic-custom": "mocha 'test/logic/**/*.js'",
-    "start": "node .",
-    "develop": "nodemon .",
-    "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"
+    "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'"
   },
   "author": "",
   "license": "ISC",
@@ -48,5 +49,10 @@
     "slug": "^3.3.0",
     "uuid": "^8.3.0",
     "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
