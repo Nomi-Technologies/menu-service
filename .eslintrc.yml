@@ -13,3 +13,15 @@ parserOptions:
 
 rules:
   no-console: warn
+  brace-style: 
+    - error
+    - stroustrup
+  keyword-spacing:
+    - error
+    - before: true
+      after: true
+      overrides:
+        catch: 
+          after: false
+        
+        
