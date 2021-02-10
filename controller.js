@@ -1,4 +1,4 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, Diet } = require("./models");
 
 const { createDish, createCategory } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
@@ -278,6 +278,7 @@ module.exports.bulkCreateDish = async (req, res) => {
             include: [
               { model: Category, attributes: ["name"] },
               { model: Tag, as: "Tags", attributes: ["id"] },
+              { model: Diet, as: "Diets", attributes: ["id"] },
             ]
           })
           let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
@@ -298,9 +299,15 @@ module.exports.bulkCreateDish = async (req, res) => {
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
+
+          dietIds = [];
+          originalDish.Diets.forEach((diet) => {
+            dietIds.push(diet.id);
+          });
   
           let dish = await createDish(categoryId, dishData)
           await dish.setTags(tagIds)
+          await dish.setDiets(dietIds)
         }
         resolve(menu);
       } catch (error) {
@@ -332,6 +339,8 @@ module.exports.createModification = async (req, res) => {
     let modification = await Modification.create(modificationData)
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
     await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
+    await modification.setDiets(req.body.removeDiets, { through: { addToDish: false } })
     res.send(modification);
   }
   
@@ -356,6 +365,8 @@ module.exports.updateModification = async (req, res) => {
     await modification.update(modificationData);
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
     await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
+    await modification.setDiets(req.body.removeDiets, { through: { addToDish: false } })
     res.send({
       message: "Modification successfully updated"
     });
@@ -633,6 +644,7 @@ module.exports.createModification = (req, res) => {
     return Modification.create(modificationData)
   }).then((modification) => {
     // set allergens
+    //TODO: add diets
     return modification.setTags(req.body.Tags)
   }).then((modification) => {
     res.send({
