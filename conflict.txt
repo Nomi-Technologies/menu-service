@@ -1,4 +1,5 @@
 Dummy file that will demonstrate some merge conflicts
 Edit 1
 Edit 4 - from child
+Edit 5 - from child
 Edit 3
