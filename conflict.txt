@@ -1,2 +1,4 @@
 Dummy file that will demonstrate some merge conflicts
 Edit 1
+Edit 2
+Edit 3
