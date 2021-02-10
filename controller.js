@@ -246,6 +246,9 @@ module.exports.createDish = async (req, res) => {
     if(req.body.dishModifications) {
       await dish.setModifications(req.body.dishModifications)
     }
+    if(req.body.dishDiets) {
+      await dish.setDiets(req.body.dishDiets)
+    }
     
     res.send(dish)
   }
@@ -456,7 +459,7 @@ module.exports.dishesByCategory = (req, res) => {
   let userRestaurantId = req.user.restaurantId;
   Category.findAll({
     include: [
-      { model: Dish, include: [{ model: Tag, as: "Tags" }] },
+      { model: Dish, include: [{ model: Tag, as: "Tags" }, { model: Diet, as: "Diets" }] },
       { model: Menu, where: { restaurantId: userRestaurantId } },
     ],
   })
@@ -487,6 +490,21 @@ module.exports.getTags = (req, res) => {
     });
 };
 
+module.exports.getDiets = (req, res) => {
+  Diet.findAll()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occured while getting diets with restaurant=" + restaurantId,
+      });
+    });
+};
+
 module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
@@ -501,7 +519,15 @@ module.exports.getDish = (req, res) => {
       {
         model: Modification,
         as: "Modifications",
-        include: { model: Tag, as: "Tags", attributes: ["id", "name", "type"] }
+        include: [
+          { model: Tag, as: "Tags", attributes: ["id", "name", "type"] },
+          { model: Diet, as: "Diets", attributes: ["id", "name"] }
+        ]
+      },
+      {
+        model: Diet,
+        as: "Diets",
+        attributes: ["id", "name"]
       }
     ],
   })
@@ -535,6 +561,10 @@ module.exports.updateDish = async (req, res) => {
 
     if(req.body.dishModifications !== undefined) { 
       await dish.setModifications(req.body.dishModifications)
+    }
+
+    if(req.body.dishDiets !== undefined) {
+      await dish.setDiets(req.body.dishDiets)
     }
     
     res.send({
@@ -652,6 +682,7 @@ module.exports.dishesByName = (req, res) => {
     },
     include: [
       { model: Tag, as: "Tags" },
+      { model: Diet, as: "Diets" },
       { model: Category, where: { menuId: req.query.menuId }, attributes: [] },
     ],
   })
@@ -938,10 +969,11 @@ module.exports.getMenu = (req, res) => {
             as: "Dishes", 
             include: [
               { model: Tag, as: "Tags" },
+              { model: Diet, as: "Diets" },
               { 
                 model: Modification, 
                 as: "Modifications",
-                include: [ { model: Tag, as: "Tags" } ],
+                include: [ { model: Tag, as: "Tags" }, { model: Diet, as: "Diets" } ],
               },
             ],
             order: [[Dish, "index", "asc"]]
@@ -1014,7 +1046,7 @@ module.exports.duplicateMenu = (req, res) => {
         {
           model: Category,
           include: [
-            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }, { model: Diet, as: "Diets" }] },
           ],
         },
       ],
@@ -1080,6 +1112,7 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
           createDish(cCopy.dataValues.id, dishInfo)
           .then((dCopy) => {
             dCopy.setTags(d.Tags);
+            dCopy.setDiets(d.Diets);
             resolve();
           })
         })
@@ -1118,7 +1151,8 @@ module.exports.getMenuAsCSV = (req, res) => {
             model: Dish, 
             as: "Dishes", 
               include: [
-                { model: Tag, as: "Tags" }
+                { model: Tag, as: "Tags" },
+                { model: Diet, as: "Diets" }
               ] 
             },
         ],
