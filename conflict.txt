@@ -1,0 +1,2 @@
+Dummy file that will demonstrate some merge conflicts
+
