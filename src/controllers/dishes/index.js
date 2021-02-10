@@ -6,10 +6,10 @@ const getDishesByName = require('./getDishesByName');
 const updateDish = require('./updateDish');
 
 module.exports = {
-    createDish,
-    deleteDish,
-    getDish,
-    getDishesByCategory,
-    getDishesByName,
-    updateDish,
-}
+  createDish,
+  deleteDish,
+  getDish,
+  getDishesByCategory,
+  getDishesByName,
+  updateDish,
+};

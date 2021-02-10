@@ -5,6 +5,6 @@ async function deleteDishById(dishId) {
   await Dish.destroy({
     where: { id: dishId },
   });
-};
+}
 
 module.exports = deleteDishById;

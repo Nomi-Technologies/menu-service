@@ -2,8 +2,8 @@ const menuLogic = require('../../logic/menus');
 
 async function deleteMenu(req, res) {
   const userRestaurantId = req.user.restaurantId;
-  const menuId = req.params.id
-  
+  const menuId = req.params.id;
+
   try {
     const menu = menuLogic.getMenuById(menuId);
     if (menu && menu.restaurantId == userRestaurantId) {
@@ -22,10 +22,10 @@ async function deleteMenu(req, res) {
   catch(err) {
     res.status(500).send({
       message:
-        err.message ||
-        `An error occured while updating menu with id=${menuId}`,
+        err.message
+        || `An error occured while updating menu with id=${menuId}`,
     });
   }
-};
+}
 
 module.exports = deleteMenu;

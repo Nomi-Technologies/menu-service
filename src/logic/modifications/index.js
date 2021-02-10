@@ -6,10 +6,10 @@ const updateModification = require('./updateModification');
 const getAllModifications = require('./getAllModifications');
 
 module.exports = {
-    createModification,
-    deleteModification,
-    getModificationByDishId,
-    getModificationById,
-    updateModification,
-    getAllModifications,
-}
+  createModification,
+  deleteModification,
+  getModificationByDishId,
+  getModificationById,
+  updateModification,
+  getAllModifications,
+};

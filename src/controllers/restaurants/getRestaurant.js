@@ -13,6 +13,6 @@ async function getRestaurant(req, res) {
       message: err.message || `An error occured while getting restaurant with restaurant_id=${userRestaurantId}`,
     });
   }
-};
+}
 
 module.exports = getRestaurant;

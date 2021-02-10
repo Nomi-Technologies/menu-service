@@ -1,22 +1,22 @@
-const { createCategory } = require('../categories')
-const { createDish } = require('../dishes')
+const { createCategory } = require('../categories');
+const { createDish } = require('../dishes');
 
 async function duplicateCategoriesAndDishes(oldMenu, newMenu) {
   return new Promise((resolve, reject) => {
-    if(oldMenu.Categories.length === 0) {
+    if (oldMenu.Categories.length === 0) {
       resolve();
     }
-    oldMenu.Categories.forEach(c => {
+    oldMenu.Categories.forEach((c) => {
       createCategory(menuId, {
         name: c.dataValues.name,
         menuId: newMenu.dataValues.id,
         description: c.dataValues.description,
       }).then((cCopy) => {
-        if(c.Dishes.length == 0) {
+        if (c.Dishes.length == 0) {
           resolve();
         }
-        c.Dishes.forEach(d => {
-          let dishInfo = {
+        c.Dishes.forEach((d) => {
+          const dishInfo = {
             name: d.dataValues.name,
             description: d.dataValues.description,
             price: d.dataValues.price,
@@ -26,19 +26,19 @@ async function duplicateCategoriesAndDishes(oldMenu, newMenu) {
             canRemove: d.dataValues.canRemove,
             notes: d.dataValues.notes,
             tableTalkPoints: d.dataValues.tableTalkPoints,
-          }
+          };
 
           createDish(cCopy.dataValues.id, dishInfo)
-          .then((dCopy) => {
-            dCopy.setTags(d.Tags);
-            resolve();
-          })
-        })
+            .then((dCopy) => {
+              dCopy.setTags(d.Tags);
+              resolve();
+            });
+        });
       }).catch((err) => {
-        reject(err)
-      })
-    })
-  })
+        reject(err);
+      });
+    });
+  });
 }
 
 module.exports = duplicateCategoriesAndDishes;

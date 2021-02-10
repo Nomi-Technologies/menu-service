@@ -1,5 +1,4 @@
-'use strict';
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
@@ -7,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
-      unique: true
+      unique: true,
     },
     index: {
       type: DataTypes.INTEGER,
-      defaultValue: 0
+      defaultValue: 0,
     },
     name: {
       type: DataTypes.STRING,
@@ -28,15 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: '',
     },
   }, {});
-  Category.associate = function(models) {
+  Category.associate = function (models) {
     Category.belongsTo(models.Menu, {
       foreignKey: 'menuId',
-      onDelete: 'CASCADE'
-    })
+      onDelete: 'CASCADE',
+    });
 
     Category.hasMany(models.Dish, {
       foreignKey: 'categoryId',
-    })
+    });
   };
   return Category;
 };

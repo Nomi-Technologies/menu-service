@@ -17,9 +17,9 @@ async function updateCategoryOrder(req, res) {
   try {
     const t = await sequelize.transaction();
     await Promise.all(order.map(async (categoryId) => {
-      let category = await Category.findByPk(categoryId)
-      category.index = order.indexOf(categoryId)
-      await category.save({ transaction: t })
+      const category = await Category.findByPk(categoryId);
+      category.index = order.indexOf(categoryId);
+      await category.save({ transaction: t });
     }));
     await t.commit();
     res.send({
@@ -30,7 +30,7 @@ async function updateCategoryOrder(req, res) {
     console.error(err);
     await t.rollback();
     res.status(500).send({
-      message: 'error updating category order'
+      message: 'error updating category order',
     });
   }
 }

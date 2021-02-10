@@ -7,7 +7,7 @@ async function getAllModifications(restaurantId) {
       model: Tag,
       as: 'Tags',
       attributes: ['id', 'name', 'type'],
-    }
+    },
   });
 }
 

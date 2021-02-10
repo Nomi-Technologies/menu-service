@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class FavoriteMenu extends Model {
     /**
@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      FavoriteMenu.belongsTo(models.Menu, { foreignKey: 'menuId', targetKey: 'id', as: "Menu" });
-      FavoriteMenu.belongsTo(models.User, { foreignKey: 'userId', targetKey: 'id', as: "User" });
+      FavoriteMenu.belongsTo(models.Menu, { foreignKey: 'menuId', targetKey: 'id', as: 'Menu' });
+      FavoriteMenu.belongsTo(models.User, { foreignKey: 'userId', targetKey: 'id', as: 'User' });
     }
-  };
+  }
   FavoriteMenu.init({
     menuId: DataTypes.UUID,
-    userId: DataTypes.UUID
+    userId: DataTypes.UUID,
   }, {
     sequelize,
     modelName: 'FavoriteMenu',

@@ -3,7 +3,7 @@ const dishLogic = require('../../logic/dishes');
 async function getDishesByName(req, res) {
   const userRestaurantId = req.user.restaurantId;
   const searchValue = `%${req.query.searchInput}%`;
-  const menuId = req.query.menuId;
+  const { menuId } = req.query;
 
   try {
     const dishesByName = await dishLogic.getDishesByName(userRestaurantId, menuId, searchValue);
@@ -12,9 +12,9 @@ async function getDishesByName(req, res) {
   catch(err) {
     console.error(err);
     res.status(500).send({
-      message: err.message || "An error occured while searching for dish",
+      message: err.message || 'An error occured while searching for dish',
     });
   }
-};
+}
 
 module.exports = getDishesByName;

@@ -1,6 +1,5 @@
-'use strict';
 const { error } = require('console');
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Dish = sequelize.define('Dish', {
@@ -8,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
-      unique: true
+      unique: true,
     },
     index: {
       type: DataTypes.INTEGER,
-      defaultValue: 0
+      defaultValue: 0,
     },
     name: {
       type: DataTypes.STRING,
@@ -59,14 +58,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     vp: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
     gfp: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
   }, {});
-  Dish.associate = function(models) {
+  Dish.associate = function (models) {
     Dish.belongsToMany(models.Tag, {
       through: 'DishTag',
       as: 'Tags',
@@ -83,13 +82,13 @@ module.exports = (sequelize, DataTypes) => {
 
     Dish.belongsTo(models.Restaurant, {
       foreignKey: 'restaurantId',
-      onDelete: 'CASCADE'
-    })
+      onDelete: 'CASCADE',
+    });
 
     Dish.belongsTo(models.Category, {
       foreignKey: 'categoryId',
-      onDelete: 'CASCADE'
-    })
+      onDelete: 'CASCADE',
+    });
   };
   return Dish;
 };

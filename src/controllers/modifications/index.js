@@ -4,8 +4,8 @@ const updateModification = require('./updateModification');
 const getModifications = require('./getModifications');
 
 module.exports = {
-    createModification,
-    deleteModification,
-    updateModification,
-    getModifications,
-}
+  createModification,
+  deleteModification,
+  updateModification,
+  getModifications,
+};

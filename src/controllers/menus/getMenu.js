@@ -1,13 +1,13 @@
 const menuLogic = require('../../logic/menus');
 
 async function getMenu(req, res) {
-  const id = req.params.id;
+  const { id } = req.params;
   const userRestaurantId = req.user.restaurantId;
-  
+
   try {
     const menu = await menuLogic.getMenuByIdAndRestaurantId(id, userRestaurantId);
-    if(menu){
-      res.send(menu)
+    if (menu) {
+      res.send(menu);
     }
     else {
       res.status(404).send({
@@ -21,6 +21,6 @@ async function getMenu(req, res) {
       message: err.message || 'An error occured while getting menus list',
     });
   }
-};
+}
 
 module.exports = getMenu;

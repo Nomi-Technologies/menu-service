@@ -1,6 +1,5 @@
-'use strict';
-const bcrypt = require("bcrypt");
-const { Sequelize } = require('sequelize')
+const bcrypt = require('bcrypt');
+const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -8,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
-      unique: true
+      unique: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -41,22 +40,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: '',
-    }
+    },
   }, {});
 
-  User.associate = models => {
+  User.associate = (models) => {
     User.belongsTo(models.Restaurant, {
       foreignKey: 'restaurantId',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     });
 
     User.belongsToMany(models.Menu, {
       through: 'FavoriteMenu',
       as: 'FavoriteMenus',
       foreignKey: 'userId',
-      otherKey: 'menuId'
-    })
-  }
+      otherKey: 'menuId',
+    });
+  };
 
   User.register = async (
     email,
@@ -65,46 +64,41 @@ module.exports = (sequelize, DataTypes) => {
     role,
     restaurant,
     fname,
-    lname
+    lname,
   ) => {
     const passwordHash = bcrypt.hashSync(password, 10);
-    let user = {
-      email: email,
+    const user = {
+      email,
       password: passwordHash,
-      phone: phone,
-      role: role,
+      phone,
+      role,
       restaurantId: restaurant,
       firstName: fname,
-      lastName: lname
+      lastName: lname,
     };
-  
-    let created_user = await User.create(user);
+
+    const created_user = await User.create(user);
     return User.authenticate(email, password);
   };
 
   User.updatePassword = async (id, newPassword) => {
     const passwordHash = bcrypt.hashSync(newPassword, 10);
-    User.findOne({ where: { id: id } }).then((user) => {
-      return user.update({password: passwordHash});
-    }).catch((err) => {
-      throw err
-    })
-  }
-  
-  User.getUser = async (obj) => {
-    return await User.findOne({
-      where: obj,
+    User.findOne({ where: { id } }).then((user) => user.update({ password: passwordHash })).catch((err) => {
+      throw err;
     });
   };
-  
+
+  User.getUser = async (obj) => await User.findOne({
+    where: obj,
+  });
+
   // used to validate the user
   User.authenticate = async (email, password) => {
-    let user = await User.findOne({ where: { email: email } });
+    const user = await User.findOne({ where: { email } });
     if (user && bcrypt.compareSync(password, user.password)) {
       return user;
-    } else {
-      return null;
     }
+    return null;
   };
 
   return User;

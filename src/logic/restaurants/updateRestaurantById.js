@@ -2,10 +2,9 @@ const getRestaurantById = require('./getRestaurantById');
 
 async function updateRestaurantById(restaurantId, newDetails) {
   getRestaurantById(restaurantId)
-  .then((restaurant) => {
+    .then((restaurant) =>
     // verify user belongs to restauraunt of dish to update
-    return restaurant.update(newDetails)
-  });
-};
+      restaurant.update(newDetails));
+}
 
 module.exports = updateRestaurantById;

@@ -1,5 +1,5 @@
 async function deleteCategory(modification) {
-    return modification.destroy();
-  };
-  
-  module.exports = deleteCategory;
+  return modification.destroy();
+}
+
+module.exports = deleteCategory;

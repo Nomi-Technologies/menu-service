@@ -6,6 +6,6 @@ async function deleteDish(dish, userRestaurantId) {
       where: { id: dish.id },
     });
   }
-};
+}
 
 module.exports = deleteDish;

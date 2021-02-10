@@ -17,10 +17,10 @@ async function updateMenu(req, res) {
   catch(err) {
     res.status(500).send({
       message:
-        err.message ||
-        `An error occured while updating menu with id=${req.params.id}`
+        err.message
+        || `An error occured while updating menu with id=${req.params.id}`,
     });
   }
-};
+}
 
 module.exports = updateMenu;

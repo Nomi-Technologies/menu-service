@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class ModificationTag extends Model {
     /**
@@ -10,14 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      ModificationTag.belongsTo(models.Modification, { foreignKey: 'modificationId', targetKey: 'id', as: "Modification" });
-      ModificationTag.belongsTo(models.Tag, { foreignKey: 'tagId', targetKey: 'id', as: "Tag" });
+      ModificationTag.belongsTo(models.Modification, { foreignKey: 'modificationId', targetKey: 'id', as: 'Modification' });
+      ModificationTag.belongsTo(models.Tag, { foreignKey: 'tagId', targetKey: 'id', as: 'Tag' });
     }
-  };
+  }
   ModificationTag.init({
     modificationId: DataTypes.UUID,
     tagId: DataTypes.UUID,
-    addToDish: DataTypes.BOOLEAN
+    addToDish: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'ModificationTag',

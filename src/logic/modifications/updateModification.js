@@ -1,4 +1,4 @@
-const restaurantLogic = require('../../logic/restaurants');
+const restaurantLogic = require('../restaurants');
 
 async function updateModification(modification, modificationData, { addTags, removeTags }) {
   await modification.update(modificationData);

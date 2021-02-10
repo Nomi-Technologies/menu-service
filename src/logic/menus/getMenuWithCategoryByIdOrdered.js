@@ -2,23 +2,23 @@ const { Menu } = require('../../models');
 
 async function getMenuWithCategoryByIdOrdered(id) {
   return Menu.findOne({
-    where: { id: id },
+    where: { id },
     include: [
       {
         model: Category,
         include: [
           {
             model: Dish,
-            as: "Dishes",
-              include: [
-                { model: Tag, as: "Tags" }
-              ]
-            },
+            as: 'Dishes',
+            include: [
+              { model: Tag, as: 'Tags' },
+            ],
+          },
         ],
-        order: [[Dish, "index", "asc"]]
+        order: [[Dish, 'index', 'asc']],
       },
     ],
-    order: [[Category, "index", "asc"]],
+    order: [[Category, 'index', 'asc']],
   });
 }
 

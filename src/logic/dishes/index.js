@@ -7,11 +7,11 @@ const updateDish = require('./updateDish');
 const updateDishById = require('./updateDishById');
 
 module.exports = {
-    createDish,
-    deleteDish,
-    deleteDishById,
-    getDishById,
-    getDishesByCategory,
-    updateDish,
-    updateDishById,
-}
+  createDish,
+  deleteDish,
+  deleteDishById,
+  getDishById,
+  getDishesByCategory,
+  updateDish,
+  updateDishById,
+};

@@ -5,9 +5,9 @@ const getCategory = require('./getCategory');
 const updateCategory = require('./updateCategory');
 
 module.exports = {
-    createCategory,
-    deleteCategory,
-    getAllCategoriesByMenu,
-    getCategory,
-    updateCategory,
-}
+  createCategory,
+  deleteCategory,
+  getAllCategoriesByMenu,
+  getCategory,
+  updateCategory,
+};

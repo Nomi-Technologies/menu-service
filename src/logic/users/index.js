@@ -18,4 +18,4 @@ module.exports = {
   updateUser,
   updateUserById,
   updateUserPassword,
-}
+};

@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Modification extends Model {
     /**
@@ -12,33 +12,33 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Modification.belongsTo(models.Restaurant, {
         foreignKey: 'restaurantId',
-        onDelete: 'CASCADE'
-      })
+        onDelete: 'CASCADE',
+      });
       Modification.belongsToMany(models.Tag, {
         through: 'ModificationTag',
         as: 'Tags',
         foreignKey: 'modificationId',
         otherKey: 'tagId',
-      })
+      });
       Modification.belongsToMany(models.Dish, {
         through: 'DishModification',
         as: 'Dishes',
         foreignKey: 'modificationId',
         otherKey: 'dishId',
-      })
+      });
     }
-  };
+  }
   Modification.init({
     id: {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      unique: true
+      unique: true,
     },
     restaurantId: DataTypes.UUID,
     name: DataTypes.STRING,
     description: DataTypes.STRING,
-    price: DataTypes.STRING
+    price: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Modification',
