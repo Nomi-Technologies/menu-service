@@ -645,6 +645,7 @@ module.exports.createModification = (req, res) => {
   }).then((modification) => {
     // set allergens
     //TODO: add diets
+    await modification.setDiets(req.body.Diets)
     return modification.setTags(req.body.Tags)
   }).then((modification) => {
     res.send({
