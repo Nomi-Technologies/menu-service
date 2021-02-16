@@ -178,6 +178,7 @@ let menuToCSV = async (menu) => {
                 'Description',
                 'Price',
                 'Allergens',
+                'Diets',
                 'Modifiable',
                 'GFP',
                 'VP',
@@ -197,6 +198,7 @@ let menuToCSV = async (menu) => {
                     row[header.indexOf('Description')] = formatCell(dish.description)
                     row[header.indexOf('Price')] = formatCell(dish.price)
                     row[header.indexOf('Allergens')] = formatCell(dishAllergensToString(dish.Tags))
+                    row[header.indexOf('Diets')] = formatCell(dishAllergensToString(dish.Diets))
 
                     // compile modifiable tags
                     let modifiableTags = []
