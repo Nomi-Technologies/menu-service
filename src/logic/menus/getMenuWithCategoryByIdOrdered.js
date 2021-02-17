@@ -11,7 +11,8 @@ async function getMenuWithCategoryByIdOrdered(id) {
             model: Dish,
             as: "Dishes",
               include: [
-                { model: Tag, as: "Tags" }
+                { model: Tag, as: "Tags" },
+                { model: Diet, as: "Diets" }
               ]
             },
         ],

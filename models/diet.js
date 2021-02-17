@@ -31,8 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       unique: true
     },
-    name: DataTypes.STRING,
-    type: DataTypes.STRING
+    name: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Diet',

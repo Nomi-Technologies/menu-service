@@ -1,6 +1,7 @@
 const menuLogic = require('../../logic/menus');
 
 async function createMenu(req, res) {
+  console.log('test4');
   const menuData = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,

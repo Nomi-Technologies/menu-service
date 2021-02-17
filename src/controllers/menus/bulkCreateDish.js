@@ -36,8 +36,14 @@ async function bulkCreateDish(req, res) {
             tagIds.push(tag.id);
           });
 
+          dietIds = [];
+          originalDish.Diets.forEach((diet) => {
+            dietIds.push(diet.id);
+          });
+
           let dish = await dishLogic.createDish(categoryId, dishData)
           await dish.setTags(tagIds)
+          await dish.setDiets(dietIds)
         }
         resolve(menu);
       } catch (error) {
