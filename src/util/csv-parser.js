@@ -4,7 +4,8 @@ const {
     User,
     Restaurant,
     Category,
-    Menu
+    Menu,
+    Diet
 } = require("../models");
 
 const {

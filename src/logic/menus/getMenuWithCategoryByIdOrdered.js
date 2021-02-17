@@ -1,4 +1,4 @@
-const { Menu } = require('../../models');
+const { Menu, Category, Dish, Tag, Diet } = require('../../models');
 
 async function getMenuWithCategoryByIdOrdered(id) {
   return Menu.findOne({

@@ -12,6 +12,7 @@ module.exports = (app) => {
   const restaurantController = require("./src/controllers/restaurants");
   const tagController = require("./src/controllers/tags");
   const userController = require("./src/controllers/users");
+  const dietController = require("./src/controllers/diets");
 
 
   var revProxy = express.Router();
@@ -98,7 +99,10 @@ module.exports = (app) => {
   router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
   router.put("/categories/:id", categoryController.updateCategory);
   router.delete("/categories/:id", categoryController.deleteCategory);
+
   router.get("/tags", tagController.getAllTags);
+
+  router.get("/diets", dietController.getAllDiets);
 
   router.post("/menus", menuController.createMenu);
   router.post("/menus/bulkCreate", menuController.bulkCreateDish);

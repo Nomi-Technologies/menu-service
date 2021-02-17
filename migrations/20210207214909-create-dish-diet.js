@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('DishDiets', {
+    await queryInterface.createTable('DishDiet', {
       dishId: {
         primaryKey: true,
         type: Sequelize.UUID,

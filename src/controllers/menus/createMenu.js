@@ -1,7 +1,7 @@
 const menuLogic = require('../../logic/menus');
+const { parseCSV } = require("../../util/csv-parser");
 
 async function createMenu(req, res) {
-  console.log('test4');
   const menuData = {
     name: req.body.name,
     restaurantId: req.user.restaurantId,
