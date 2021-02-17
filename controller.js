@@ -78,43 +78,6 @@ module.exports.loginUser = async (req, res) => {
       res.status(401).json({ msg: "Could not authentiate user" });
     }
   }
-};``
-
-module.exports.getUserDetails = async (req, res) => {
-  User.getUser({ email: req.user.email })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured creating while processing this request",
-      });
-    });
-};
-
-module.exports.updateUserDetails = async (req, res) => {
-  userId = req.user.id;
-  User.findOne({ where: { id: userId } })
-    .then((user) => {
-      // verify user belongs to restauraunt of dish to update
-      User.update(req.body, { where: { id: userId } }).then(() => {
-        res.status(200).send({
-          message: "update sucessful",
-          user: user,
-        });
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured while updating user with userId=" + userId,
-      });
-    });
 };
 
 module.exports.updatePassword = async (req, res) => {
@@ -325,12 +288,25 @@ module.exports.bulkCreateDish = async (req, res) => {
   })
 };
 
+module.exports.getModifications = (req, res) => {
+  let restaurantId = req.user.restaurantId;
+
+  Modification.findAll({
+    where: { restaurantId: restaurantId }
+  }).then((data) => res.send(data))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: 'An error occurred while finding all modifications',
+      })
+    });
+}
+
 // takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
 module.exports.createModification = async (req, res) => {
   const modificationData = {
     restaurantId: req.params.restaurantId,
     name: req.body.name,
-    description: req.body.description,
     price: req.body.price
   }
 
@@ -338,9 +314,10 @@ module.exports.createModification = async (req, res) => {
   try {
     let modification = await Modification.create(modificationData)
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
     await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
-    await modification.setDiets(req.body.removeDiets, { through: { addToDish: false } })
+    await modification.addDiets(req.body.removeDiets, { through: { addToDish: false } })
+    
     res.send(modification);
   }
   
@@ -355,7 +332,6 @@ module.exports.createModification = async (req, res) => {
 module.exports.updateModification = async (req, res) => {
   const modificationData = {
     name: req.body.name,
-    description: req.body.description,
     price: req.body.price
   }
 
@@ -364,9 +340,11 @@ module.exports.updateModification = async (req, res) => {
     let modification = await Modification.findByPk(modificationID)
     await modification.update(modificationData);
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
+    // .setTags will override the operation above
+    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
     await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
-    await modification.setDiets(req.body.removeDiets, { through: { addToDish: false } })
+    await modification.addDiets(req.body.removeDiets, { through: { addToDish: false } })
+    
     res.send({
       message: "Modification successfully updated"
     });
@@ -544,7 +522,13 @@ module.exports.getDish = (req, res) => {
   })
     .then((dish) => {
       // verify user belongs to restauraunt of dish requested
-      res.send(dish);
+      const plainDish = dish.toJSON();
+      plainDish.Modifications.forEach((modification) => {
+        modification['addTags'] = modification.Tags?.filter((tag) => tag.ModificationTag.addToDish);
+        modification['removeTags'] = modification.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
+        delete modification['Tags'];
+      });
+      res.send(plainDish);
     })
     .catch((err) => {
       console.error(err);
@@ -629,34 +613,6 @@ module.exports.deleteDish = (req, res) => {
     }
   });
 };
-
-// create a modifiation for a specific dish
-module.exports.createModification = (req, res) => {
-  let dishId = req.params.id
-  let modificationData = {
-    dishId: dishId,
-    ...req.body
-  }
-  
-  // search for dish to verify existence
-  Dish.findByPk(dishId).then(() => {
-    // create modification
-    return Modification.create(modificationData)
-  }).then((modification) => {
-    // set allergens
-    return modification.setDiets(req.body.Diets) && modification.setTags(req.body.Tags)
-  }).then((modification) => {
-    res.send({
-      message: "Modification successfully added",
-      modification: modification
-    })
-  }).catch((err) => {
-    console.err(err);
-    res.status(500).send({
-      message: "could not create modifcation for dish with id=" + req.params.id
-    })
-  })
-}
 
 module.exports.removeModification = (req, res) => {
   let dishId = req.params.dishId
