@@ -12,6 +12,7 @@ module.exports = (app) => {
   const restaurantController = require("./src/controllers/restaurants");
   const tagController = require("./src/controllers/tags");
   const userController = require("./src/controllers/users");
+  const dietController = require("./src/controllers/diets");
 
 
   var revProxy = express.Router();
@@ -91,14 +92,17 @@ module.exports = (app) => {
   router.delete("/dishes/:id", dishController.deleteDish);
   router.get("/dishes-by-category", dishController.getDishesByCategory);
   router.get("/dishes-by-name", dishController.getDishesByName);
-  router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
+  //router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
   
   router.post("/categories", categoryController.createCategory);
   router.get("/categories/:id", categoryController.getCategory);
   router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
   router.put("/categories/:id", categoryController.updateCategory);
   router.delete("/categories/:id", categoryController.deleteCategory);
+
   router.get("/tags", tagController.getAllTags);
+
+  router.get("/diets", dietController.getAllDiets);
 
   router.post("/menus", menuController.createMenu);
   router.post("/menus/bulkCreate", menuController.bulkCreateDish);

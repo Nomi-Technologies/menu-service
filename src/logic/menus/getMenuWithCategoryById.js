@@ -6,7 +6,7 @@ async function getMenuWithCategoryById(id) {
         {
           model: Category,
           include: [
-            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
+            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }, { model: Diet, as: "Diets" }] },
           ],
         },
       ],

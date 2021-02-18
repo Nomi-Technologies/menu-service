@@ -4,7 +4,8 @@ const {
     User,
     Restaurant,
     Category,
-    Menu
+    Menu,
+    Diet
 } = require("../models");
 
 const {
@@ -37,6 +38,24 @@ let allergensToIds = async (allergens) => {
     return allergenIds
 }
 
+let dietsToIds = async (diets) => {
+    let dietIds = []
+    let splitDiets = diets.split(",")
+    for(diet of splitDiets) {
+        try {
+            let foundDiet = await Diet.findOne(
+                { where: { name: {[Op.iLike]: diet.trim() } } }
+            )
+            if(foundDiet) {
+                dietIds.push(foundDiet.id)
+            }
+        } catch(err) {
+            throw err;
+        }
+    }
+    return dietIds
+}
+
 let getOrCreateCategory = async (categoryName, menuId) => {
     try {
         let category = await Category.findOne({where: { name: categoryName, menuId: menuId }})
@@ -64,6 +83,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     let dish = output[i]
                     let categoryId
                     let allergenIds
+                    let dietIds
                     let existingDish
                     let vp = dish.VP !== ''
                     let gfp = dish.GFP !== ''
@@ -73,6 +93,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
+                        dietIds = await dietsToIds(dish.Diets)
                         modifiableAllergenIds = await allergensToIds(dish.Modifiable)
                         existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
                     }
@@ -94,6 +115,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             })
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await existingDish.setTags(nonModifiableAllergenIds)
+                            await existingDish.setDiets(dietIds)
                             await existingDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
@@ -115,6 +137,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             let newDish = await createDish(categoryId, dishInfo)
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await newDish.setTags(nonModifiableAllergenIds)
+                            await newDish.setDiets(dietIds)
                             await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
@@ -156,6 +179,7 @@ let menuToCSV = async (menu) => {
                 'Description',
                 'Price',
                 'Allergens',
+                'Diets',
                 'Modifiable',
                 'GFP',
                 'VP',
@@ -175,6 +199,7 @@ let menuToCSV = async (menu) => {
                     row[header.indexOf('Description')] = formatCell(dish.description)
                     row[header.indexOf('Price')] = formatCell(dish.price)
                     row[header.indexOf('Allergens')] = formatCell(dishAllergensToString(dish.Tags))
+                    row[header.indexOf('Diets')] = formatCell(dishAllergensToString(dish.Diets))
 
                     // compile modifiable tags
                     let modifiableTags = []

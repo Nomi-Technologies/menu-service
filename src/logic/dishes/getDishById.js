@@ -1,4 +1,4 @@
-const { Dish, Category, Tag, Modification } = require('../../models');
+const { Dish, Category, Tag, Modification, Diet } = require('../../models');
 
 // gets restaurant information based on authentication
 async function getDishById(id) {
@@ -14,9 +14,17 @@ async function getDishById(id) {
         attributes: ["id", "name", "type"]
       },
       {
+        model: Diet,
+        as: "Diets",
+        attributes: ["id", "name"]
+      },
+      {
         model: Modification,
         as: "Modifications",
-        include: { model: Tag, as: "Tags", attributes: ["id", "name", "type"] }
+        include: [
+          { model: Tag, as: "Tags", attributes: ["id", "name", "type"] },
+          { model: Diet, as: "Diets", attributes: ["id", "name"] },
+        ]
       }
     ],
   });

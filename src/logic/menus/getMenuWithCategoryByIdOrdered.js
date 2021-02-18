@@ -1,4 +1,4 @@
-const { Menu } = require('../../models');
+const { Menu, Category, Dish, Tag, Diet } = require('../../models');
 
 async function getMenuWithCategoryByIdOrdered(id) {
   return Menu.findOne({
@@ -11,7 +11,8 @@ async function getMenuWithCategoryByIdOrdered(id) {
             model: Dish,
             as: "Dishes",
               include: [
-                { model: Tag, as: "Tags" }
+                { model: Tag, as: "Tags" },
+                { model: Diet, as: "Diets" }
               ]
             },
         ],

@@ -31,6 +31,7 @@ async function duplicateCategoriesAndDishes(oldMenu, newMenu) {
           createDish(cCopy.dataValues.id, dishInfo)
           .then((dCopy) => {
             dCopy.setTags(d.Tags);
+            dCopy.setDiet(d.Diets);
             resolve();
           })
         })
