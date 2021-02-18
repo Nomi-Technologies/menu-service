@@ -92,7 +92,7 @@ module.exports = (app) => {
   router.delete("/dishes/:id", dishController.deleteDish);
   router.get("/dishes-by-category", dishController.getDishesByCategory);
   router.get("/dishes-by-name", dishController.getDishesByName);
-  router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
+  //router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
   
   router.post("/categories", categoryController.createCategory);
   router.get("/categories/:id", categoryController.getCategory);

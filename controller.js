@@ -36,7 +36,7 @@ passport.use(strategy);
 module.exports.passport = passport;
 
 // users
-module.exports.registerUser = async (req, res) => {
+/*module.exports.registerUser = async (req, res) => {
   try {
     user = await User.register(
       req.body.email,
@@ -1139,7 +1139,7 @@ module.exports.getMenuAsCSV = (req, res) => {
       message: "Could not get menu as CSV"
     })
   })
-}
+}*/
 
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
