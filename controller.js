@@ -1,4 +1,4 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, Diet } = require("./models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
 
 const { createDish, createCategory } = require("./util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
@@ -78,6 +78,43 @@ module.exports.loginUser = async (req, res) => {
       res.status(401).json({ msg: "Could not authentiate user" });
     }
   }
+};``
+
+module.exports.getUserDetails = async (req, res) => {
+  User.getUser({ email: req.user.email })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occured creating while processing this request",
+      });
+    });
+};
+
+module.exports.updateUserDetails = async (req, res) => {
+  userId = req.user.id;
+  User.findOne({ where: { id: userId } })
+    .then((user) => {
+      // verify user belongs to restauraunt of dish to update
+      User.update(req.body, { where: { id: userId } }).then(() => {
+        res.status(200).send({
+          message: "update sucessful",
+          user: user,
+        });
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occured while updating user with userId=" + userId,
+      });
+    });
 };
 
 module.exports.updatePassword = async (req, res) => {
@@ -209,9 +246,6 @@ module.exports.createDish = async (req, res) => {
     if(req.body.dishModifications) {
       await dish.setModifications(req.body.dishModifications)
     }
-    if(req.body.dishDiets) {
-      await dish.setDiets(req.body.dishDiets)
-    }
     
     res.send(dish)
   }
@@ -241,7 +275,6 @@ module.exports.bulkCreateDish = async (req, res) => {
             include: [
               { model: Category, attributes: ["name"] },
               { model: Tag, as: "Tags", attributes: ["id"] },
-              { model: Diet, as: "Diets", attributes: ["id"] },
             ]
           })
           let categoryId = await getOrCreateCategory(originalDish.Category.name, menu.id)
@@ -262,15 +295,9 @@ module.exports.bulkCreateDish = async (req, res) => {
           originalDish.Tags.forEach((tag) => {
             tagIds.push(tag.id);
           });
-
-          dietIds = [];
-          originalDish.Diets.forEach((diet) => {
-            dietIds.push(diet.id);
-          });
   
           let dish = await createDish(categoryId, dishData)
           await dish.setTags(tagIds)
-          await dish.setDiets(dietIds)
         }
         resolve(menu);
       } catch (error) {
@@ -288,25 +315,12 @@ module.exports.bulkCreateDish = async (req, res) => {
   })
 };
 
-module.exports.getModifications = (req, res) => {
-  let restaurantId = req.user.restaurantId;
-
-  Modification.findAll({
-    where: { restaurantId: restaurantId }
-  }).then((data) => res.send(data))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({
-        message: 'An error occurred while finding all modifications',
-      })
-    });
-}
-
 // takes in restaurantId, name, description, price, and list of addTags and list of removeTags (ids)
 module.exports.createModification = async (req, res) => {
   const modificationData = {
     restaurantId: req.params.restaurantId,
     name: req.body.name,
+    description: req.body.description,
     price: req.body.price
   }
 
@@ -314,10 +328,7 @@ module.exports.createModification = async (req, res) => {
   try {
     let modification = await Modification.create(modificationData)
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
-    await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
-    await modification.addDiets(req.body.removeDiets, { through: { addToDish: false } })
-    
+    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
     res.send(modification);
   }
   
@@ -332,6 +343,7 @@ module.exports.createModification = async (req, res) => {
 module.exports.updateModification = async (req, res) => {
   const modificationData = {
     name: req.body.name,
+    description: req.body.description,
     price: req.body.price
   }
 
@@ -340,11 +352,7 @@ module.exports.updateModification = async (req, res) => {
     let modification = await Modification.findByPk(modificationID)
     await modification.update(modificationData);
     await modification.setTags(req.body.addTags, { through: { addToDish: true } })
-    // .setTags will override the operation above
-    await modification.addTags(req.body.removeTags, { through: { addToDish: false } })
-    await modification.setDiets(req.body.addDiets, { through: { addToDish: true } })
-    await modification.addDiets(req.body.removeDiets, { through: { addToDish: false } })
-    
+    await modification.setTags(req.body.removeTags, { through: { addToDish: false } })
     res.send({
       message: "Modification successfully updated"
     });
@@ -448,7 +456,7 @@ module.exports.dishesByCategory = (req, res) => {
   let userRestaurantId = req.user.restaurantId;
   Category.findAll({
     include: [
-      { model: Dish, include: [{ model: Tag, as: "Tags" }, { model: Diet, as: "Diets" }] },
+      { model: Dish, include: [{ model: Tag, as: "Tags" }] },
       { model: Menu, where: { restaurantId: userRestaurantId } },
     ],
   })
@@ -479,21 +487,6 @@ module.exports.getTags = (req, res) => {
     });
 };
 
-module.exports.getDiets = (req, res) => {
-  Diet.findAll()
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "An error occured while getting diets with restaurant=" + restaurantId,
-      });
-    });
-};
-
 module.exports.getDish = (req, res) => {
   const id = req.params.id;
 
@@ -508,27 +501,13 @@ module.exports.getDish = (req, res) => {
       {
         model: Modification,
         as: "Modifications",
-        include: [
-          { model: Tag, as: "Tags", attributes: ["id", "name", "type"] },
-          { model: Diet, as: "Diets", attributes: ["id", "name"] }
-        ]
-      },
-      {
-        model: Diet,
-        as: "Diets",
-        attributes: ["id", "name"]
+        include: { model: Tag, as: "Tags", attributes: ["id", "name", "type"] }
       }
     ],
   })
     .then((dish) => {
       // verify user belongs to restauraunt of dish requested
-      const plainDish = dish.toJSON();
-      plainDish.Modifications.forEach((modification) => {
-        modification['addTags'] = modification.Tags?.filter((tag) => tag.ModificationTag.addToDish);
-        modification['removeTags'] = modification.Tags?.filter((tag) => !tag.ModificationTag.addToDish);
-        delete modification['Tags'];
-      });
-      res.send(plainDish);
+      res.send(dish);
     })
     .catch((err) => {
       console.error(err);
@@ -556,10 +535,6 @@ module.exports.updateDish = async (req, res) => {
 
     if(req.body.dishModifications !== undefined) { 
       await dish.setModifications(req.body.dishModifications)
-    }
-
-    if(req.body.dishDiets !== undefined) {
-      await dish.setDiets(req.body.dishDiets)
     }
     
     res.send({
@@ -614,6 +589,34 @@ module.exports.deleteDish = (req, res) => {
   });
 };
 
+// create a modifiation for a specific dish
+module.exports.createModification = (req, res) => {
+  let dishId = req.params.id
+  let modificationData = {
+    dishId: dishId,
+    ...req.body
+  }
+  
+  // search for dish to verify existence
+  Dish.findByPk(dishId).then(() => {
+    // create modification
+    return Modification.create(modificationData)
+  }).then((modification) => {
+    // set allergens
+    return modification.setTags(req.body.Tags)
+  }).then((modification) => {
+    res.send({
+      message: "Modification successfully added",
+      modification: modification
+    })
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send({
+      message: "could not create modifcation for dish with id=" + req.params.id
+    })
+  })
+}
+
 module.exports.removeModification = (req, res) => {
   let dishId = req.params.dishId
   let modificationId = req.params.modificationId
@@ -649,7 +652,6 @@ module.exports.dishesByName = (req, res) => {
     },
     include: [
       { model: Tag, as: "Tags" },
-      { model: Diet, as: "Diets" },
       { model: Category, where: { menuId: req.query.menuId }, attributes: [] },
     ],
   })
@@ -936,11 +938,10 @@ module.exports.getMenu = (req, res) => {
             as: "Dishes", 
             include: [
               { model: Tag, as: "Tags" },
-              { model: Diet, as: "Diets" },
               { 
                 model: Modification, 
                 as: "Modifications",
-                include: [ { model: Tag, as: "Tags" }, { model: Diet, as: "Diets" } ],
+                include: [ { model: Tag, as: "Tags" } ],
               },
             ],
             order: [[Dish, "index", "asc"]]
@@ -1013,7 +1014,7 @@ module.exports.duplicateMenu = (req, res) => {
         {
           model: Category,
           include: [
-            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }, { model: Diet, as: "Diets" }] },
+            { model: Dish, as: "Dishes", include: [{ model: Tag, as: "Tags" }] },
           ],
         },
       ],
@@ -1079,7 +1080,6 @@ const duplicateCategoriesAndDishes = (oldMenu, newMenu) => {
           createDish(cCopy.dataValues.id, dishInfo)
           .then((dCopy) => {
             dCopy.setTags(d.Tags);
-            dCopy.setDiets(d.Diets);
             resolve();
           })
         })
@@ -1118,8 +1118,7 @@ module.exports.getMenuAsCSV = (req, res) => {
             model: Dish, 
             as: "Dishes", 
               include: [
-                { model: Tag, as: "Tags" },
-                { model: Diet, as: "Diets" }
+                { model: Tag, as: "Tags" }
               ] 
             },
         ],
@@ -1139,7 +1138,7 @@ module.exports.getMenuAsCSV = (req, res) => {
       message: "Could not get menu as CSV"
     })
   })
-}*/
+} */
 
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
