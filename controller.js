@@ -1,4 +1,4 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./src/models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, Diet } = require("./src/models");
 
 const { createDish, createCategory } = require("./src/util/menu")
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
@@ -1184,6 +1184,7 @@ module.exports.publicDishList = (req, res) => {
   Dish.findAll({
     include: [
       { model: Tag, as: "Tags" },
+      { model: Diet, as: "Diets" },
       { model: Category, where: { menuId: menuId } },
       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
       { model: Modification, as: "Modifications" }
