@@ -143,6 +143,8 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction().then(async t => {});
+    return queryInterface.sequelize.transaction().then(async t => {
+      await Restaurant.destroy({ where: { uniqueName: "test-restaurant" }});
+    });
   }
 };

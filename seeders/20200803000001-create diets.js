@@ -13,7 +13,7 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Tag', { name: [
+    return queryInterface.bulkDelete('Diet', { name: [
       "vegetarian",
       "vegan",
       "keto",
