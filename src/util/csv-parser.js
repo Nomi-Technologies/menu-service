@@ -22,35 +22,41 @@ const fs = require('fs');
 // converts list of allergen names to ids
 let allergensToIds = async (allergens) => {
     let allergenIds = []
-    let splitAllergens = allergens.split(",")
-    for(allergen of splitAllergens) {
-        try {
-            let tag = await Tag.findOne(
-                { where: { name: {[Op.iLike]: allergen.trim() } } }
-            )
-            if(tag) {
-                allergenIds.push(tag.id)
+
+    if(allergens) {
+        let splitAllergens = allergens.split(",")
+        for(allergen of splitAllergens) {
+            try {
+                let tag = await Tag.findOne(
+                    { where: { name: {[Op.iLike]: allergen.trim() } } }
+                )
+                if(tag) {
+                    allergenIds.push(tag.id)
+                }
+            } catch(err) {
+                throw err;
             }
-        } catch(err) {
-            throw err;
         }
     }
+
     return allergenIds
 }
 
 let dietsToIds = async (diets) => {
     let dietIds = []
-    let splitDiets = diets.split(",")
-    for(diet of splitDiets) {
-        try {
-            let foundDiet = await Diet.findOne(
-                { where: { name: {[Op.iLike]: diet.trim() } } }
-            )
-            if(foundDiet) {
-                dietIds.push(foundDiet.id)
+    if(diets) {
+        let splitDiets = diets.split(",")
+        for(diet of splitDiets) {
+            try {
+                let foundDiet = await Diet.findOne(
+                    { where: { name: {[Op.iLike]: diet.trim() } } }
+                )
+                if(foundDiet) {
+                    dietIds.push(foundDiet.id)
+                }
+            } catch(err) {
+                throw err;
             }
-        } catch(err) {
-            throw err;
         }
     }
     return dietIds
