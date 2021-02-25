@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const sinon = require('sinon');
+const sinon = require('sinon'); // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai');
 const app = require('../../../index.js');
 const { generateTestRestaurantData, deleteTestRestaurantById } = require('../../utils/restaurants');
@@ -33,7 +33,8 @@ describe('controller.restauarants.createRestaurant', () => {
       url: TEST_RESTAURANT.url,
       zip: TEST_RESTAURANT.zip,
     });
-    // set TEST_RESTAURANT.id to the id created by `createRestuarant` so that we can delete it in the `after` clause
+    // set TEST_RESTAURANT.id to the id created by `createRestuarant` so that we can delete it in
+    // the `after` clause
     TEST_RESTAURANT.id = res.body.id;
   });
 });

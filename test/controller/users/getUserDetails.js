@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const sinon = require('sinon');
+const sinon = require('sinon'); // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai');
 const app = require('../../../index.js');
 const { authenticateTestUser } = require('../../utils/users');
