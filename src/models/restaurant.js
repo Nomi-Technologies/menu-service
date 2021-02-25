@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       { unique: true, fields: ['uniqueName'] },
     ],
   });
-  Restaurant.associate = function (models) {
+  Restaurant.associate = (models) => {
     // associations can be defined here
     Restaurant.hasMany(models.User, {
       foreignKey: 'restaurantId',

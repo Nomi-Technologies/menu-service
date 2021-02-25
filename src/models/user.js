@@ -77,20 +77,22 @@ module.exports = (sequelize, DataTypes) => {
       lastName: lname,
     };
 
-    const created_user = await User.create(user);
+    await User.create(user);
     return User.authenticate(email, password);
   };
 
   User.updatePassword = async (id, newPassword) => {
     const passwordHash = bcrypt.hashSync(newPassword, 10);
-    User.findOne({ where: { id } }).then((user) => user.update({ password: passwordHash })).catch((err) => {
+
+    return User.findOne({ where: { id } })
+    .then((user) => user
+    .update({ password: passwordHash }))
+    .catch((err) => {
       throw err;
     });
   };
 
-  User.getUser = async (obj) => await User.findOne({
-    where: obj,
-  });
+  User.getUser = async (obj) => User.findOne({ where: obj });
 
   // used to validate the user
   User.authenticate = async (email, password) => {

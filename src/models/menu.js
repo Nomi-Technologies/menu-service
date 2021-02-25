@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       name: 'UniqueMenuNameIndex',
     }],
   });
-  Menu.associate = function (models) {
+  Menu.associate = (models) => {
     // associations can be defined here
     Menu.belongsTo(models.Restaurant, {
       foreignKey: 'restaurantId',

@@ -1,4 +1,3 @@
-const { error } = require('console');
 const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -65,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
   }, {});
-  Dish.associate = function (models) {
+  Dish.associate = (models) => {
     Dish.belongsToMany(models.Tag, {
       through: 'DishTag',
       as: 'Tags',

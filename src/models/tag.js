@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: '',
     },
   }, {});
-  Tag.associate = function (models) {
+  Tag.associate = (models) => {
     // associations can be defined here
     Tag.belongsToMany(models.Dish, {
       through: 'DishTag',

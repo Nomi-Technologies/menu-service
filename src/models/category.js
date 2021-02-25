@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: '',
     },
   }, {});
-  Category.associate = function (models) {
+  Category.associate = (models) => {
     Category.belongsTo(models.Menu, {
       foreignKey: 'menuId',
       onDelete: 'CASCADE',
