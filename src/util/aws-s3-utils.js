@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { serializeError } = require('serialize-error');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -7,7 +8,7 @@ const {
   ENV_SPEC_BUCKET_NAME,
   ACCESS_KEY_ID,
   SECRET_ACCESS_KEY,
-} = require('../config.js');
+} = require('../../config');
 
 aws.config.update({
   region: 'us-west-1',
