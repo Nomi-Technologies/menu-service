@@ -1,4 +1,5 @@
 const menuLogic = require('../../logic/menus');
+const { parseCSV } = require('../../util/csv-parser');
 
 async function createMenu(req, res) {
   const menuData = {
@@ -7,9 +8,9 @@ async function createMenu(req, res) {
     published: true,
   };
   const { body: { csv, overwrite } } = req;
-
+  let menu;
   try {
-    const menu = await menuLogic.createMenu(menuData);
+    menu = await menuLogic.createMenu(menuData);
     if (csv) {
       await parseCSV(csv, menu.restaurantId, menu.id, overwrite);
     }

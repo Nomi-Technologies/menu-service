@@ -1,5 +1,4 @@
 const modificationLogic = require('../../logic/modifications');
-const dishLogic = require('../../logic/dishes');
 
 async function createModification(req, res) {
   const modificationData = {

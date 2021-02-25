@@ -6,7 +6,7 @@ async function getModifications(req, res) {
 
   try {
     const modifications = await modificationLogic.getAllModifications(restaurantId);
-    plainModifications = modifications.map((modification) => {
+    const plainModifications = modifications.map((modification) => {
       const plainMod = modification.toJSON();
       return modConverter(plainMod);
     });

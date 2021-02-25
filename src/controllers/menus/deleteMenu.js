@@ -6,7 +6,7 @@ async function deleteMenu(req, res) {
 
   try {
     const menu = menuLogic.getMenuById(menuId);
-    if (menu && menu.restaurantId == userRestaurantId) {
+    if (menu && menu.restaurantId === userRestaurantId) {
       await menuLogic.deleteMenuById(menuId);
       res.send({
         message: 'menu was deleted successfully',

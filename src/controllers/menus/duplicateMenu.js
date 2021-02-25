@@ -6,7 +6,7 @@ async function duplicateMenu(req, res) {
 
   try {
     const oldMenu = await menuLogic.getMenuWithCategoryById(menuId);
-    if (oldMenu && oldMenu.dataValues.restaurantId == userRestaurantId) {
+    if (oldMenu && oldMenu.dataValues.restaurantId === userRestaurantId) {
       const menuData = {
         name: `${oldMenu.dataValues.name} Copy`,
         restaurantId: userRestaurantId,

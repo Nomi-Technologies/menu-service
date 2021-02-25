@@ -11,7 +11,6 @@ async function updateUserDetails(req, res) {
       message: 'update sucessful',
       user: userUpdated,
     });
-    return true;
   }
   catch(err) {
     console.error(err);

@@ -1,4 +1,5 @@
-const menuLogic = require('../../logic/menus');
+const { sequelize } = require('../../models');
+const categoryLogic = require('../../logic/categories');
 
 // params: ordering: a list of category objects depicting the current order of the menu
 // note: every category should be passed in, regardless of if categories were reordered or not.
@@ -13,11 +14,11 @@ const menuLogic = require('../../logic/menus');
 
 async function updateCategoryOrder(req, res) {
   const { order } = req.body;
+  const t = await sequelize.transaction();
 
   try {
-    const t = await sequelize.transaction();
     await Promise.all(order.map(async (categoryId) => {
-      const category = await Category.findByPk(categoryId);
+      const category = await categoryLogic.getCategoryById(categoryId);
       category.index = order.indexOf(categoryId);
       await category.save({ transaction: t });
     }));

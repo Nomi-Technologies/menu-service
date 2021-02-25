@@ -1,12 +1,13 @@
-const menuLogic = require('../../logic/menus');
+const { sequelize } = require('../../models');
+const dishLogic = require('../../logic/dishes');
 
 async function updateDishOrder(req, res) {
   const { order } = req.body;
+  const t = await sequelize.transaction();
 
   try {
-    const t = await sequelize.transaction();
     await Promise.all(order.map(async (dishId) => {
-      const dish = await Dish.findByPk(dishId);
+      const dish = await dishLogic.getDishById(dishId);
       dish.index = order.indexOf(dishId);
       await dish.save({ transaction: t });
     }));
