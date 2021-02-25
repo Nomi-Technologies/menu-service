@@ -1,4 +1,9 @@
 const { Op } = require('sequelize');
+const {
+  Category,
+  Dish,
+  Tag,
+} = require('../../models');
 
 async function getDishesByName(userRestaurantId, menuId, searchValue) {
   return Dish.findAll({

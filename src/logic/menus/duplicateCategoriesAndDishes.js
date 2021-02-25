@@ -2,6 +2,7 @@ const { createCategory } = require('../categories');
 const { createDish } = require('../dishes');
 
 async function duplicateCategoriesAndDishes(oldMenu, newMenu) {
+  const menuId = newMenu.dataValues.id;
   return new Promise((resolve, reject) => {
     if (oldMenu.Categories.length === 0) {
       resolve();
@@ -9,10 +10,10 @@ async function duplicateCategoriesAndDishes(oldMenu, newMenu) {
     oldMenu.Categories.forEach((c) => {
       createCategory(menuId, {
         name: c.dataValues.name,
-        menuId: newMenu.dataValues.id,
+        menuId,
         description: c.dataValues.description,
       }).then((cCopy) => {
-        if (c.Dishes.length == 0) {
+        if (c.Dishes.length === 0) {
           resolve();
         }
         c.Dishes.forEach((d) => {

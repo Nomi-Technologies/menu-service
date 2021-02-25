@@ -1,7 +1,8 @@
 const slug = require('slug');
 const { Restaurant } = require('../../models');
 
-async function createRestaurant(restaurant) {
+async function createRestaurant(newRestaurant) {
+  const restaurant = newRestaurant;
   const uniqueNameBase = slug(restaurant.name);
   let uniqueName = uniqueNameBase;
   let retries = 0;
@@ -9,7 +10,8 @@ async function createRestaurant(restaurant) {
     where: { uniqueName },
   });
   while (collision.length > 0) {
-    uniqueName = `${uniqueNameBase}-${++retries}`;
+    uniqueName = `${uniqueNameBase}-${retries += 1}`;
+    // eslint-disable-next-line no-await-in-loop
     collision = await Restaurant.findAll({ where: { uniqueName } });
   }
 
