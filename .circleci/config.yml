@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   # heroku: circleci/heroku@x.y
-  node: circleci/node@3.0.0
+  node: circleci/node@4.2.0
 
 jobs:
   lint:
@@ -12,6 +12,8 @@ jobs:
       - run:
           command: npm run lint
   build:
+    executor:
+      name: node/default
     docker:
       - image: circleci/postgres:latest
         # auth:
@@ -21,21 +23,19 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nomi-ci
-    executor:
-      name: node/default
     steps:
       - checkout
-       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      # Download and cache dependencies
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       # fallback to using the latest cache if no exact match is found
+      #       - v1-dependencies-
       - node/install-packages
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
 
 workflows:
   test-and-hold:
