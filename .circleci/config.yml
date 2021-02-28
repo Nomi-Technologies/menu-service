@@ -31,9 +31,9 @@ jobs:
             - v1-dependencies-
       - node/install-packages
       - save_cache:
-        paths:
-          - node_modules
-        key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
 
 workflows:
   test-and-hold:
