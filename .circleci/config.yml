@@ -9,18 +9,42 @@ jobs:
     executor:
       name: node/default
     steps:
-      - checkout
-      - node/install-packages
       - run:
           command: npm run lint
+  build:
+    docker:
+      - image: circleci/postgres:latest
+        # auth:
+        #   username: mydockerhub-user
+        #   password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nomi-ci
+    steps:
+      - checkout
+       # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - node/install-packages
+      - save_cache:
+        paths:
+          - node_modules
+        key: v1-dependencies-{{ checksum "package.json" }}
 
 workflows:
   test-and-hold:
     jobs:
-      - lint
+      - build
+      - lint:
+          requires:
+            - build
       - node/test:
           requires:
-            - lint
+            - build
 
   # deploy:
   #   jobs:
@@ -32,4 +56,12 @@ workflows:
   #       requires:
   #         - node/test
 
-      
+# jobs:
+#   build:
+#     docker:
+#       - image: postgres:latest
+#         auth:
+#           username: mydockerhub-user
+#           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+#         environment:
+#           POSTGRES_USER: root
