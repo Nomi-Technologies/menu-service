@@ -3,16 +3,12 @@ const { Op } = require('sequelize');
 
 const parse = require('csv-parse');
 const fs = require('fs');
-const {
-  createDish, createCategory,
-} = require('./menu');
+const { createCategory } = require('../logic/categories');
+const { createDish } = require('../logic/dishes');
 const {
   Dish,
   Tag,
-  User,
-  Restaurant,
   Category,
-  Menu,
 } = require('../models');
 
 // converts list of allergen names to ids
