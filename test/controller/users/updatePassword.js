@@ -4,7 +4,10 @@ const sinon = require('sinon'); // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai');
 const app = require('../../../index.js');
 const {
-  authenticateTestUser, generateTestUserData, deleteTestUserById, createTestUser,
+  authenticateTestUser,
+  generateTestUserData,
+  deleteTestUserById,
+  createTestUser,
 } = require('../../utils/users');
 const { generateTestRestaurantData, createTestRestaurant, deleteTestRestaurantById } = require('../../utils/restaurants');
 
@@ -40,9 +43,9 @@ describe('controller.user.updatePassword', () => {
       const oldPass = TEST_USER.password;
       const newPass = Math.random().toString();
       const res = await chai.request(app)
-        .post(endpoint)
-        .set('Authorization', `Bearer ${token}`)
-        .send({ password: oldPass, newPassword: newPass });
+      .post(endpoint)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ password: oldPass, newPassword: newPass });
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('message');
       expect(res.body.message).to.equal('password updated successfully');
