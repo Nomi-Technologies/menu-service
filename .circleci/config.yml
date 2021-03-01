@@ -6,24 +6,14 @@ orbs:
 
 jobs:
   lint:
-    # executor:
-    #   name: node/default
-    docker:
-      - image: circleci/node:latest
-      - image: circleci/postgres:latest
-        # auth:
-        #   username: mydockerhub-user
-        #   password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nomi-ci
+    executor:
+      name: node/default
     steps:
       - checkout
       - node/install-packages
       - run:
           command: npm run lint
-  build:
+  test:
     # executor:
     #   name: node/default
     docker:
@@ -47,15 +37,13 @@ jobs:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - node/test
 
 workflows:
   lint-and-test:
     jobs:
-      - build
-      - lint:
-          requires:
-            - build
-      - node/test:
+      - lint
+      - test:
           requires:
             - lint
 
