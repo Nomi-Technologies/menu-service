@@ -25,7 +25,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nomi-ci
+          POSTGRES_DB: nomi-dev
     steps:
       - checkout
       - node/install-packages
