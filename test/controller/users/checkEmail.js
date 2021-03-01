@@ -32,7 +32,7 @@ describe('controller.users.checkEmail', () => {
   it('Should return true if email is taken', async () => {
     const res = await chai.request(app)
       .get(endpoint)
-      .query(TEST_USER.email);
+      .query(TEST_USER);
     expect(res).to.have.status(200);
     expect(res.body.taken).to.be.true;
   });
