@@ -33,9 +33,7 @@ describe('controller.users.getUserDetails', () => {
   });
   context('Authenticated Requests', () => {
     before(async () => {
-      console.log('getting token');
       token = await authenticateTestUser(TEST_USER);
-      console.log('got token');
       expect(token).to.not.be.null;
     });
     it('Should return user details if user is logged in', async () => {

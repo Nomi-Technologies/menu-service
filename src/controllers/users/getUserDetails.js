@@ -4,11 +4,7 @@ async function getUserDetails(req, res) {
   const { email } = req.user;
 
   try {
-    console.log('email');
-    console.log(email);
     const user = await userLogic.getUserByEmail(email);
-    console.log('user');
-    console.log(user);
     res.send(user);
   }
   catch(err) {
