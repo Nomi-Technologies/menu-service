@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { Restaurant } = require('../../models');
+const { Restaurant } = require('../../src/models');
 
 async function createTestRestaurant(restaurant) {
   return Restaurant.create(restaurant);

@@ -14,7 +14,7 @@ async function createDish(categoryId, dishInfo, { dishTags, dishDiets, dishModif
   if (dishTags) {
     await dish.setTags(dishTags);
   }
-  if(dishDiets) {
+  if (dishDiets) {
     await dish.setDiets(dishDiets);
   }
   if (dishModifications) {

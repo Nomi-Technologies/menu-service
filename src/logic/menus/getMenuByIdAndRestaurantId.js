@@ -25,14 +25,14 @@ async function getMenuByIdAndRestaurantId(menuId, restaurantId) {
                 model: Tag,
                 as: 'Tags',
               },
-              { 
-                model: Diet, 
-                as: 'Diets'
+              {
+                model: Diet,
+                as: 'Diets',
               },
               {
                 model: Modification,
                 as: 'Modifications',
-                include: [ { model: Tag, as: 'Tags' },  { model: Diet, as: 'Diets' } ],
+                include: [{ model: Tag, as: 'Tags' }, { model: Diet, as: 'Diets' }],
               },
             ],
             order: [[Dish, 'index', 'asc']],

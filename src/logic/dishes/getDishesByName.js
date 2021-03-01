@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const {
   Category,
+  Diet,
   Dish,
   Tag,
 } = require('../../models');

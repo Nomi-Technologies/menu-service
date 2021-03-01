@@ -34,7 +34,7 @@ async function bulkCreateDish(req, res) {
       originalDish.Tags.forEach((tag) => {
         tagIds.push(tag.id);
       });
-      
+
       const dietIds = [];
       originalDish.Diets.forEach((diet) => {
         dietIds.push(diet.id);

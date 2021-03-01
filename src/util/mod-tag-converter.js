@@ -6,7 +6,7 @@ module.exports = (modification) => {
     addDiets: modification.Diets?.filter((diet) => diet.ModificationDiet.addToDish),
     removeDiets: modification.Diets?.filter((diet) => !diet.ModificationDiet.addToDish),
   };
-  delete copy['Tags'];
-  delete copy['Diets'];
+  delete copy.Tags;
+  delete copy.Diets;
   return copy;
 };

@@ -1,7 +1,7 @@
 const { Diet } = require('../../models');
 
-async function getAllDiets(req, res) {
+async function getAllDiets() {
   return Diet.findAll();
-};
+}
 
 module.exports = getAllDiets;

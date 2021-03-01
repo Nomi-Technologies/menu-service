@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Diet extends Model {
     /**
@@ -14,24 +12,25 @@ module.exports = (sequelize, DataTypes) => {
         through: 'DishDiet',
         as: 'Dishes',
         foreignKey: 'dietId',
-        otherKey: 'dishId'
+        otherKey: 'dishId',
       });
       Diet.belongsToMany(models.Modification, {
         through: 'ModificationDiet',
         as: 'Modifications',
         foreignKey: 'dietId',
-        otherKey: 'modificationId'
+        otherKey: 'modificationId',
       });
     }
-  };
+  }
+
   Diet.init({
     id: {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      unique: true
+      unique: true,
     },
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Diet',

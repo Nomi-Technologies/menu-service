@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { Menu } = require('../../models');
+const { Menu } = require('../../src/models');
 
 async function createTestMenu(menu) {
   return Menu.create(menu);

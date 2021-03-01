@@ -5,13 +5,13 @@ async function updateDish(dish, newDetails) {
   if (dishTags) {
     await dish.setTags(dishTags);
   }
-  
+
   if (dishDiets) {
-    await dish.setDiets(dishDiets)
+    await dish.setDiets(dishDiets);
   }
 
-  if (dishModifications) { 
-    await dish.setModifications(dishModifications)
+  if (dishModifications) {
+    await dish.setModifications(dishModifications);
   }
 
   return dish;

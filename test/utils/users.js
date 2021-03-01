@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const { User } = require('../../models');
+const { User } = require('../../src/models');
 const { JWT_SECRET } = require('../../config.js');
 
 async function addFavoriteMenuByUserId(userId, menuId) {

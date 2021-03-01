@@ -1,5 +1,6 @@
 const {
   Category,
+  Diet,
   Dish,
   Menu,
   Tag,

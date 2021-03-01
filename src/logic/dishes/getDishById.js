@@ -21,8 +21,8 @@ async function getDishById(id) {
       },
       {
         model: Diet,
-        as: "Diets",
-        attributes: ["id", "name"]
+        as: 'Diets',
+        attributes: ['id', 'name'],
       },
       {
         model: Modification,
@@ -30,7 +30,7 @@ async function getDishById(id) {
         include: [
           { model: Tag, as: 'Tags', attributes: ['id', 'name', 'type'] },
           { model: Diet, as: 'Diets', attributes: ['id', 'name'] },
-        ]
+        ],
       },
     ],
   });
