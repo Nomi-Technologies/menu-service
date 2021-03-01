@@ -37,7 +37,9 @@ jobs:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - node/test
+      - run:
+          name: Run tests
+          command: npm test
 
 workflows:
   lint-and-test:
