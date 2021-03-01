@@ -19,6 +19,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: nomi-ci
     steps:
+      - checkout
       - run:
           command: npm run lint
   build:
