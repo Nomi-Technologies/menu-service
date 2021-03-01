@@ -6,7 +6,7 @@ async function getMenuAsCSV(req, res) {
 
   try {
     const menu = await menuLogic.getMenuWithCategoryByIdOrdered(menuId);
-    const csv = menuToCSV(menu);
+    const csv = await menuToCSV(menu);
     res.send({ csv });
   }
   catch(err) {

@@ -9,7 +9,10 @@ async function updateModification(req, res) {
   const extraParams = {
     addTags: req.body.addTags || null,
     removeTags: req.body.removeTags || null,
+    addDiets: req.body.addDiets || null,
+    removeDiets: req.body.removeDiets || null,
   };
+
   try {
     const modification = await modificationLogic.getModificationById(modificationId);
     await modificationLogic.updateModification(modification, modificationData, extraParams);

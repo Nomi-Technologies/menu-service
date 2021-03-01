@@ -1,5 +1,6 @@
 const {
   Category,
+  Diet,
   Dish,
   Menu,
   Tag,
@@ -17,6 +18,7 @@ async function getMenuWithCategoryByIdOrdered(id) {
             as: 'Dishes',
             include: [
               { model: Tag, as: 'Tags' },
+              { model: Diet, as: 'Diets' },
             ],
           },
         ],

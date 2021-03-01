@@ -1,8 +1,8 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification } = require("./models");
+const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, Diet } = require("./src/models");
 
-const { createDish, createCategory } = require("./util/menu")
-const { parseCSV, menuToCSV, getOrCreateCategory } = require("./util/csv-parser");
-const { getStaticFile, getFile, uploadFile, uploadImage } = require('./util/aws-s3-utils');
+const { createDish, createCategory } = require("./src/util/menu")
+const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
+const { getStaticFile, getFile, uploadFile, uploadImage } = require('./src/util/aws-s3-utils');
 const slug = require("slug");
 const { JWT_SECRET } = require("./config.js");
 const jwt = require("jsonwebtoken");
@@ -11,7 +11,7 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
-const dish = require("./util/menu");
+const dish = require("./src/util/menu");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -36,7 +36,7 @@ passport.use(strategy);
 module.exports.passport = passport;
 
 // users
-module.exports.registerUser = async (req, res) => {
+/*module.exports.registerUser = async (req, res) => {
   try {
     user = await User.register(
       req.body.email,
@@ -1092,7 +1092,7 @@ module.exports.getMenuAsCSV = (req, res) => {
       message: "Could not get menu as CSV"
     })
   })
-}
+}*/
 
 module.exports.fetchAsset = async (req, res) => {
   let path = req.params[0];
@@ -1184,6 +1184,7 @@ module.exports.publicDishList = (req, res) => {
   Dish.findAll({
     include: [
       { model: Tag, as: "Tags" },
+      { model: Diet, as: "Diets" },
       { model: Category, where: { menuId: menuId } },
       { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
       { model: Modification, as: "Modifications" }

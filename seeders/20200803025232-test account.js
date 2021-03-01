@@ -1,5 +1,5 @@
 'use strict';
-const { User, Restaurant, Menu, Dish, Category, Tag, Modification } = require('../models');
+const { User, Restaurant, Menu, Dish, Category, Tag, Modification, Diet } = require('../src/models');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -47,6 +47,7 @@ module.exports = {
       const sesame = await Tag.findByName("sesame")
       const treenuts = await Tag.findByName("treenuts")
       const egg = await Tag.findByName("egg")
+      const vegan = await Diet.findOne({ where: { name: "vegan" }});
   
       let dishData = {
         name: "Calamari",
@@ -82,6 +83,16 @@ module.exports = {
       })
       await mod.setTags([egg.id], { through: { addToDish: false } });
       await hamburger.addModification(mod)
+
+      const salad = await Dish.create({
+        name: "Salad",
+        description: "Very vegan",
+        restaurantId: restaurant.id,
+        categoryId: entrees.id,
+        price: '3',
+      });
+      salad.setTags([sesame]);
+      salad.setDiets([vegan]);
       
       menu = await Menu.create({
         name: "Drinks",
@@ -132,6 +143,8 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction().then(async t => {});
+    return queryInterface.sequelize.transaction().then(async t => {
+      await Restaurant.destroy({ where: { uniqueName: "test-restaurant" }});
+    });
   }
 };

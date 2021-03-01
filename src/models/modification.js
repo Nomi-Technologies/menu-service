@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'modificationId',
         otherKey: 'tagId',
       });
+      Modification.belongsToMany(models.Diet, {
+        through: 'ModificationDiet',
+        as: 'Diets',
+        foreignKey: 'modificationId',
+        otherKey: 'dietId',
+      });
       Modification.belongsToMany(models.Dish, {
         through: 'DishModification',
         as: 'Dishes',

@@ -17,6 +17,7 @@ async function createDish(req, res) {
 
   const extraParams = {
     dishTags: req.body.dishTags || null,
+    dishDiets: req.body.dishDiets || null,
     dishModifications: req.body.dishModifications || null,
   };
 

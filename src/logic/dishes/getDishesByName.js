@@ -15,6 +15,7 @@ async function getDishesByName(userRestaurantId, menuId, searchValue) {
     },
     include: [
       { model: Tag, as: 'Tags' },
+      { model: Diet, as: 'Diets' },
       { model: Category, where: { menuId }, attributes: [] },
     ],
   });
