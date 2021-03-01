@@ -18,6 +18,10 @@ jobs:
     #   name: node/default
     docker:
       - image: circleci/node:latest
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          NODE_ENV: development
       - image: circleci/postgres:latest
         # auth:
         #   username: mydockerhub-user
