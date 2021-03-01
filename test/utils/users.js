@@ -10,6 +10,7 @@ async function addFavoriteMenuByUserId(userId, menuId) {
 }
 
 async function authenticateTestUser({ email, password }) {
+  console.log('authenticating user');
   const authenticatedUser = await User.authenticate(email, password);
   if (authenticatedUser) {
     const payload = { email: authenticatedUser.email };
