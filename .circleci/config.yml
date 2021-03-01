@@ -6,8 +6,8 @@ orbs:
 
 jobs:
   lint:
-    executor:
-      name: node/default
+    # executor:
+    #   name: node/default
     docker:
       - image: circleci/node:latest
       - image: circleci/postgres:latest
@@ -22,8 +22,8 @@ jobs:
       - run:
           command: npm run lint
   build:
-    executor:
-      name: node/default
+    # executor:
+    #   name: node/default
     docker:
       - image: circleci/node:latest
       - image: circleci/postgres:latest
@@ -47,7 +47,7 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
 workflows:
-  test-and-hold:
+  lint-and-test:
     jobs:
       - build
       - lint:
