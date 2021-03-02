@@ -3,9 +3,9 @@ const { menuToCSV } = require('../../util/csv-parser');
 
 async function getMenuAsCSV(req, res) {
   const menuId = req.params.id;
-  
+
   try {
-    const menu = await  menuLogic.getMenuWithCategoryByIdOrdered(menuId);
+    const menu = await menuLogic.getMenuWithCategoryByIdOrdered(menuId);
     const csv = await menuToCSV(menu);
     res.send({ csv });
   }

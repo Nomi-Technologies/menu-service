@@ -7,7 +7,7 @@ async function updateMenu(req, res) {
 
   try {
     const menu = await menuLogic.getMenuById(menuId);
-    if (menu && menu.restaurantId == userRestaurantId) {
+    if (menu && menu.restaurantId === userRestaurantId) {
       await menuLogic.updateMenuById(menuData, menuId);
       res.status(200).send({
         message: 'update sucessful',
@@ -17,10 +17,10 @@ async function updateMenu(req, res) {
   catch(err) {
     res.status(500).send({
       message:
-        err.message ||
-        `An error occured while updating menu with id=${req.params.id}`
+        err.message
+        || `An error occured while updating menu with id=${req.params.id}`,
     });
   }
-};
+}
 
 module.exports = updateMenu;

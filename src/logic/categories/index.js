@@ -7,11 +7,11 @@ const updateCategory = require('./updateCategory');
 const updateCategoryById = require('./updateCategoryById');
 
 module.exports = {
-    createCategory,
-    deleteCategory,
-    deleteCategoryById,
-    getAllCategoriesByMenuId,
-    getCategoryById,
-    updateCategory,
-    updateCategoryById,
-}
+  createCategory,
+  deleteCategory,
+  deleteCategoryById,
+  getAllCategoriesByMenuId,
+  getCategoryById,
+  updateCategory,
+  updateCategoryById,
+};

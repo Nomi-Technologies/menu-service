@@ -1,9 +1,9 @@
 const menuLogic = require('../../logic/menus');
 
 async function toggleFiltering(req, res) {
-  const enableFiltering = req.body.enableFiltering;
+  const { enableFiltering } = req.body;
   const menuId = req.params.id;
-  
+
   try {
     await menuLogic.updateMenuById({ enableFiltering }, menuId);
     res.status(200).send({

@@ -1,25 +1,26 @@
-const menuLogic = require('../../logic/menus');
+const { sequelize } = require('../../models');
+const dishLogic = require('../../logic/dishes');
 
 async function updateDishOrder(req, res) {
   const { order } = req.body;
+  const t = await sequelize.transaction();
 
   try {
-    const t = await sequelize.transaction()
     await Promise.all(order.map(async (dishId) => {
-      let dish = await Dish.findByPk(dishId)
-      dish.index = order.indexOf(dishId)
-      await dish.save({ transaction: t })
+      const dish = await dishLogic.getDishById(dishId);
+      dish.index = order.indexOf(dishId);
+      await dish.save({ transaction: t });
     }));
-    await t.commit()
+    await t.commit();
     res.send({
-      message: 'category updated successfully'
+      message: 'category updated successfully',
     });
   }
   catch(error) {
     console.error(error);
-    await t.rollback()
+    await t.rollback();
     res.status(500).send({
-      message: 'error updating category order'
+      message: 'error updating category order',
     });
   }
 }

@@ -1,10 +1,17 @@
-const { Menu, Category, Dish, Tag, Modification, Diet } = require('../../models');
+const {
+  Category,
+  Diet,
+  Dish,
+  Menu,
+  Modification,
+  Tag,
+} = require('../../models');
 
 async function getMenuByIdAndRestaurantId(menuId, restaurantId) {
   return Menu.findOne({
-    where: { 
-      restaurantId: restaurantId, 
-      id: menuId 
+    where: {
+      restaurantId,
+      id: menuId,
     },
     include: [
       {
@@ -12,32 +19,32 @@ async function getMenuByIdAndRestaurantId(menuId, restaurantId) {
         include: [
           {
             model: Dish,
-            as: "Dishes",
+            as: 'Dishes',
             include: [
-              { 
-                model: Tag, 
-                as: "Tags" 
+              {
+                model: Tag,
+                as: 'Tags',
               },
-              { 
-                model: Diet, 
-                as: "Diets" 
+              {
+                model: Diet,
+                as: 'Diets',
               },
               {
                 model: Modification,
-                as: "Modifications",
-                include: [ { model: Tag, as: "Tags" },  { model: Diet, as: "Diets" } ],
+                as: 'Modifications',
+                include: [{ model: Tag, as: 'Tags' }, { model: Diet, as: 'Diets' }],
               },
             ],
-            order: [[Dish, "index", "asc"]]
+            order: [[Dish, 'index', 'asc']],
           },
         ],
         order: [
-          [{ model: Dish, as: 'Dishes' }, 'index', 'asc']
-        ]
+          [{ model: Dish, as: 'Dishes' }, 'index', 'asc'],
+        ],
       },
     ],
-    order: [[Category, "index", "asc"]],
-  })
+    order: [[Category, 'index', 'asc']],
+  });
 }
 
 module.exports = getMenuByIdAndRestaurantId;

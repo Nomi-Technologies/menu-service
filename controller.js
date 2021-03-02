@@ -1,6 +1,18 @@
-const { sequelize, Dish, Tag, User, Restaurant, Category, Menu, FavoriteMenu, Modification, Diet } = require("./src/models");
+const {
+  sequelize,
+  Dish,
+  Tag,
+  User,
+  Restaurant,
+  Category,
+  Menu,
+  FavoriteMenu,
+  Modification,
+  Diet,
+} = require('./src/models');
 
-const { createDish, createCategory } = require("./src/util/menu")
+const { createCategory } = require('./src/logic/categories');
+const { createDish } = require('./src/logic/dishes');
 const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
 const { getStaticFile, getFile, uploadFile, uploadImage } = require('./src/util/aws-s3-utils');
 const slug = require("slug");
@@ -11,7 +23,6 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
-const dish = require("./src/util/menu");
 
 let ExtractJwt = passportJWT.ExtractJwt;
 

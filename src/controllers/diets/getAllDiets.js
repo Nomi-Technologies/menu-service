@@ -11,6 +11,6 @@ async function getAllDiets(req, res) {
       message: err.message || 'An error occured while getting all diets',
     });
   }
-};
+}
 
 module.exports = getAllDiets;

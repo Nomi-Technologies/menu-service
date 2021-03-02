@@ -10,7 +10,7 @@ async function createRestaurant(req, res) {
     phone: req.body.phone,
     url: req.body.url,
   };
-  
+
   try {
     const data = await restaurantLogic.createRestaurant(restaurant);
     res.send(data);
@@ -18,9 +18,9 @@ async function createRestaurant(req, res) {
   catch(err) {
     console.error(err);
     res.status(500).send({
-      message: err.message || "An error occured creating while processing this request",
+      message: err.message || 'An error occured creating while processing this request',
     });
   }
-};
+}
 
 module.exports = createRestaurant;

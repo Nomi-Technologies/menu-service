@@ -11,6 +11,6 @@ async function getAllTags(req, res) {
       message: err.message || 'An error occured while getting all tags',
     });
   }
-};
+}
 
 module.exports = getAllTags;

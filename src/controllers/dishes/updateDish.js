@@ -3,7 +3,7 @@ const dishLogic = require('../../logic/dishes');
 async function updateDish(req, res) {
   const dishId = req.params.id;
   const newDetails = req.body;
-  
+
   try {
     const dish = await dishLogic.getDishById(dishId);
     await dishLogic.updateDish(dish, newDetails);
@@ -17,6 +17,6 @@ async function updateDish(req, res) {
       message: err.message || `An error occured while updating dish with dishId=${dishId}`,
     });
   }
-};
+}
 
 module.exports = updateDish;

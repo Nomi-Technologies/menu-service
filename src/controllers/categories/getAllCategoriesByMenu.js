@@ -1,8 +1,8 @@
 const categoryLogic = require('../../logic/categories');
 
 async function getAllCategoriesByMenu(req, res) {
-  const menuId = req.params.menuId;
-  
+  const { menuId } = req.params;
+
   try {
     const categories = await categoryLogic.getAllCategoriesByMenuId(menuId);
     res.send(categories);
@@ -13,6 +13,6 @@ async function getAllCategoriesByMenu(req, res) {
       message: err.message || `An error occured while getting categories with menuId=${menuId}`,
     });
   }
-};
+}
 
 module.exports = getAllCategoriesByMenu;

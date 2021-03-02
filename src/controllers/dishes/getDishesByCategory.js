@@ -10,9 +10,9 @@ async function getDishesByCategory(req, res) {
   catch(err) {
     console.error(err);
     res.status(500).send({
-      message: err.message || "An error occured while getting categories list",
+      message: err.message || 'An error occured while getting categories list',
     });
   }
-};
+}
 
 module.exports = getDishesByCategory;

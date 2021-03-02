@@ -1,0 +1,35 @@
+env:
+  commonjs: true
+  es2021: true
+  node: true
+  mocha: true
+
+extends:
+  - eslint:recommended
+  - airbnb-base
+
+parserOptions:
+  ecmaVersion: 12
+
+rules:
+  no-console: warn
+  brace-style: 
+    - error
+    - stroustrup
+  keyword-spacing:
+    - error
+    - before: true
+      after: true
+      overrides:
+        catch: 
+          after: false
+  indent:
+    - error
+    - 2
+    - MemberExpression: 'off'
+
+overrides:
+  - files: 
+      - ./test/**
+    rules:
+      no-unused-expressions: off

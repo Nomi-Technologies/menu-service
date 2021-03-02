@@ -17,6 +17,6 @@ async function getDish(req, res) {
       message: err.message || `An error occured while getting dish with id==${dishId}`,
     });
   }
-};
+}
 
 module.exports = getDish;

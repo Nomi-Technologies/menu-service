@@ -3,7 +3,7 @@ const restaurantLogic = require('../../logic/restaurants');
 async function updateRestaurant(req, res) {
   const userRestaurantId = req.params.id;
   const newDetails = req.body;
-  
+
   try {
     const restaurant = await restaurantLogic.getRestaurantById(userRestaurantId);
     const restaurantUpdated = await restaurantLogic.updateRestaurant(restaurant, newDetails);
@@ -18,6 +18,6 @@ async function updateRestaurant(req, res) {
       message: err.message || `An error occured while updating restaurant with restaurant_id=${userRestaurantId}`,
     });
   }
-};
+}
 
 module.exports = updateRestaurant;

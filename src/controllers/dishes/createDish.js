@@ -18,19 +18,19 @@ async function createDish(req, res) {
   const extraParams = {
     dishTags: req.body.dishTags || null,
     dishDiets: req.body.dishDiets || null,
-    dishModifications: req.body.dishModifications || null
-  }
-  
+    dishModifications: req.body.dishModifications || null,
+  };
+
   try {
     const dish = await dishLogic.createDish(dishData.categoryId, dishData, extraParams);
-    res.send(dish)
+    res.send(dish);
   }
   catch(err) {
     console.error(err);
     res.status(500).send({
-      message: err.message || "Dish could not be created",
+      message: err.message || 'Dish could not be created',
     });
   }
-};
+}
 
 module.exports = createDish;

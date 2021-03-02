@@ -1,5 +1,10 @@
-
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
+const {
+  Category,
+  Diet,
+  Dish,
+  Tag,
+} = require('../../models');
 
 async function getDishesByName(userRestaurantId, menuId, searchValue) {
   return Dish.findAll({
@@ -10,11 +15,11 @@ async function getDishesByName(userRestaurantId, menuId, searchValue) {
       restaurantId: userRestaurantId,
     },
     include: [
-      { model: Tag, as: "Tags" },
-      { model: Diet, as: "Diets" },
-      { model: Category, where: { menuId: menuId }, attributes: [] },
+      { model: Tag, as: 'Tags' },
+      { model: Diet, as: 'Diets' },
+      { model: Category, where: { menuId }, attributes: [] },
     ],
   });
-};
+}
 
 module.exports = getDishesByName;

@@ -1,23 +1,15 @@
+/* eslint-disable */
+const { Op } = require('sequelize');
+const parse = require('csv-parse');
+const fs = require('fs');
+const { createCategory } = require('../logic/categories');
+const { createDish } = require('../logic/dishes');
 const {
+    Category,
+    Diet,
     Dish,
     Tag,
-    User,
-    Restaurant,
-    Category,
-    Menu,
-    Diet
-} = require("../models");
-
-const {
-    createDish, createCategory
-} = require("./menu")
-
-
-const { Op } = require("sequelize");
-
-
-const parse = require('csv-parse')
-const fs = require('fs');
+} = require('../models');
 
 // converts list of allergen names to ids
 let allergensToIds = async (allergens) => {

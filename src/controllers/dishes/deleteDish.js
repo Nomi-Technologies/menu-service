@@ -3,7 +3,7 @@ const dishLogic = require('../../logic/dishes');
 async function deleteDish(req, res) {
   const userRestaurantId = req.user.restaurantId;
   const dishId = req.params.id;
-  
+
   try {
     const dish = await dishLogic.getDishById(dishId);
     await dishLogic.deleteDish(dish, userRestaurantId);
@@ -17,6 +17,6 @@ async function deleteDish(req, res) {
       message: err.message || `An error occured while deleting dish with dishId=${dishId}`,
     });
   }
-};
+}
 
 module.exports = deleteDish;
