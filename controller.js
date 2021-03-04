@@ -13,8 +13,8 @@ const {
 
 const { createCategory } = require('./src/logic/categories');
 const { createDish } = require('./src/logic/dishes');
-const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/util/csv-parser");
-const { getStaticFile, getFile, uploadFile, uploadImage } = require('./src/util/aws-s3-utils');
+const { parseCSV, menuToCSV, getOrCreateCategory } = require("./src/utils/csv-parser");
+const { getStaticFile, getFile, uploadFile, uploadImage } = require('./src/utils/aws-s3-utils');
 const slug = require("slug");
 const { JWT_SECRET } = require("./config.js");
 const jwt = require("jsonwebtoken");

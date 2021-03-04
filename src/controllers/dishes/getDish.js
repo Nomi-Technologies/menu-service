@@ -1,5 +1,6 @@
 const dishLogic = require('../../logic/dishes');
-const modConverter = require('../../util/mod-tag-converter');
+const modConverter = require('../../utils/mod-tag-converter');
+const logger = require('../../utils/logger');
 
 // gets restaurant information based on authentication
 async function getDish(req, res) {
@@ -12,7 +13,7 @@ async function getDish(req, res) {
     res.send(plainDish);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while getting dish with id==${dishId}`,
     });

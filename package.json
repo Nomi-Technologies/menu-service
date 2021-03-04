@@ -9,7 +9,7 @@
     "lint-fix": "eslint ./src ./test --fix",
     "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all",
     "start": "node .",
-    "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
+    "test": "mocha 'test/**/*.js' --exclude 'test/utils/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
     "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'"

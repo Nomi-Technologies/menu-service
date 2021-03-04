@@ -1,4 +1,5 @@
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function checkEmail(req, res) {
   const { email } = req.query;
@@ -12,7 +13,7 @@ async function checkEmail(req, res) {
     }
   }
   catch(err) {
-    console.log(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while processing this request',
     });
