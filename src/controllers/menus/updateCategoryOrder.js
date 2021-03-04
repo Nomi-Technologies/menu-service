@@ -1,5 +1,6 @@
 const { sequelize } = require('../../models');
 const categoryLogic = require('../../logic/categories');
+const logger = require('../../utils/logger');
 
 // params: ordering: a list of category objects depicting the current order of the menu
 // note: every category should be passed in, regardless of if categories were reordered or not.
@@ -28,7 +29,7 @@ async function updateCategoryOrder(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     await t.rollback();
     res.status(500).send({
       message: 'error updating category order',

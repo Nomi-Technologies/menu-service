@@ -1,4 +1,5 @@
 const modificationLogic = require('../../logic/modifications');
+const logger = require('../../utils/logger');
 
 async function createModification(req, res) {
   const modificationData = {
@@ -22,7 +23,7 @@ async function createModification(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured creating while processing this request',
     });

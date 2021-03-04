@@ -1,4 +1,5 @@
 const restaurantLogic = require('../../logic/restaurants');
+const logger = require('../../utils/logger');
 
 async function updateRestaurant(req, res) {
   const userRestaurantId = req.params.id;
@@ -13,7 +14,7 @@ async function updateRestaurant(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while updating restaurant with restaurant_id=${userRestaurantId}`,
     });

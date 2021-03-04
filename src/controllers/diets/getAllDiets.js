@@ -1,4 +1,5 @@
 const dietLogic = require('../../logic/diets');
+const logger = require('../../utils/logger');
 
 async function getAllDiets(req, res) {
   try {
@@ -6,7 +7,7 @@ async function getAllDiets(req, res) {
     res.send(diets);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while getting all diets',
     });

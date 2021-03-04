@@ -1,5 +1,5 @@
-const logger = require('../../utils/logger');
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function getFavoriteMenus(req, res) {
   const userId = req.user.id;
