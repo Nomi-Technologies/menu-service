@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { serializeError } = require('serialize-error');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
