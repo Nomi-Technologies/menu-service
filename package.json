@@ -12,7 +12,7 @@
     "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
-    "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'"
+    "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'" 
   },
   "author": "",
   "license": "ISC",

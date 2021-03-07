@@ -8,6 +8,8 @@ module.exports = {
       await Diet.create({ name: "Vegan" });
       await Diet.create({ name: "Keto" });
       await Diet.create({ name: "Pescetarian" });
+      await Diet.create({ name: "Halal" });
+      await Diet.create({ name: "Gluten Free" });
       transaction.commit();
     });
   },
@@ -18,6 +20,8 @@ module.exports = {
       "Vegan",
       "Keto",
       "Pescetarian",
+      "Halal",
+      "Gluten Free",
     ]}, {});
   }
 };
