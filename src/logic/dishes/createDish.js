@@ -1,6 +1,6 @@
 const { Dish } = require('../../models');
 
-async function createDish(categoryId, dishInfo, { dishTags, dishDiets, dishModifications }) {
+async function createDish(categoryId, dishInfo) {
   const nextIdx = await Dish.count({
     where: {
       categoryId,

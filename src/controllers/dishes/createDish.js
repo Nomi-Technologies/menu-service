@@ -15,14 +15,11 @@ async function createDish(req, res) {
     price: req.body.price,
   };
 
-  const extraParams = {
-    dishTags: req.body.dishTags || null,
-    dishDiets: req.body.dishDiets || null,
-    dishModifications: req.body.dishModifications || null,
-  };
-
   try {
-    const dish = await dishLogic.createDish(dishData.categoryId, dishData, extraParams);
+    const dish = await dishLogic.createDish(dishData.categoryId, dishData);
+    dish.setTags(req.body.dishTags || null);
+    dish.setDiets(req.body.dishDiets || null);
+    dish.setModifications(req.body.dishModification || null)
     res.send(dish);
   }
   catch(err) {
