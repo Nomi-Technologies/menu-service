@@ -40,9 +40,7 @@ let dietsToIds = async (diets) => {
         let splitDiets = diets.split(",")
         for(diet of splitDiets) {
             try {
-                let foundDiet = await Diet.findOne(
-                    { where: { name: {[Op.iLike]: diet.trim() } } }
-                )
+                let foundDiet = await Diet.findByName(diet);
                 if(foundDiet) {
                     dietIds.push(foundDiet.id)
                 }

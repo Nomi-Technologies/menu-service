@@ -8,7 +8,7 @@
     "lint": "eslint ./src ./test",
     "lint-fix": "eslint ./src ./test --fix",
     "refresh-db": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all",
-    "start": "node .",
+    "start": "nodemon .",
     "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
