@@ -36,11 +36,12 @@ let allergensToIds = async (allergens) => {
 
 let dietsToIds = async (diets) => {
     let dietIds = []
+
     if(diets) {
         let splitDiets = diets.split(",")
         for(diet of splitDiets) {
             try {
-                let foundDiet = await Diet.findByName(diet);
+                let foundDiet = await Diet.findByName(diet.trim());
                 if(foundDiet) {
                     dietIds.push(foundDiet.id)
                 }
