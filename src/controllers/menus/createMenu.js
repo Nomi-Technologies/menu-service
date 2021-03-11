@@ -19,7 +19,7 @@ async function createMenu(req, res) {
   catch(err) {
     // if there's an error, clean up the menu that was created
     await menuLogic.deleteMenuById(menu.id);
-    console.error(err)
+    console.error(err);
     res.status(500).send({
       message: err.message || 'Menu could not be created',
     });

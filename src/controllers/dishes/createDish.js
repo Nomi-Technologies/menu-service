@@ -19,7 +19,7 @@ async function createDish(req, res) {
     const dish = await dishLogic.createDish(dishData.categoryId, dishData);
     dish.setTags(req.body.dishTags || null);
     dish.setDiets(req.body.dishDiets || null);
-    dish.setModifications(req.body.dishModification || null)
+    dish.setModifications(req.body.dishModification || null);
     res.send(dish);
   }
   catch(err) {
