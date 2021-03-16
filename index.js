@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000
 
 const app = express()
 
+
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   limit: '10mb',
@@ -30,6 +32,18 @@ app.server = app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 });
 
+if(process.env.NODE_ENV === 'production') {
+  const Rollbar = require('rollbar');
+  const { ROLLBAR_ACCESS_TOKEN } = require('./config');
+  
+  rollbar = new Rollbar({
+    accessToken: ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true
+  })
+  
+  app.use(rollbar.errorHandler());
+}
 
 require("./routes")(app);
 

@@ -12,7 +12,7 @@
     "test": "mocha 'test/**/*.js' --exclude 'test/util/*'",
     "test-controller": "mocha 'test/controller/**/*.js'",
     "test-logic": "mocha 'test/logic/**/*.js'",
-    "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'" 
+    "test-custom": "mocha 'test/controller/users/getFavoriteMenus.js'"
   },
   "author": "",
   "license": "ISC",
@@ -41,6 +41,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.0.0",
+    "rollbar": "^2.21.0",
     "sequelize": "^6.0.0",
     "sequelize-cli": "^6.0.0",
     "serialize-error": "^7.0.1",
