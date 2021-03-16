@@ -12,6 +12,9 @@
     "dialect": "postgres",
     "define": {
       "freezeTableName": true
+    },
+    "dialectOptions": {
+      "ssl": true
     }
   }
 }
