@@ -32,4 +32,17 @@ app.server = app.listen(port, () => {
 
 require('./routes')(app);
 
+if(process.env.NODE_ENV === 'production') {
+  const Rollbar = require('rollbar');
+  const { ROLLBAR_ACCESS_TOKEN } = require('./config');
+  
+  rollbar = new Rollbar({
+    accessToken: ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true
+  })
+  
+  app.use(rollbar.errorHandler());
+}
+
 module.exports = app;

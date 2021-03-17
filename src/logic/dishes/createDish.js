@@ -1,6 +1,6 @@
 const { Dish } = require('../../models');
 
-async function createDish(categoryId, dishInfo, { dishTags, dishDiets, dishModifications }) {
+async function createDish(categoryId, dishInfo) {
   const nextIdx = await Dish.count({
     where: {
       categoryId,
@@ -10,17 +10,7 @@ async function createDish(categoryId, dishInfo, { dishTags, dishDiets, dishModif
     ...dishInfo,
     index: nextIdx,
   });
-
-  if (dishTags) {
-    await dish.setTags(dishTags);
-  }
-  if (dishDiets) {
-    await dish.setDiets(dishDiets);
-  }
-  if (dishModifications) {
-    await dish.setModifications(dishModifications);
-  }
-
+  
   return dish;
 }
 

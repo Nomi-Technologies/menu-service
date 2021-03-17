@@ -47,7 +47,7 @@ module.exports = {
       const sesame = await Tag.findByName("sesame")
       const treenuts = await Tag.findByName("treenuts")
       const egg = await Tag.findByName("egg")
-      const vegan = await Diet.findOne({ where: { name: "vegan" }});
+      const vegan = await Diet.findByName("vegan");
   
       let dishData = {
         name: "Calamari",
@@ -91,8 +91,8 @@ module.exports = {
         categoryId: entrees.id,
         price: '3',
       });
-      salad.setTags([sesame]);
-      salad.setDiets([vegan]);
+      await salad.setTags([sesame]);
+      await salad.setDiets([vegan]);
       
       menu = await Menu.create({
         name: "Drinks",

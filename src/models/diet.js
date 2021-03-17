@@ -1,4 +1,4 @@
-const { Model } = require('sequelize');
+const { Model, Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Diet extends Model {
@@ -35,5 +35,14 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Diet',
   });
+
+  Diet.findByName = async (name) => Diet.findOne({
+    where: {
+      name: {
+        [Op.iLike]: `%${name}%`,
+      },
+    },
+  });
+
   return Diet;
 };
