@@ -1,4 +1,5 @@
-const { parseCSV } = require('../../util/csv-parser');
+const { parseCSV } = require('../../utils/csv-parser');
+const logger = require('../../utils/logger');
 
 // reads csv and creates menu
 async function uploadMenuCSV(req, res) {
@@ -12,7 +13,7 @@ async function uploadMenuCSV(req, res) {
     res.send(completed);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while processing this request',
     });

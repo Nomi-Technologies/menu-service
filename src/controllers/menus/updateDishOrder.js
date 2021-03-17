@@ -1,5 +1,6 @@
 const { sequelize } = require('../../models');
 const dishLogic = require('../../logic/dishes');
+const logger = require('../../utils/logger');
 
 async function updateDishOrder(req, res) {
   const { order } = req.body;
@@ -17,7 +18,7 @@ async function updateDishOrder(req, res) {
     });
   }
   catch(error) {
-    console.error(error);
+    logger.error(error);
     await t.rollback();
     res.status(500).send({
       message: 'error updating category order',

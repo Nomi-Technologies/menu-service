@@ -1,4 +1,5 @@
 const categoryLogic = require('../../logic/categories');
+const logger = require('../../utils/logger');
 
 async function createCategory(req, res) {
   const { menuId } = req.body;
@@ -9,7 +10,7 @@ async function createCategory(req, res) {
     res.send(category);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Category could not be created',
     });

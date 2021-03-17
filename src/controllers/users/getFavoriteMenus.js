@@ -1,4 +1,5 @@
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function getFavoriteMenus(req, res) {
   const userId = req.user.id;
@@ -9,7 +10,7 @@ async function getFavoriteMenus(req, res) {
     return res.send(favoriteMenus);
   }
   catch(err) {
-    console.log(err);
+    logger.error(err);
     return res.status(500).send({
       message: 'Could not get favorite menus',
     });

@@ -1,4 +1,5 @@
 const dishLogic = require('../../logic/dishes');
+const logger = require('../../utils/logger');
 
 async function getDishesByCategory(req, res) {
   const userRestaurantId = req.user.restaurantId;
@@ -8,7 +9,7 @@ async function getDishesByCategory(req, res) {
     res.send(dishesByCategory);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while getting categories list',
     });

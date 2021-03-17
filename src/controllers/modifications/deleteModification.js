@@ -1,4 +1,5 @@
 const modificationLogic = require('../../logic/modifications');
+const logger = require('../../utils/logger');
 
 // gets restaurant information based on authentication
 async function deleteModification(req, res) {
@@ -12,7 +13,7 @@ async function deleteModification(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while deleting modification with modificationId=${modificationId} and dishId=${dishId}`,
     });
