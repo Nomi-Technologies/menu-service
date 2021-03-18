@@ -9,6 +9,7 @@ const {
   ACCESS_KEY_ID,
   SECRET_ACCESS_KEY,
 } = require('../../config');
+const logger = require('./logger');
 
 aws.config.update({
   region: 'us-west-1',
@@ -59,7 +60,7 @@ module.exports.uploadImage = async (path, req, res, type) => {
 
   upload(req, res, (err) => {
     if (err) {
-      console.log(JSON.stringify(serializeError(err)));
+      logger.error(JSON.stringify(serializeError(err)));
     }
   });
 };

@@ -44,6 +44,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.0.0",
+    "rollbar": "^2.21.0",
     "sequelize": "^6.0.0",
     "sequelize-cli": "^6.0.0",
     "serialize-error": "^7.0.1",

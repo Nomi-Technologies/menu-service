@@ -1,5 +1,6 @@
 const modificationLogic = require('../../logic/modifications');
-const modConverter = require('../../util/mod-tag-converter');
+const modConverter = require('../../utils/mod-tag-converter');
+const logger = require('../../utils/logger');
 
 async function getModifications(req, res) {
   const { restaurantId } = req.user;
@@ -13,7 +14,7 @@ async function getModifications(req, res) {
     res.send(plainModifications);
   }
   catch(err) {
-    console.log(err);
+    logger.error(err);
     res.status(500).send({
       message: 'An error occurred while finding all modifications',
     });

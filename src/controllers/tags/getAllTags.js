@@ -1,4 +1,5 @@
 const tagLogic = require('../../logic/tags');
+const logger = require('../../utils/logger');
 
 async function getAllTags(req, res) {
   try {
@@ -6,7 +7,7 @@ async function getAllTags(req, res) {
     res.send(tags);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while getting all tags',
     });

@@ -1,5 +1,5 @@
 const menuLogic = require('../../logic/menus');
-const { parseCSV } = require('../../util/csv-parser');
+const { parseCSV } = require('../../utils/csv-parser');
 
 async function createMenu(req, res) {
   const menuData = {
