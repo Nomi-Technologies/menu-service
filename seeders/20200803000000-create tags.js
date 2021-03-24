@@ -1,5 +1,5 @@
 'use strict';
-const { Tag } = require('../models');
+const { Tag } = require('../src/models');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
