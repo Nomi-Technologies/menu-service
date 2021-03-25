@@ -55,11 +55,8 @@ jobs:
       - node/install-packages
       # Run optional required steps before releasing
       # - run: npm run build-script
-      - run:
-          name: semantic-release
-          command: npx semantic-release
-          environment:
-            HUSKY_SKIP_HOOKS: 1
+      - run: HUSKY_SKIP_HOOKS=1 npx semantic-release
+
 workflows:
   lint-and-test:
     jobs:
