@@ -71,6 +71,7 @@ workflows:
             branches:
               only:
                 - staging
+                - production
       - release:
           requires:
             - hold
@@ -78,6 +79,7 @@ workflows:
             branches:
               only:
                 - staging
+                - production
 
   # deploy:
   #   jobs:
