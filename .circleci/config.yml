@@ -47,7 +47,15 @@ jobs:
       - run:
           name: Run tests
           command: npm test
-
+  release:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - node/install-packages
+      # Run optional required steps before releasing
+      # - run: npm run build-script
+      - run: npx semantic-release
 workflows:
   lint-and-test:
     jobs:
@@ -55,6 +63,23 @@ workflows:
       - test:
           requires:
             - lint
+      - hold:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - staging
+                - production
+      - release:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - staging
+                - production
 
   # deploy:
   #   jobs:
