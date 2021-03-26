@@ -1,6 +1,6 @@
 {
   "name": "nomi-menu-service",
-  "version": "0.0.0-development",
+  "version": "1.0.0-staging.1",
   "description": "Backend API for nomi",
   "main": "index.js",
   "scripts": {
