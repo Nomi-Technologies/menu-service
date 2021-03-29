@@ -76,6 +76,8 @@ module.exports = (app) => {
   router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
 
+  
+
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
   router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
@@ -92,6 +94,7 @@ module.exports = (app) => {
   router.delete("/dishes/:id", dishController.deleteDish);
   router.get("/dishes-by-category", dishController.getDishesByCategory);
   router.get("/dishes-by-name", dishController.getDishesByName);
+  
   //router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
   
   router.post("/categories", categoryController.createCategory);
