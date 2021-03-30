@@ -44,10 +44,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Nomi API!' });
 });
 
-app.server = app.listen(port, () => {
-  logger.info(`Listening on port ${port}`);
-});
-
 require('./routes')(app);
 
 if(process.env.NODE_ENV === 'production') {
@@ -64,3 +60,8 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 module.exports = app;
+
+
+app.server = app.listen(port, () => {
+  logger.info(`Listening on port ${port}`);
+});
