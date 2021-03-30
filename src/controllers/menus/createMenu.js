@@ -1,5 +1,6 @@
 const menuLogic = require('../../logic/menus');
-const { parseCSV } = require('../../util/csv-parser');
+const { parseCSV } = require('../../utils/csv-parser');
+const logger = require('../../utils/logger');
 
 async function createMenu(req, res) {
   const menuData = {
@@ -19,7 +20,7 @@ async function createMenu(req, res) {
   catch(err) {
     // if there's an error, clean up the menu that was created
     await menuLogic.deleteMenuById(menu.id);
-    console.error(err)
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Menu could not be created',
     });

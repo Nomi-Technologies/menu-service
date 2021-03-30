@@ -10,7 +10,6 @@ async function createDish(categoryId, dishInfo) {
     ...dishInfo,
     index: nextIdx,
   });
-  
   return dish;
 }
 

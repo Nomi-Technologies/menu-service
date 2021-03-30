@@ -1,4 +1,5 @@
 const restaurantLogic = require('../../logic/restaurants');
+const logger = require('../../utils/logger');
 
 // gets restaurant information based on authentication
 async function getRestaurant(req, res) {
@@ -8,7 +9,7 @@ async function getRestaurant(req, res) {
     res.send(restaurant);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while getting restaurant with restaurant_id=${userRestaurantId}`,
     });

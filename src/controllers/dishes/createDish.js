@@ -1,4 +1,5 @@
 const dishLogic = require('../../logic/dishes');
+const logger = require('../../utils/logger');
 
 // TODO: Get user from auth and get restaurant from user
 async function createDish(req, res) {
@@ -19,11 +20,11 @@ async function createDish(req, res) {
     const dish = await dishLogic.createDish(dishData.categoryId, dishData);
     dish.setTags(req.body.dishTags || null);
     dish.setDiets(req.body.dishDiets || null);
-    dish.setModifications(req.body.dishModification || null)
+    dish.setModifications(req.body.dishModification || null);
     res.send(dish);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Dish could not be created',
     });

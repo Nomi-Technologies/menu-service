@@ -1,4 +1,5 @@
 const categoryLogic = require('../../logic/categories');
+const logger = require('../../utils/logger');
 
 async function deleteCategory(req, res) {
   const categoryId = req.params.id;
@@ -11,7 +12,7 @@ async function deleteCategory(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while deleting category with id=${categoryId}`,
     });

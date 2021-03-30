@@ -1,4 +1,5 @@
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function favoriteMenu(req, res) {
   const { favorite } = req.body;
@@ -21,7 +22,7 @@ async function favoriteMenu(req, res) {
     }
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: favorite ? 'Could not favorite menu' : 'Could not unfavorite menu',
     });

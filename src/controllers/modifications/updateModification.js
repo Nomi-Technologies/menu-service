@@ -1,4 +1,5 @@
 const modificationLogic = require('../../logic/modifications');
+const logger = require('../../utils/logger');
 
 async function updateModification(req, res) {
   const modificationId = req.params.id;
@@ -21,7 +22,7 @@ async function updateModification(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while updating modification with modificationId=${modificationId}`,
     });

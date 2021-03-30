@@ -1,4 +1,5 @@
 const menuLogic = require('../../logic/menus');
+const logger = require('../../utils/logger');
 
 async function toggleFiltering(req, res) {
   const { enableFiltering } = req.body;
@@ -11,7 +12,7 @@ async function toggleFiltering(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'An error occured while updating filtering',
     });

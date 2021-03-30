@@ -1,4 +1,5 @@
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function registerUser(req, res) {
   const user = {
@@ -16,7 +17,7 @@ async function registerUser(req, res) {
     res.send(`User ${registeredUser.email} was successfully created!`);
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send(err);
   }
 }

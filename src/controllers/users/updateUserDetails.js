@@ -1,4 +1,5 @@
 const userLogic = require('../../logic/users');
+const logger = require('../../utils/logger');
 
 async function updateUserDetails(req, res) {
   const userId = req.user.id;
@@ -13,7 +14,7 @@ async function updateUserDetails(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || `An error occured while updating user with userId=${userId}`,
     });

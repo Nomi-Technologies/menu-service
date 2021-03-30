@@ -1,4 +1,8 @@
 const userLogic = require('../../logic/users');
+<<<<<<< HEAD
+=======
+const logger = require('../../utils/logger');
+>>>>>>> staging
 
 async function updatePassword(req, res) {
   const userId = req.user.id;
@@ -13,7 +17,7 @@ async function updatePassword(req, res) {
     });
   }
   catch(err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: 'An error occured while updating password',
     });
