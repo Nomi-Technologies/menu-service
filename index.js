@@ -57,7 +57,7 @@ if(process.env.NODE_ENV === 'production') {
   rollbar = new Rollbar({
     accessToken: ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
-    captureUnhandledRejections: true
+    captureUnhandledRejections: true,
   })
   
   app.use(rollbar.errorHandler());
