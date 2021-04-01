@@ -14,12 +14,13 @@ async function updateMenu(req, res) {
       });
     }
   }
-  catch(err) {
+  catch (err) {
     res.status(500).send({
       message:
         err.message
         || `An error occured while updating menu with id=${req.params.id}`,
     });
+    console.error(err);
   }
 }
 
