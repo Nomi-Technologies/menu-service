@@ -39,3 +39,6 @@ If running locally, create a `.env` file with the following content:
 JWT_SECRET=<any string>
 DB_NAME=<db name i.e "nomi-dev">
 ```
+
+
+TEST
