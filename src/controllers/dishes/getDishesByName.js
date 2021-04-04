@@ -2,12 +2,11 @@ const dishLogic = require('../../logic/dishes');
 const logger = require('../../utils/logger');
 
 async function getDishesByName(req, res) {
-  const userRestaurantId = req.user.restaurantId;
   const searchValue = `%${req.query.searchInput}%`;
   const { menuId } = req.query;
 
   try {
-    const dishesByName = await dishLogic.getDishesByName(userRestaurantId, menuId, searchValue);
+    const dishesByName = await dishLogic.getDishesByName(menuId, searchValue);
     res.send(dishesByName);
   }
   catch(err) {

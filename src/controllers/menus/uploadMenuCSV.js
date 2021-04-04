@@ -4,12 +4,11 @@ const logger = require('../../utils/logger');
 // reads csv and creates menu
 async function uploadMenuCSV(req, res) {
   const { data } = req.body;
-  const { restaurantId } = req.user;
   const menuId = req.params.id;
   const { overwrite } = req.body;
 
   try {
-    const completed = await parseCSV(data, restaurantId, menuId, overwrite);
+    const completed = await parseCSV(data, menuId, overwrite);
     res.send(completed);
   }
   catch(err) {

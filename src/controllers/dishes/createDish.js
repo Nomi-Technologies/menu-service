@@ -10,7 +10,7 @@ async function createDish(req, res) {
     canRemove: req.body.canRemove,
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
-    restaurantId: req.user.restaurantId,
+    restaurantId: req.body.restaurantId,
     categoryId: req.body.categoryId,
     menuId: req.body.menuId,
     price: req.body.price,

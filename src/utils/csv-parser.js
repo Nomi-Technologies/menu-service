@@ -70,7 +70,7 @@ let getOrCreateCategory = async (categoryName, menuId) => {
 
 const arrayDiff = (arr1, arr2) => arr1.concat(arr2).filter(val => !(arr1.includes(val) && arr2.includes(val)));
 
-let parseCSV = async (data, restaurantId, menuId, overwrite) => {
+let parseCSV = async (data, menuId, overwrite) => {
     return new Promise(async (finish, reject) => {
         parse(data, {columns: true}, async (err, output) => {
             if(err) {
@@ -92,7 +92,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                         allergenIds = await allergensToIds(dish.Allergens)
                         dietIds = await dietsToIds(dish.Diets)
                         modifiableAllergenIds = await allergensToIds(dish.Modifiable)
-                        existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
+                        existingDish = await Dish.findOne({where: {name: dish.Name, menuId: menuId, categoryId: categoryId}})
                     }
                     catch(err) {
                         reject(err)
@@ -127,7 +127,6 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 tableTalkPoints: dish['Table Talk Points'],
                                 categoryId: categoryId,
                                 menuId: menuId,
-                                restaurantId: restaurantId,
                                 vp: vp,
                                 gfp: gfp
                             }

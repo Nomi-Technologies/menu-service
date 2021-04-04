@@ -27,10 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1,
       allowNull: false,
     },
-    restaurantId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -41,11 +37,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: '',
     },
+    groupId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      defaultValue: ''
+    }
   }, {});
 
   User.associate = (models) => {
-    User.belongsTo(models.Restaurant, {
-      foreignKey: 'restaurantId',
+    User.belongsTo(models.Group, {
+      foreignKey: 'groupId',
       onDelete: 'CASCADE',
     });
 

@@ -6,13 +6,12 @@ const {
   Tag,
 } = require('../../models');
 
-async function getDishesByName(userRestaurantId, menuId, searchValue) {
+async function getDishesByName(menuId, searchValue) {
   return Dish.findAll({
     where: {
       name: {
         [Op.iLike]: searchValue,
       },
-      restaurantId: userRestaurantId,
     },
     include: [
       { model: Tag, as: 'Tags' },

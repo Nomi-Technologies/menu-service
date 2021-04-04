@@ -3,10 +3,9 @@ const logger = require('../../utils/logger');
 
 async function getMenu(req, res) {
   const { id } = req.params;
-  const userRestaurantId = req.user.restaurantId;
 
   try {
-    const menu = await menuLogic.getMenuByIdAndRestaurantId(id, userRestaurantId);
+    const menu = await menuLogic.getMenuById(id);
     if (menu) {
       res.send(menu);
     }

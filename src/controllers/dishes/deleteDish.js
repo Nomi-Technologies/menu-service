@@ -2,12 +2,11 @@ const dishLogic = require('../../logic/dishes');
 const logger = require('../../utils/logger');
 
 async function deleteDish(req, res) {
-  const userRestaurantId = req.user.restaurantId;
   const dishId = req.params.id;
 
   try {
     const dish = await dishLogic.getDishById(dishId);
-    await dishLogic.deleteDish(dish, userRestaurantId);
+    await dishLogic.deleteDish(dish);
     res.status(200).send({
       message: 'Dish deleted successfully',
     });

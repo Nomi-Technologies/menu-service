@@ -13,7 +13,7 @@ async function createMenu(req, res) {
   try {
     menu = await menuLogic.createMenu(menuData);
     if (csv) {
-      await parseCSV(csv, menu.restaurantId, menu.id, overwrite);
+      await parseCSV(csv, menu.id, overwrite);
     }
     res.send(menu);
   }

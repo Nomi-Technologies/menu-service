@@ -1,15 +1,15 @@
 const menuLogic = require('../../logic/menus');
 
 async function duplicateMenu(req, res) {
-  const userRestaurantId = req.user.restaurantId;
   const menuId = req.params.id;
+  const restaurantId = req.params.restaurantId
 
   try {
     const oldMenu = await menuLogic.getMenuWithCategoryById(menuId);
-    if (oldMenu && oldMenu.dataValues.restaurantId === userRestaurantId) {
+    if (oldMenu) {
       const menuData = {
         name: `${oldMenu.dataValues.name} Copy`,
-        restaurantId: userRestaurantId,
+        restaurantId: restaurantId,
         published: true,
       };
       const newMenu = await menuLogic.createMenu(menuData);

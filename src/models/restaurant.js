@@ -48,6 +48,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: '',
     },
+    groupId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      defaultValue: ''
+    }
   }, {
     indexes: [
       { unique: true, fields: ['uniqueName'] },
@@ -70,6 +75,11 @@ module.exports = (sequelize, DataTypes) => {
     Restaurant.hasMany(models.Modification, {
       foreignKey: 'restaurantId',
     });
+
+    Restaurant.belongsTo(models.Group, {
+      foreignKey: 'groupId',
+      onDelete: 'CASCADE'
+    })
   };
   return Restaurant;
 };
