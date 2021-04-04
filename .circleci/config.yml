@@ -1,10 +1,16 @@
 version: 2.1
 
 orbs:
-  # heroku: circleci/heroku@x.y
+  heroku: circleci/heroku@1.2.6
   node: circleci/node@4.2.0
 
 jobs:
+  migrate: 
+    executor:
+      name: node/default
+    steps:
+      - run:
+          command: npx sequelize-cli db:migrate
   lint:
     executor:
       name: node/default
@@ -48,14 +54,23 @@ jobs:
           name: Run tests
           command: npm test
   release:
-    docker:
-      - image: circleci/node:latest
+    executor:
+      name: node/default
     steps:
       - checkout
       - node/install-packages
-      # Run optional required steps before releasing
-      # - run: npm run build-script
       - run: HUSKY_SKIP_HOOKS=1 npx semantic-release
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - run:
+          command: >
+            echo "The command above installs Heroku, the command below deploys.
+            What you do inbetween is up to you!"
+      - heroku/deploy-via-git
+      - migrate
 
 workflows:
   lint-and-test:
@@ -81,23 +96,11 @@ workflows:
               only:
                 - staging
                 - production
-
-  # deploy:
-  #   jobs:
-  #     - heroku/deploy-via-git:
-  #       filters:
-  #         branches:
-  #           only:
-  #             - master
-  #       requires:
-  #         - node/test
-
-# jobs:
-#   build:
-#     docker:
-#       - image: postgres:latest
-#         auth:
-#           username: mydockerhub-user
-#           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-#         environment:
-#           POSTGRES_USER: root
+  heroku_deploy:
+    jobs:
+      - heroku/deploy-via-git
+    filters:
+      branches:
+        only:
+          - staging
+          - production
