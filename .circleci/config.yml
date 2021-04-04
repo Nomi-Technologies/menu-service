@@ -96,11 +96,11 @@ workflows:
               only:
                 - staging
                 - production
-  heroku_deploy:
-    jobs:
-      - heroku/deploy-via-git
-    filters:
-      branches:
-        only:
-          - staging
-          - production
+  # heroku_deploy:
+  #   jobs:
+  #     - heroku/deploy-via-git
+  #   filters:
+  #     branches:
+  #       only:
+  #         - staging
+  #         - production
