@@ -2,6 +2,7 @@ name: Release Drafter
 on: 
   push:
     branches:
+      - develop
       - staging
     pull_request:
       types: [opened, reopened, synchronize]
