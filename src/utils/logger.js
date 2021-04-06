@@ -1,4 +1,6 @@
 const winston = require('winston');
+const { Rollbar } = require('winston-transport-rollbar');
+const { ROLLBAR_ACCESS_TOKEN } = require('../../config');
 
 const logger = winston.createLogger({
   levels: winston.config.npm.levels,
@@ -29,6 +31,16 @@ if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.simple(),
   }));
+}
+else {
+  const rollbar = new Rollbar({
+    rollbarConfig: {
+      accessToken: ROLLBAR_ACCESS_TOKEN,
+      captureUncaught: true,
+      captureUnhandledRejections: true,
+    },
+  });
+  logger.add(rollbar);
 }
 
 module.exports = logger;
