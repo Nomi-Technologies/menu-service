@@ -15,5 +15,5 @@ module.exports = {
   getDishesByCategory,
   updateDish,
   updateDishById,
-  getDishesByName
+  getDishesByName,
 };
