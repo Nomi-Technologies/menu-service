@@ -52,7 +52,7 @@ app.server = app.listen(port, () => {
 
 require('./routes')(app);
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.DEPLOYMENT_CONTEXT === 'production') {
   const rollbar = new Rollbar({
     accessToken: ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
