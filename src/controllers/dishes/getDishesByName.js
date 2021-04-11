@@ -3,7 +3,7 @@ const logger = require('../../utils/logger');
 
 async function getDishesByName(req, res) {
   const searchValue = `%${req.query.searchInput}%`;
-  const { menuId } = req.query;
+  const { menuId } = req.params;
 
   try {
     const dishesByName = await dishLogic.getDishesByName(menuId, searchValue);

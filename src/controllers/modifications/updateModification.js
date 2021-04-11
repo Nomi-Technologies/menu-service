@@ -2,7 +2,7 @@ const modificationLogic = require('../../logic/modifications');
 const logger = require('../../utils/logger');
 
 async function updateModification(req, res) {
-  const modificationId = req.params.id;
+  const { modificationId } = req.params;
   const modificationData = {
     name: req.body.name,
     price: req.body.price,
@@ -24,7 +24,7 @@ async function updateModification(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while updating modification with modificationId=${modificationId}`,
+      message: `An error occured while updating modification with modificationId=${modificationId}`,
     });
   }
 }

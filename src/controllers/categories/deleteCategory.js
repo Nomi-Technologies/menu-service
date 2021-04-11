@@ -2,7 +2,7 @@ const categoryLogic = require('../../logic/categories');
 const logger = require('../../utils/logger');
 
 async function deleteCategory(req, res) {
-  const categoryId = req.params.id;
+  const { categoryId } = req.params;
 
   try {
     const category = await categoryLogic.getCategoryById(categoryId);

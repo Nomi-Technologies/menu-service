@@ -1,15 +1,14 @@
 const menuLogic = require('../../logic/menus');
 
 async function duplicateMenu(req, res) {
-  const menuId = req.params.id;
-  const restaurantId = req.params.restaurantId
+  const { menuId, restaurantId } = req.params;
 
   try {
     const oldMenu = await menuLogic.getMenuWithCategoryById(menuId);
     if (oldMenu) {
       const menuData = {
         name: `${oldMenu.dataValues.name} Copy`,
-        restaurantId: restaurantId,
+        restaurantId,
         published: true,
       };
       const newMenu = await menuLogic.createMenu(menuData);
@@ -29,9 +28,7 @@ async function duplicateMenu(req, res) {
   }
   catch(err) {
     res.status(500).send({
-      message:
-        err.message
-        || 'An error occured while duplicating menu',
+      message: 'An error occured while duplicating menu',
     });
   }
 }

@@ -11,8 +11,8 @@ async function createDish(req, res) {
     notes: req.body.notes,
     tableTalkPoints: req.body.tableTalkPoints,
     restaurantId: req.body.restaurantId,
-    categoryId: req.body.categoryId,
-    menuId: req.body.menuId,
+    categoryId: req.params.categoryId,
+    menuId: req.params.menuId,
     price: req.body.price,
   };
 
@@ -26,7 +26,7 @@ async function createDish(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || 'Dish could not be created',
+      message: 'Dish could not be created',
     });
   }
 }

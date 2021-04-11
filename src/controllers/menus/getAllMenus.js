@@ -2,10 +2,10 @@ const menuLogic = require('../../logic/menus');
 const logger = require('../../utils/logger');
 
 async function getAllMenus(req, res) {
-  const userRestaurantId = req.user.restaurantId;
+  const { restaurantId } = req.params;
 
   try {
-    const data = await menuLogic.getAllMenusByRestaurantId(userRestaurantId);
+    const data = await menuLogic.getAllMenusByRestaurantId(restaurantId);
     res.send(data);
   }
   catch(err) {

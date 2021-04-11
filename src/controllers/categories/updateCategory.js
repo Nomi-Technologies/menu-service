@@ -2,7 +2,7 @@ const categoryLogic = require('../../logic/categories');
 const logger = require('../../utils/logger');
 
 async function updateCategory(req, res) {
-  const categoryId = req.params.id;
+  const { categoryId } = req.params;
   const newDetails = req.body;
 
   try {
@@ -13,7 +13,7 @@ async function updateCategory(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while updating category with id=${categoryId}`,
+      message: `An error occured while updating category with id=${categoryId}`,
     });
   }
 }

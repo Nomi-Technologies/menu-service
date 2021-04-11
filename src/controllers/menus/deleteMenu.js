@@ -1,7 +1,7 @@
 const menuLogic = require('../../logic/menus');
 
 async function deleteMenu(req, res) {
-  const menuId = req.params.id;
+  const { menuId } = req.params;
 
   try {
     const menu = await menuLogic.getMenuById(menuId);
@@ -14,15 +14,13 @@ async function deleteMenu(req, res) {
     else {
       // sends if menu does not exist, or user does not have access
       res.status(404).send({
-        message: 'Could not find menu to update',
+        message: 'Could not find menu to delete',
       });
     }
   }
   catch(err) {
     res.status(500).send({
-      message:
-        err.message
-        || `An error occured while updating menu with id=${menuId}`,
+      message: `An error occured while delete menu with id=${menuId}`,
     });
   }
 }

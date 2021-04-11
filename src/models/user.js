@@ -40,8 +40,8 @@ module.exports = (sequelize, DataTypes) => {
     groupId: {
       type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: ''
-    }
+      defaultValue: '',
+    },
   }, {});
 
   User.associate = (models) => {

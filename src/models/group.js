@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Group extends Model {
     /**
@@ -12,15 +12,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Group.hasMany(models.Restaurant, {
-        foreignKey: 'groupId'
-      })
+        foreignKey: 'groupId',
+      });
       Group.hasMany(models.User, {
-        foreignKey: 'groupId'
-      })
+        foreignKey: 'groupId',
+      });
     }
-  };
+  }
   Group.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Group',

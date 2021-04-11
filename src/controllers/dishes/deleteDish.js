@@ -2,7 +2,7 @@ const dishLogic = require('../../logic/dishes');
 const logger = require('../../utils/logger');
 
 async function deleteDish(req, res) {
-  const dishId = req.params.id;
+  const { dishId } = req.params;
 
   try {
     const dish = await dishLogic.getDishById(dishId);
@@ -14,7 +14,7 @@ async function deleteDish(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while deleting dish with dishId=${dishId}`,
+      message: `An error occured while deleting dish with dishId=${dishId}`,
     });
   }
 }

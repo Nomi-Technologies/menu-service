@@ -2,7 +2,7 @@ const categoryLogic = require('../../logic/categories');
 const logger = require('../../utils/logger');
 
 async function createCategory(req, res) {
-  const { menuId } = req.body;
+  const { menuId } = req.params;
   const categoryData = req.body;
 
   try {

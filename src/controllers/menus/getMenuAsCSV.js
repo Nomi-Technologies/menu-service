@@ -3,7 +3,7 @@ const { menuToCSV } = require('../../utils/csv-parser');
 const logger = require('../../utils/logger');
 
 async function getMenuAsCSV(req, res) {
-  const menuId = req.params.id;
+  const { menuId } = req.params;
 
   try {
     const menu = await menuLogic.getMenuWithCategoryByIdOrdered(menuId);

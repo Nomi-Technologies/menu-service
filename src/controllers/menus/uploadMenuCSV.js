@@ -4,7 +4,7 @@ const logger = require('../../utils/logger');
 // reads csv and creates menu
 async function uploadMenuCSV(req, res) {
   const { data } = req.body;
-  const menuId = req.params.id;
+  const { menuId } = req.params;
   const { overwrite } = req.body;
 
   try {
@@ -14,7 +14,7 @@ async function uploadMenuCSV(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || 'An error occured while processing this request',
+      message: 'An error occured while processing this request',
     });
   }
 }

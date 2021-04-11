@@ -2,7 +2,7 @@ const categoryLogic = require('../../logic/categories');
 const logger = require('../../utils/logger');
 
 async function getCategory(req, res) {
-  const categoryId = req.params.id;
+  const { categoryId } = req.params;
 
   try {
     const category = await categoryLogic.getCategoryById(categoryId);
@@ -11,7 +11,7 @@ async function getCategory(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while getting category with id=${categoryId}`,
+      message: `An error occured while getting category with id=${categoryId}`,
     });
   }
 }

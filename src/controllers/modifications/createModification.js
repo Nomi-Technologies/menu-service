@@ -2,8 +2,10 @@ const modificationLogic = require('../../logic/modifications');
 const logger = require('../../utils/logger');
 
 async function createModification(req, res) {
+  const { restaurantId } = req.params;
+
   const modificationData = {
-    restaurantId: req.user.restaurantId,
+    restaurantId,
     name: req.body.name,
     description: req.body.description,
     price: req.body.price ?? '0',
@@ -25,7 +27,7 @@ async function createModification(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || 'An error occured creating while processing this request',
+      message: 'An error occured creating while processing this request',
     });
   }
 }

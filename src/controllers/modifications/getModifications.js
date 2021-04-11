@@ -3,7 +3,7 @@ const modConverter = require('../../utils/mod-tag-converter');
 const logger = require('../../utils/logger');
 
 async function getModifications(req, res) {
-  const { restaurantId } = req.user;
+  const { restaurantId } = req.params;
 
   try {
     const modifications = await modificationLogic.getAllModifications(restaurantId);

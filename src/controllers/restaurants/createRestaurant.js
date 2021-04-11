@@ -10,6 +10,7 @@ async function createRestaurant(req, res) {
     zip: req.body.zip,
     phone: req.body.phone,
     url: req.body.url,
+    groupId: req.params.groupId,
   };
 
   try {
@@ -19,7 +20,7 @@ async function createRestaurant(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || 'An error occured creating while processing this request',
+      message: 'An error occured creating while processing this request',
     });
   }
 }

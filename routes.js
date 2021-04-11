@@ -13,6 +13,7 @@ module.exports = (app) => {
   const tagController = require("./src/controllers/tags");
   const userController = require("./src/controllers/users");
   const dietController = require("./src/controllers/diets");
+  const groupController = require('./src/controllers/groups')
 
 
   var revProxy = express.Router();
@@ -45,27 +46,7 @@ module.exports = (app) => {
   };
   app.use(cors(corsOptions));
 
-  // var winston = require('winston');
-  // var expressWinston = require('express-winston');
-
-  // app.use(expressWinston.logger({
-  //   transports: [
-  //     new winston.transports.Console()
-  //   ],
-  //   format: winston.format.combine(
-  //     winston.format.colorize(),
-  //     winston.format.json()
-  //   ),
-  //   meta: false, // optional: control whether you want to log the meta data about the request (default to true)
-  //   msg: "[HTTP] {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-  //   expressFormat: false, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-  //   colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-  //   ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
-  // }));
-
   var router = express.Router();
-
-  router.post("/restaurants/register", restaurantController.createRestaurant);
   router.get("/assets/*", controller.fetchAsset);
 
   router.post("/user/register", userController.registerUser);
@@ -76,61 +57,61 @@ module.exports = (app) => {
   router.get("/images/menus/:id", controller.getMenuImage);
   router.get("/images/dishes/:id", controller.getDishImage);
 
-  
+
+  router.post('/groups', groupController.createGroup);
 
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
-  router.put("/images/restaurants/:id", controller.uploadRestaurantImage);
-  router.put("/images/menus/:id", controller.uploadMenuImage);
-  router.put("/images/dishes/:id", controller.uploadDishImage);
-  
-  router.get("/restaurants/me", restaurantController.getRestaurant);
-  router.put("/restaurants/:id", restaurantController.updateRestaurant);
-  router.post("/restaurants/register", restaurantController.createRestaurant);
-  
-  router.post("/dishes", dishController.createDish);
-  router.get("/dishes/:id", dishController.getDish);
-  router.put("/dishes/:id", dishController.updateDish);
-  router.delete("/dishes/:id", dishController.deleteDish);
-  router.get("/dishes-by-name", dishController.getDishesByName);
-  
-  //router.post("/upload-menu-csv", controller.uploadMenuCSV);  // TODO(tony): verify the usage or remove
-  
-  router.post("/categories", categoryController.createCategory);
-  router.get("/categories/:id", categoryController.getCategory);
-  router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu);
-  router.put("/categories/:id", categoryController.updateCategory);
-  router.delete("/categories/:id", categoryController.deleteCategory);
 
+  // Groups
+  router.get("/groups/:groupId", groupController.getGroup);
+  router.get("/groups/:groupId/restaurants", restaurantController.restaurantList);
+  router.post("/groups/:groupId/restaurants", restaurantController.createRestaurant);
+  router.get("/groups/:groupId/restaurants/:restaurantId", restaurantController.getRestaurant);
+  router.put("/groups/:groupId/restaurants/:groupId", restaurantController.updateRestaurant);
+
+  // Menus
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus", menuController.getAllMenus);
+  router.post("/groups/:groupId/restaurants/:restaurantId/menus", menuController.createMenu);
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.getMenu);
+  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.updateMenu);
+  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.deleteMenu);
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/csv", menuController.getMenuAsCSV);
+  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/csv", menuController.uploadMenuCSV);
+  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/duplicate", menuController.duplicateMenu);
+  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/update-category-order", menuController.updateCategoryOrder);
+  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/update-dish-order", menuController.updateDishOrder);
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/search", dishController.getDishesByName);
+
+  // Categories
+  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories", categoryController.createCategory);
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.getCategory);
+  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.updateCategory);
+  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.deleteCategory);
+  
+  router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu); // TODO: What is this used for?
+
+  // Dishes
+  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes", dishController.createDish);
+  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.getDish);
+  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.updateDish);
+  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.deleteDish);
+
+  // Tags and Diets
   router.get("/tags", tagController.getAllTags);
-
   router.get("/diets", dietController.getAllDiets);
 
-  router.post("/menus", menuController.createMenu);
-  router.post("/menus/bulkCreate", menuController.bulkCreateDish);
-  router.get("/menus/:id/csv", menuController.getMenuAsCSV);
-  router.put("/menus/:id/toggle-filtering", menuController.toggleFiltering);
-  router.post("/menus/:id/uploadCSV", menuController.uploadMenuCSV);
-  router.post("/menus/:id/favorite-menu", menuController.favoriteMenu);
-  router.delete("/menus/:id", menuController.deleteMenu);
-  router.get("/menus/:id", menuController.getMenu);
-  router.post("/menus/:id", menuController.duplicateMenu);
-  router.put("/menus/:id", menuController.updateMenu);
-  router.put("/menus/:id/update-category-order", menuController.updateCategoryOrder);
-  router.put("/menus/:id/update-dish-order", menuController.updateDishOrder);
-  router.delete("/menus/:id/dishes/bulkDelete", menuController.bulkDeleteDish);
-  router.get("/all-menus", menuController.getAllMenus);
 
-  router.post("/modifications", modificationController.createModification);
-  router.put("/modifications/:id", modificationController.updateModification);
-  router.get("/modifications", modificationController.getModifications);
+  // Modifications
+  router.get("/groups/:groupId/restaurants/:restaurantId/modifications", modificationController.getModifications);
+  router.post("/groups/:groupId/restaurants/:restaurantId/modifications", modificationController.createModification);
+  router.put("/groups/:groupId/restaurants/:restaurantId/modifications/:modificationId", modificationController.updateModification);
   
+  // User
   router.get("/user/favorite-menus", userController.getFavoriteMenus);
   router.get("/user/details", userController.getUserDetails);
   router.put("/user/details", userController.updateUserDetails);
   router.post("/user/password", userController.updatePassword);
-
-  // /groups/:groupId/restaurants/:restaurantId/menus/:menuId/
 
   app.use("/api", router);
 

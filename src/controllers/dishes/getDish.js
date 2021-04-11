@@ -4,7 +4,7 @@ const logger = require('../../utils/logger');
 
 // gets restaurant information based on authentication
 async function getDish(req, res) {
-  const dishId = req.params.id;
+  const { dishId } = req.params;
 
   try {
     const dish = await dishLogic.getDishById(dishId);
@@ -15,7 +15,7 @@ async function getDish(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while getting dish with id==${dishId}`,
+      message: `An error occured while getting dish with id==${dishId}`,
     });
   }
 }

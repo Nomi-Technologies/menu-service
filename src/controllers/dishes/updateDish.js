@@ -2,7 +2,7 @@ const dishLogic = require('../../logic/dishes');
 const logger = require('../../utils/logger');
 
 async function updateDish(req, res) {
-  const dishId = req.params.id;
+  const { dishId } = req.params;
   const newDetails = req.body;
 
   try {
@@ -15,7 +15,7 @@ async function updateDish(req, res) {
   catch(err) {
     logger.error(err);
     res.status(500).send({
-      message: err.message || `An error occured while updating dish with dishId=${dishId}`,
+      message: `An error occured while updating dish with dishId=${dishId}`,
     });
   }
 }
