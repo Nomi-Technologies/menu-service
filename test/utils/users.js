@@ -48,7 +48,7 @@ function generateTestUserData(user = {}) {
     password: user.password || 'password123',
     phone: user.phone || Math.random().toString(),
     role: user.role || 1,
-    restaurantId: user.restaurantId || uuidv4(),
+    groupId: user.groupId || uuidv4(),
     firstName: user.firstName || Math.random().toString(),
     lastName: user.lastName || Math.random().toString(),
   };

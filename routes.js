@@ -13,7 +13,8 @@ module.exports = (app) => {
   const tagController = require("./src/controllers/tags");
   const userController = require("./src/controllers/users");
   const dietController = require("./src/controllers/diets");
-  const groupController = require('./src/controllers/groups')
+  const groupController = require('./src/controllers/groups');
+  const imageController = require('./src/controllers/images');
 
 
   var revProxy = express.Router();
@@ -53,59 +54,59 @@ module.exports = (app) => {
   router.get("/user/check-email", userController.checkEmail);
   router.post("/user/login", userController.loginUser);
 
-  router.get("/images/restaurants/:id", controller.getRestaurantImage);
-  router.get("/images/menus/:id", controller.getMenuImage);
-  router.get("/images/dishes/:id", controller.getDishImage);
+  router.get("/images/restaurants/:id", imageController.getRestaurantImage);
+  router.get("/images/menus/:id", imageController.getMenuImage);
+  router.get("/images/dishes/:id", imageController.getDishImage);
 
-
-  router.post('/groups', groupController.createGroup);
+  router.post('/groups/register', groupController.createGroup);
 
   // All routes below are authenticated
   router.use(passport.authenticate("jwt", { session: false }));
 
   // Groups
-  router.get("/groups/:groupId", groupController.getGroup);
-  router.get("/groups/:groupId/restaurants", restaurantController.restaurantList);
-  router.post("/groups/:groupId/restaurants", restaurantController.createRestaurant);
-  router.get("/groups/:groupId/restaurants/:restaurantId", restaurantController.getRestaurant);
-  router.put("/groups/:groupId/restaurants/:groupId", restaurantController.updateRestaurant);
+  router.get("/groups/me", groupController.getGroup);
+
+  // Restaurants
+  router.get("/restaurants", restaurantController.restaurantList);
+  router.post("/restaurants", restaurantController.createRestaurant);
+  router.get("/restaurants/:restaurantId", restaurantController.getRestaurant);
+  router.put("/restaurants/:restaurantId", restaurantController.updateRestaurant);
 
   // Menus
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus", menuController.getAllMenus);
-  router.post("/groups/:groupId/restaurants/:restaurantId/menus", menuController.createMenu);
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.getMenu);
-  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.updateMenu);
-  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId", menuController.deleteMenu);
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/csv", menuController.getMenuAsCSV);
-  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/csv", menuController.uploadMenuCSV);
-  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/duplicate", menuController.duplicateMenu);
-  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/update-category-order", menuController.updateCategoryOrder);
-  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/update-dish-order", menuController.updateDishOrder);
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/search", dishController.getDishesByName);
+  router.get("/restaurants/:restaurantId/menus", menuController.getAllMenus);
+  router.post("/restaurants/:restaurantId/menus", menuController.createMenu);
+  router.get("/restaurants/:restaurantId/menus/:menuId", menuController.getMenu);
+  router.put("/restaurants/:restaurantId/menus/:menuId", menuController.updateMenu);
+  router.delete("/restaurants/:restaurantId/menus/:menuId", menuController.deleteMenu);
+  router.get("/restaurants/:restaurantId/menus/:menuId/csv", menuController.getMenuAsCSV);
+  router.post("/restaurants/:restaurantId/menus/:menuId/csv", menuController.uploadMenuCSV);
+  router.post("/restaurants/:restaurantId/menus/:menuId/duplicate", menuController.duplicateMenu);
+  router.put("/restaurants/:restaurantId/menus/:menuId/update-category-order", menuController.updateCategoryOrder);
+  router.put("/restaurants/:restaurantId/menus/:menuId/update-dish-order", menuController.updateDishOrder);
+  router.get("/restaurants/:restaurantId/menus/:menuId/search", dishController.getDishesByName);
 
   // Categories
-  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories", categoryController.createCategory);
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.getCategory);
-  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.updateCategory);
-  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.deleteCategory);
+  router.post("/restaurants/:restaurantId/menus/:menuId/categories", categoryController.createCategory);
+  router.get("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.getCategory);
+  router.put("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.updateCategory);
+  router.delete("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId", categoryController.deleteCategory);
   
   router.get("/categories-by-menu/:menuId", categoryController.getAllCategoriesByMenu); // TODO: What is this used for?
 
   // Dishes
-  router.post("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes", dishController.createDish);
-  router.get("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.getDish);
-  router.put("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.updateDish);
-  router.delete("/groups/:groupId/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.deleteDish);
+  router.post("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes", dishController.createDish);
+  router.get("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.getDish);
+  router.put("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.updateDish);
+  router.delete("/restaurants/:restaurantId/menus/:menuId/categories/:categoryId/dishes/:dishId", dishController.deleteDish);
 
   // Tags and Diets
   router.get("/tags", tagController.getAllTags);
   router.get("/diets", dietController.getAllDiets);
 
-
   // Modifications
-  router.get("/groups/:groupId/restaurants/:restaurantId/modifications", modificationController.getModifications);
-  router.post("/groups/:groupId/restaurants/:restaurantId/modifications", modificationController.createModification);
-  router.put("/groups/:groupId/restaurants/:restaurantId/modifications/:modificationId", modificationController.updateModification);
+  router.get("/restaurants/:restaurantId/modifications", modificationController.getModifications);
+  router.post("/restaurants/:restaurantId/modifications", modificationController.createModification);
+  router.put("/restaurants/:restaurantId/modifications/:modificationId", modificationController.updateModification);
   
   // User
   router.get("/user/favorite-menus", userController.getFavoriteMenus);

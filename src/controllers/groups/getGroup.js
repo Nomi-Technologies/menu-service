@@ -2,7 +2,7 @@ const groupLogic = require('../../logic/groups');
 const logger = require('../../utils/logger');
 
 async function getGroup(req, res) {
-  const { groupId } = req.params;
+  const { groupId } = req.user;
 
   try {
     const group = await groupLogic.getGroupById(groupId);
@@ -11,7 +11,7 @@ async function getGroup(req, res) {
     }
     else {
       res.status(404).send({
-        message: 'could not find menu',
+        message: 'could not find group for user',
       });
     }
   }

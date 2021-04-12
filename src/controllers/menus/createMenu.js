@@ -5,7 +5,7 @@ const logger = require('../../utils/logger');
 async function createMenu(req, res) {
   const menuData = {
     name: req.body.name,
-    restaurantId: req.user.restaurantId,
+    restaurantId: req.params.restaurantId,
     published: true,
   };
   const { body: { csv, overwrite } } = req;

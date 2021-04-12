@@ -2,6 +2,8 @@ const restaurantLogic = require('../../logic/restaurants');
 const logger = require('../../utils/logger');
 
 async function createRestaurant(req, res) {
+  const { groupId } = req.user;
+
   const restaurant = {
     name: req.body.name,
     streetAddress: req.body.streetAddress,
@@ -10,7 +12,7 @@ async function createRestaurant(req, res) {
     zip: req.body.zip,
     phone: req.body.phone,
     url: req.body.url,
-    groupId: req.params.groupId,
+    groupId,
   };
 
   try {
