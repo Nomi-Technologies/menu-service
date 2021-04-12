@@ -62,31 +62,7 @@ module.exports.fetchAsset = async (req, res) => {
     });
 };
 
-function imageUploadHelper(path, req, res) {
-  const headers = caseless(req.headers);
-  uploadImage(path, req, res, headers.get('content-type'))
-    .then((data) => res.send(data))
-    .catch((err) => {
-      console.log(JSON.stringify(serializeError(err)));
-      res.status(500).send({
-        message: `An error occurred while uploading asset to ${path}`
-      });
-    });
-}
 
-function imageDownloadHelper(path, req, res) {
-  getFile(path)
-    .then((data) => {
-      res.setHeader("Content-Type", data.ContentType);
-      res.send(data.Body);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(err.statusCode).send({
-        message: err.message
-      });
-    });
-}
 
 module.exports.uploadRestaurantImage = async (req, res) => {
   imageUploadHelper(`restaurants/${req.params.id}`, req, res);

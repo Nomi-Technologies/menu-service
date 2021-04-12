@@ -7,7 +7,7 @@ async function registerUser(req, res) {
     password: req.body.password,
     phone: req.body.phone,
     role: req.body.role,
-    restaurantId: req.body.restaurantId,
+    groupId: req.body.groupId,
     firstName: req.body.firstname,
     lastName: req.body.lastname,
   };
@@ -18,7 +18,9 @@ async function registerUser(req, res) {
   }
   catch(err) {
     logger.error(err);
-    res.status(500).send(err);
+    res.status(500).send({
+      message: 'error registering user',
+    });
   }
 }
 
