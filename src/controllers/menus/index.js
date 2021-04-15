@@ -12,7 +12,6 @@ const updateCategoryOrder = require('./updateCategoryOrder.js');
 const updateDishOrder = require('./updateDishOrder.js');
 const updateMenu = require('./updateMenu.js');
 const uploadMenuCSV = require('./uploadMenuCSV.js');
-const setPublished = require('./setPublished.js');
 
 module.exports = {
   bulkCreateDish,
@@ -29,5 +28,4 @@ module.exports = {
   updateDishOrder,
   updateMenu,
   uploadMenuCSV,
-  setPublished,
 };
