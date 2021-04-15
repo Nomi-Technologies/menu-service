@@ -23,7 +23,6 @@ const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const caseless = require("caseless");
 const { serializeError } = require('serialize-error');
-const menuLogic = require('./src/logic/menus');
 
 let ExtractJwt = passportJWT.ExtractJwt;
 
@@ -1190,27 +1189,25 @@ module.exports.publicMenuList = (req, res) => {
   })
 };
 
-module.exports.publicDishList = async (req, res) => {
+module.exports.publicDishList = (req, res) => {
   let uniqueName = req.params.uniqueName;
   let menuId = req.params.menuId;
-  let menu = await menuLogic.getMenuById(menuId);
-
-  if(menu.published) {
-    let dishes = await Dish.findAll({
-      include: [
-        { model: Tag, as: "Tags" },
-        { model: Diet, as: "Diets" },
-        { model: Category, where: { menuId: menuId } },
-        { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
-        { model: Modification, as: "Modifications" }
-      ],
-      order: [[Category, "index", "asc"]],
-    })
-    res.send(dishes);
-  }
-  else {
-    res.send(404);
-  }
+  Dish.findAll({
+    include: [
+      { model: Tag, as: "Tags" },
+      { model: Diet, as: "Diets" },
+      { model: Category, where: { menuId: menuId } },
+      { model: Restaurant, where: { uniqueName: uniqueName }, attributes: [] },
+      { model: Modification, as: "Modifications" }
+    ],
+    order: [[Category, "index", "asc"]],
+  })
+    .then((data) => res.send(data))
+    .catch((err) =>
+      res.status(500).send({
+        message: err.message || "An error occured while getting dishes list",
+      })
+    );
 };
 
 module.exports.publicRestaurantList = (req, res) => {
