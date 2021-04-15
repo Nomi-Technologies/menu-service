@@ -111,6 +111,7 @@ module.exports = (app) => {
   router.post("/menus/bulkCreate", menuController.bulkCreateDish);
   router.get("/menus/:id/csv", menuController.getMenuAsCSV);
   router.put("/menus/:id/toggle-filtering", menuController.toggleFiltering);
+  router.put("/menus/:id/set-published", menuController.setPublished);
   router.post("/menus/:id/uploadCSV", menuController.uploadMenuCSV);
   router.post("/menus/:id/favorite-menu", menuController.favoriteMenu);
   router.delete("/menus/:id", menuController.deleteMenu);
