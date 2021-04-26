@@ -19,7 +19,6 @@ const JwtStrategy = passportJWT.Strategy;
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: JWT_SECRET,
-  // passReqToCallback: true,
 };
 
 // auth strategy
