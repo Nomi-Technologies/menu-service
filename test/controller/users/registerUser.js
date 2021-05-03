@@ -11,7 +11,7 @@ chai.use(sinonChai);
 
 const { expect } = chai;
 
-const endpoint = '/api/user/register';
+const endpoint = '/api/users/register';
 
 const TEST_GROUP = generateTestGroupData();
 const TEST_USER = generateTestUserData({ groupId: TEST_GROUP.id });

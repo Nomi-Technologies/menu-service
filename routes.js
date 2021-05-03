@@ -11,6 +11,7 @@ const modificationController = require('./src/controllers/modifications');
 const restaurantController = require('./src/controllers/restaurants');
 const tagController = require('./src/controllers/tags');
 const userController = require('./src/controllers/users');
+const groupController = require('./src/controllers/groups')
 
 module.exports = (app) => {
   const revProxy = express.Router();
@@ -46,10 +47,11 @@ module.exports = (app) => {
 
   const router = express.Router();
 
-  router.post('/restaurants/register', restaurantController.createRestaurant);
-  router.get('/assets/*', controller.fetchAsset);
-
+  router.post('/users/login', userController.loginUser);
+  router.post('/users/register', userController.registerUser);
   router.post('/groups/register', groupController.createGroup);
+
+  router.get('/assets/*', controller.fetchAsset);
   router.get('/images/restaurants/:id', imagesController.getRestaurantImage);
   router.get('/images/menus/:id', imagesController.getMenuImage);
   router.get('/images/dishes/:id', imagesController.getDishImage);
