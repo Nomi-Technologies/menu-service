@@ -1,67 +1,64 @@
-const express = require("express");
-const cors = require("cors");
-const proxy = require("express-http-proxy");
+const express = require('express');
+const cors = require('cors');
+const proxy = require('express-http-proxy');
+const { passport, ...controller } = require('./controller');
+const categoryController = require('./src/controllers/categories');
+const dietController = require('./src/controllers/diets');
+const dishController = require('./src/controllers/dishes');
+const imagesController = require('./src/controllers/images');
+const menuController = require('./src/controllers/menus');
+const modificationController = require('./src/controllers/modifications');
+const restaurantController = require('./src/controllers/restaurants');
+const tagController = require('./src/controllers/tags');
+const userController = require('./src/controllers/users');
 
 module.exports = (app) => {
-  const controller = require("./controller");
-  const { passport } = require("./controller");
-  const categoryController = require("./src/controllers/categories");
-  const dishController = require("./src/controllers/dishes");
-  const menuController = require("./src/controllers/menus");
-  const modificationController = require("./src/controllers/modifications");
-  const restaurantController = require("./src/controllers/restaurants");
-  const tagController = require("./src/controllers/tags");
-  const userController = require("./src/controllers/users");
-  const dietController = require("./src/controllers/diets");
-  const groupController = require('./src/controllers/groups');
-  const imageController = require('./src/controllers/images');
-
-
-  var revProxy = express.Router();
+  const revProxy = express.Router();
   revProxy.all(
-    "/smart-menu/*",
-    proxy("https://nomi-smart-menu.netlify.app", {
+    '/smart-menu/*',
+    proxy('https://nomi-smart-menu.netlify.app', {
       proxyReqPathResolver: (req) => `/${req.params[0]}`,
-    })
+    }),
   );
-  app.use("/app", revProxy);
+  app.use('/app', revProxy);
 
   // use cors only other than reverse proxy, otherwise web browsers won't be able to
   // access the react apps
-  var whitelist = [
+  const whitelist = [
     /https\:\/\/[a-z]*\.?nomi\.menu/,
     /https\:\/\/(.*--)?(.+)\.netlify\.app/,
     /http\:\/\/localhost:8000/,
     /http\:\/\/localhost:8001/,
   ];
-  var corsOptions = {
-    origin: function (origin, callback) {
+  const corsOptions = {
+    origin(origin, callback) {
       const found = whitelist.find((regex) => regex.test(origin));
       if (found !== undefined || origin === undefined) {
         callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      }
+      else {
+        callback(new Error('Not allowed by CORS'));
       }
     },
     optionsSuccessStatus: 200,
   };
   app.use(cors(corsOptions));
 
-  var router = express.Router();
-  router.get("/assets/*", controller.fetchAsset);
+  const router = express.Router();
 
-  router.post("/user/register", userController.registerUser);
-  router.get("/user/check-email", userController.checkEmail);
-  router.post("/user/login", userController.loginUser);
-
-  router.get("/images/restaurants/:id", imageController.getRestaurantImage);
-  router.get("/images/menus/:id", imageController.getMenuImage);
-  router.get("/images/dishes/:id", imageController.getDishImage);
+  router.post('/restaurants/register', restaurantController.createRestaurant);
+  router.get('/assets/*', controller.fetchAsset);
 
   router.post('/groups/register', groupController.createGroup);
+  router.get('/images/restaurants/:id', imagesController.getRestaurantImage);
+  router.get('/images/menus/:id', imagesController.getMenuImage);
+  router.get('/images/dishes/:id', imagesController.getDishImage);
 
   // All routes below are authenticated
-  router.use(passport.authenticate("jwt", { session: false }));
+  router.use(passport.authenticate('jwt', { session: false }));
+  router.put('/images/restaurants/:id', imagesController.uploadRestaurantImage);
+  router.put('/images/menus/:id', imagesController.uploadMenuImage);
+  router.put('/images/dishes/:id', imagesController.uploadDishImage);
 
   // Groups
   router.get("/groups/me", groupController.getGroup);
@@ -116,9 +113,9 @@ module.exports = (app) => {
 
   app.use("/api", router);
 
-  var webApiRouter = express.Router();
-  webApiRouter.get("/:uniqueName", controller.publicMenuList);
-  webApiRouter.get("/:uniqueName/:menuId", controller.publicDishList);
-  webApiRouter.get("/restaurants", controller.publicRestaurantList);
-  app.use("/webApi", webApiRouter);
+  const webApiRouter = express.Router();
+  webApiRouter.get('/:uniqueName', controller.publicMenuList);
+  webApiRouter.get('/:uniqueName/:menuId', controller.publicDishList);
+  webApiRouter.get('/restaurants', controller.publicRestaurantList);
+  app.use('/webApi', webApiRouter);
 };
