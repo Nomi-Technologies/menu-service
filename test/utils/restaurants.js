@@ -29,6 +29,7 @@ function generateTestRestaurantData(restaurant = {}) {
     zip: restaurant.zip || Math.random().toString(),
     phone: restaurant.phone || Math.random().toString(),
     url: restaurant.url || Math.random().toString(),
+    groupId: restaurant.groupId || uuidv4(),
   };
   return testRestaurant;
 }

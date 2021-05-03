@@ -1,9 +1,12 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const sinon = require('sinon'); // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai');
 const app = require('../../../index.js');
-const { generateTestRestaurantData, createTestRestaurant, deleteTestRestaurantById } = require('../../utils/restaurants');
+const {
+  generateTestRestaurantData,
+  createTestRestaurant,
+  deleteTestRestaurantById,
+} = require('../../utils/restaurants');
 const {
   authenticateTestUser,
   generateTestUserData,

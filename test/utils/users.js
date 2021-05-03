@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const { User } = require('../../src/models');
@@ -19,12 +18,9 @@ async function authenticateTestUser({ email, password }) {
   return null;
 }
 
-async function createTestUser(user) {
+async function createTestUser(userData) {
   // copy user object into testUser so that we can retain the password in the original user object.
-  const testUser = { ...user };
-  const passwordHash = bcrypt.hashSync(testUser.password, 10);
-  testUser.password = passwordHash;
-  await User.create(testUser);
+  const user = await User.register(userData);
   return user;
 }
 

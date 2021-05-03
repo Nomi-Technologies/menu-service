@@ -58,24 +58,24 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  User.register = async (
+  User.register = async ({
     email,
     password,
     phone,
     role,
-    restaurant,
-    fname,
-    lname,
-  ) => {
+    groupId,
+    firstName,
+    lastName,
+  }) => {
     const passwordHash = bcrypt.hashSync(password, 10);
     const user = {
       email,
+      firstName,
+      groupId,
+      lastName,
       password: passwordHash,
       phone,
       role,
-      restaurantId: restaurant,
-      firstName: fname,
-      lastName: lname,
     };
 
     await User.create(user);
@@ -86,11 +86,11 @@ module.exports = (sequelize, DataTypes) => {
     const passwordHash = bcrypt.hashSync(newPassword, 10);
 
     return User.findOne({ where: { id } })
-    .then((user) => user
-    .update({ password: passwordHash }))
-    .catch((err) => {
-      throw err;
-    });
+      .then((user) => user
+        .update({ password: passwordHash }))
+      .catch((err) => {
+        throw err;
+      });
   };
 
   User.getUser = async (obj) => User.findOne({ where: obj });

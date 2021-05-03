@@ -12,10 +12,10 @@ chai.use(sinonChai);
 
 const { expect } = chai;
 
-const endpoint = '/api/restaurants/me';
+const endpoint = '/api/restaurants';
 
 const TEST_RESTAURANT = generateTestRestaurantData();
-const TEST_USER = generateTestUserData({ restaurantId: TEST_RESTAURANT.id });
+const TEST_USER = generateTestUserData();
 let token;
 
 describe('controller.users.getRestaurant', () => {
@@ -37,7 +37,7 @@ describe('controller.users.getRestaurant', () => {
     });
     it('Should return restaurant if user is logged in', async () => {
       const res = await chai.request(app)
-        .get(endpoint)
+        .get(`${endpoint}/${TEST_RESTAURANT.id}`)
         .set('Authorization', `Bearer ${token}`);
       expect(res).to.have.status(200);
       expect(res.body).to.deep.include({

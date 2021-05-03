@@ -1,9 +1,16 @@
 'use strict';
 const { User, Restaurant, Menu, Dish, Category, Tag, Modification, Diet } = require('../src/models');
+const { Group } = require('../src/models');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction().then(async t => {
+      const group = await Group.create({
+        name: "Test Group"
+      })
+
+      console.log(`created group: ${group.id}`)
+
       const restaurant = await Restaurant.create({
         uniqueName: "test-restaurant",
         name: "Test Restaurant",
@@ -12,25 +19,26 @@ module.exports = {
         state: "CA",
         zip: "90007",
         phone: "1111111111",
-        url: "google.com"
+        url: "google.com",
+        groupId: group.id
       });
-      console.log("creating user")
-      await User.register(
-        "admin@test.com",
-        "password123",
-        "2222222222",
-        1,
-        restaurant.id,
-        "John",
-        "Doe"
-      )
-  
+
+      const user = await User.register({
+        email: "admin@test.com",
+        password: "password123",
+        phone: "2222222222",
+        role: 1,
+        groupId: group.id,
+        firstName: "John",
+        lastName: "Doe"
+      });
+
       let menu = await Menu.create({
         name: "Dinner",
         restaurantId: restaurant.id,
         published: true,
-      });      
-  
+      });
+
       let apps = await Category.create({
         name: "Appetizers",
         description: "Small plates to start with",
@@ -42,22 +50,22 @@ module.exports = {
         description: "The main event",
         menuId: menu.id
       })
-  
+
       const gluten = await Tag.findByName("gluten")
       const sesame = await Tag.findByName("sesame")
       const treenuts = await Tag.findByName("treenuts")
       const egg = await Tag.findByName("egg")
       const vegan = await Diet.findByName("vegan");
-  
+
       let dishData = {
         name: "Calamari",
         restaurantId: restaurant.id,
         categoryId: apps.id,
         price: '10',
       }
-  
+
       await Dish.create(dishData).then(dish => dish.setTags([treenuts.id]));
-  
+
       dishData = {
         name: "Hamburger",
         description: "Very juicy",
@@ -65,7 +73,7 @@ module.exports = {
         categoryId: entrees.id,
         price: '5',
       }
-  
+
       const hamburger = await Dish.create(dishData)
       await hamburger.setTags([sesame, gluten, egg])
       let addMeatMod = await Modification.create({
@@ -93,46 +101,46 @@ module.exports = {
       });
       await salad.setTags([sesame]);
       await salad.setDiets([vegan]);
-      
+
       menu = await Menu.create({
         name: "Drinks",
         restaurantId: restaurant.id,
         published: true
       })
-    
+
       let Wine = await Category.create({
         name: "Wine",
         description: "This stuff is made from grapes!",
         menuId: menu.id
       })
-    
+
       let Beer = await Category.create({
         name: "Beer",
         menuId: menu.id
       })
-    
+
       await Dish.create({
         name: "Corona",
         description: "yike",
         restaurantId: restaurant.id,
         categoryId: Beer.id
       })
-    
+
       await Dish.create({
         name: "Coors Lite",
         description: "crispy",
         restaurantId: restaurant.id,
         categoryId: Beer.id
       })
-    
-    
+
+
       await Dish.create({
         name: "Malbec",
         description: "yike",
         restaurantId: restaurant.id,
         categoryId: Wine.id
       })
-    
+
       await Dish.create({
         name: "Pinot Noir",
         description: "crispy",
@@ -144,7 +152,7 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction().then(async t => {
-      await Restaurant.destroy({ where: { uniqueName: "test-restaurant" }});
+      await Restaurant.destroy({ where: { uniqueName: "test-restaurant" } });
     });
   }
 };
