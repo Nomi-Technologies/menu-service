@@ -5,7 +5,7 @@ async function getMenu(req, res) {
   const { menuId } = req.params;
 
   try {
-    const menu = await menuLogic.getMenuById(menuId);
+    const menu = await menuLogic.getMenuWithCategoryById(menuId);
     if (menu) {
       res.send(menu);
     }

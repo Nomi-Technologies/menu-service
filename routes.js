@@ -70,6 +70,7 @@ module.exports = (app) => {
   router.post("/restaurants", restaurantController.createRestaurant);
   router.get("/restaurants/:restaurantId", restaurantController.getRestaurant);
   router.put("/restaurants/:restaurantId", restaurantController.updateRestaurant);
+  router.get("/groups/:groupId/restaurants", restaurantController.getGroupRestaurants);
 
   // Menus
   router.get("/restaurants/:restaurantId/menus", menuController.getAllMenus);
