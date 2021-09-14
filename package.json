@@ -37,6 +37,7 @@
     "multer-s3": "^2.9.0",
     "node": "^14.4.0",
     "node-addon-api": "^3.0.0",
+    "node-cron": "^3.0.0",
     "nodemon": "^2.0.4",
     "package.json": "^2.0.1",
     "passport": "^0.4.1",
