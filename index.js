@@ -29,10 +29,7 @@ app.use(expressWinston.logger({
   transports: [
     new winston.transports.Console(),
   ],
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.json(),
-  ),
+  format: winston.format.colorize(),
   meta: true,
   msg: 'HTTP {{req.method}} {{req.url}}',
   expressFormat: true,
