@@ -90,8 +90,8 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
-                        dietIds = await dietsToIds(dish.Diets)
                         modifiableAllergenIds = await allergensToIds(dish.Modifiable)
+                        dietIds = await dietsToIds(dish.Diets)
                         existingDish = await Dish.findOne({ where: { name: dish.Name, restaurantId: restaurantId, categoryId: categoryId } })
                     }
                     catch (err) {
@@ -112,8 +112,8 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             })
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await existingDish.setTags(nonModifiableAllergenIds)
+                            await existingDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                             await existingDish.setDiets(dietIds)
-                            await existingDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
