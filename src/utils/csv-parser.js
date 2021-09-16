@@ -136,7 +136,7 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await newDish.setTags(nonModifiableAllergenIds)
                             await newDish.setDiets(dietIds)
-                            await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
+                            await newDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
