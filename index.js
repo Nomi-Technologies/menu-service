@@ -43,10 +43,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Nomi API!' });
 });
 
-app.server = app.listen(port, () => {
-  logger.info(`Listening on port ${port}`);
-});
-
 require('./routes')(app);
 
 if (process.env.DEPLOYMENT_CONTEXT === 'production') {
@@ -55,8 +51,13 @@ if (process.env.DEPLOYMENT_CONTEXT === 'production') {
     captureUncaught: true,
     captureUnhandledRejections: true,
   });
-
+  
   app.use(rollbar.errorHandler());
 }
 
 module.exports = app;
+
+
+app.server = app.listen(port, () => {
+  logger.info(`Listening on port ${port}`);
+});
