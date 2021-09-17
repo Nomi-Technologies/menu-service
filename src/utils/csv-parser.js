@@ -14,17 +14,17 @@ const {
 let allergensToIds = async (allergens) => {
     let allergenIds = []
 
-    if(allergens) {
+    if (allergens) {
         let splitAllergens = allergens.split(",")
-        for(allergen of splitAllergens) {
+        for (allergen of splitAllergens) {
             try {
                 let tag = await Tag.findOne(
-                    { where: { name: {[Op.iLike]: allergen.trim() } } }
+                    { where: { name: { [Op.iLike]: allergen.trim() } } }
                 )
-                if(tag) {
+                if (tag) {
                     allergenIds.push(tag.id)
                 }
-            } catch(err) {
+            } catch (err) {
                 throw err;
             }
         }
@@ -36,15 +36,15 @@ let allergensToIds = async (allergens) => {
 let dietsToIds = async (diets) => {
     let dietIds = []
 
-    if(diets) {
+    if (diets) {
         let splitDiets = diets.split(",")
-        for(diet of splitDiets) {
+        for (diet of splitDiets) {
             try {
                 let foundDiet = await Diet.findByName(diet.trim());
-                if(foundDiet) {
+                if (foundDiet) {
                     dietIds.push(foundDiet.id)
                 }
-            } catch(err) {
+            } catch (err) {
                 throw err;
             }
         }
@@ -54,8 +54,8 @@ let dietsToIds = async (diets) => {
 
 let getOrCreateCategory = async (categoryName, menuId) => {
     try {
-        let category = await Category.findOne({where: { name: categoryName, menuId: menuId }})
-        if(category) {
+        let category = await Category.findOne({ where: { name: categoryName, menuId: menuId } })
+        if (category) {
             return category.id
         } else {
             newCategory = await createCategory(menuId, { name: categoryName, menuId: menuId })
@@ -71,11 +71,11 @@ const arrayDiff = (arr1, arr2) => arr1.concat(arr2).filter(val => !(arr1.include
 
 let parseCSV = async (data, restaurantId, menuId, overwrite) => {
     return new Promise(async (finish, reject) => {
-        parse(data, {columns: true}, async (err, output) => {
-            if(err) {
+        parse(data, { columns: true }, async (err, output) => {
+            if (err) {
                 throw err
             } else {
-                for(let i = 0; i < output.length; i++) {
+                for (let i = 0; i < output.length; i++) {
                     let dish = output[i]
                     let categoryId
                     let allergenIds
@@ -89,17 +89,17 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                     try {
                         categoryId = await getOrCreateCategory(dish.Category, menuId)
                         allergenIds = await allergensToIds(dish.Allergens)
-                        dietIds = await dietsToIds(dish.Diets)
                         modifiableAllergenIds = await allergensToIds(dish.Modifiable)
-                        existingDish = await Dish.findOne({where: {name: dish.Name, restaurantId: restaurantId, categoryId: categoryId}})
+                        dietIds = await dietsToIds(dish.Diets)
+                        existingDish = await Dish.findOne({ where: { name: dish.Name, restaurantId: restaurantId, categoryId: categoryId } })
                     }
-                    catch(err) {
+                    catch (err) {
                         reject(err)
                         throw err
                     }
 
                     // check if dish exists
-                    if(existingDish) {
+                    if (existingDish) {
                         try {
                             await existingDish.update({
                                 description: dish.Description,
@@ -111,8 +111,8 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             })
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await existingDish.setTags(nonModifiableAllergenIds)
+                            await existingDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                             await existingDish.setDiets(dietIds)
-                            await existingDish.addTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
@@ -128,13 +128,14 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 menuId: menuId,
                                 restaurantId: restaurantId,
                                 vp: vp,
-                                gfp: gfp
+                                gfp: gfp,
+                                index: i
                             }
                             let newDish = await createDish(categoryId, dishInfo)
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
                             await newDish.setTags(nonModifiableAllergenIds)
                             await newDish.setDiets(dietIds)
-                            await newDish.addTags(modifiableAllergenIds, { through: { removable: true } })
+                            await newDish.setTags(modifiableAllergenIds, { through: { removable: true } })
                         } catch (err) {
                             reject(err)
                             throw err
@@ -157,7 +158,7 @@ let dishAllergensToString = (tags) => {
 }
 
 let formatCell = (value) => {
-    if(value && value.includes(',')) {
+    if (value && value.includes(',')) {
         return "\"" + value + "\""
     } else {
         return value
@@ -200,7 +201,7 @@ let menuToCSV = async (menu) => {
                     // compile modifiable tags
                     let modifiableTags = []
                     dish.Tags.forEach((tag) => {
-                        if(tag.DishTag.removable) {
+                        if (tag.DishTag.removable) {
                             modifiableTags.push(tag)
                         }
                     })

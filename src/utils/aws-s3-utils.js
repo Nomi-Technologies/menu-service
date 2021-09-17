@@ -44,10 +44,11 @@ module.exports.getFile = async (path) => {
   return data;
 };
 
-module.exports.uploadImage = async (path, req, res, type) => {
+module.exports.uploadImage = (path, req, res, type) => {
   const storage = multerS3({
     s3,
     bucket: ENV_SPEC_BUCKET_NAME,
+    acl: 'public-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata(req, file, cb) {
       cb(null, { fieldName: file.fieldname });
@@ -61,6 +62,9 @@ module.exports.uploadImage = async (path, req, res, type) => {
   upload(req, res, (err) => {
     if (err) {
       logger.error(JSON.stringify(serializeError(err)));
+      res.status(err.status || 400).send();
+    } else {
+      res.status(200).send();
     }
   });
 };

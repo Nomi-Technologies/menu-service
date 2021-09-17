@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const winston = require('winston');
+const expressWinston = require('express-winston');
+const Rollbar = require('rollbar');
+const { ROLLBAR_ACCESS_TOKEN } = require('./config');
 const logger = require('./src/utils/logger');
-var winston = require('winston'),
-    expressWinston = require('express-winston');  
 
 logger.info('Starting menu-service...');
 
@@ -25,17 +27,14 @@ app.use(bodyParser.raw({
 // Logging
 app.use(expressWinston.logger({
   transports: [
-    new winston.transports.Console()
+    new winston.transports.Console(),
   ],
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.json()
-  ),
-  meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-  msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-  expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-  colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-  ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
+  format: winston.format.colorize(),
+  meta: true,
+  msg: 'HTTP {{req.method}} {{req.url}}',
+  expressFormat: true,
+  colorize: false,
+  ignoreRoute: (req, res) => false,
 }));
 
 app.use(passport.initialize());
@@ -46,15 +45,12 @@ app.get('/', (req, res) => {
 
 require('./routes')(app);
 
-if(process.env.NODE_ENV === 'production') {
-  const Rollbar = require('rollbar');
-  const { ROLLBAR_ACCESS_TOKEN } = require('./config');
-  
-  rollbar = new Rollbar({
+if (process.env.DEPLOYMENT_CONTEXT === 'production') {
+  const rollbar = new Rollbar({
     accessToken: ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true,
-  })
+  });
   
   app.use(rollbar.errorHandler());
 }
