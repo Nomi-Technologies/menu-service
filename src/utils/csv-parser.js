@@ -109,9 +109,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                                 vp: vp,
                                 gfp: gfp
                             })
-                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
-                            await existingDish.setTags(nonModifiableAllergenIds)
+                            let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds); 
                             await existingDish.setTags(modifiableAllergenIds, { through: { removable: true } })
+                            await existingDish.addTags(nonModifiableAllergenIds)
                             await existingDish.setDiets(dietIds)
                         } catch (err) {
                             reject(err)
@@ -133,9 +133,9 @@ let parseCSV = async (data, restaurantId, menuId, overwrite) => {
                             }
                             let newDish = await createDish(categoryId, dishInfo)
                             let nonModifiableAllergenIds = arrayDiff(allergenIds, modifiableAllergenIds);
-                            await newDish.setTags(nonModifiableAllergenIds)
-                            await newDish.setDiets(dietIds)
                             await newDish.setTags(modifiableAllergenIds, { through: { removable: true } })
+                            await newDish.addTags(nonModifiableAllergenIds)
+                            await newDish.setDiets(dietIds)
                         } catch (err) {
                             reject(err)
                             throw err
