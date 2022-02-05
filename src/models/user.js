@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const bcrypt = require('bcrypt');
 const { Sequelize } = require('sequelize');
 
