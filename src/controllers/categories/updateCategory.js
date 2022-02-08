@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const categoryLogic = require('../../logic/categories');
 const logger = require('../../utils/logger');
 

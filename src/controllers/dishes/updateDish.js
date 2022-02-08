@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const dishLogic = require('../../logic/dishes');
 const logger = require('../../utils/logger');
 

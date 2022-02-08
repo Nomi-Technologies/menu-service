@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const createMenu = require('./createMenu.js');
 const deleteMenuById = require('./deleteMenuById.js');
 const duplicateCategoriesAndDishes = require('./duplicateCategoriesAndDishes.js');
