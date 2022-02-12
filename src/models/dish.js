@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {

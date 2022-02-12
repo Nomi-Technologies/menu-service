@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
 const {

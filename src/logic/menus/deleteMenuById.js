@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { Menu } = require('../../models');
 
 async function deleteMenuById(id) {
