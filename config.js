@@ -1,3 +1,5 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable import/newline-after-import */
 const dotenv = require('dotenv');
 dotenv.config();
 

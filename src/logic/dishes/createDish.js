@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { Dish } = require('../../models');
 
 async function createDish(categoryId, dishInfo) {

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { Modification } = require('../../models');
 
 async function createModification(modificationData, extraParams) {
