@@ -16,7 +16,7 @@ async function createDish(req, res) {
     restaurantId: req.user.restaurantId,
     categoryId: req.body.categoryId,
     menuId: req.body.menuId,
-    price: req.body.price,
+    price: req.body.price || 0,
   };
 
   try {
@@ -26,7 +26,7 @@ async function createDish(req, res) {
     dish.setTags(req.body.dishRemovableTags, { through: { removable: true } } || null);
     // dish.addTags(totalDishTags || null);
     dish.setDiets(req.body.dishDiets || null);
-    dish.setModifications(req.body.dishModification || null);
+    dish.setModifications(req.body.dishModifications || null);
     res.send(dish);
   } catch(err) {
     logger.error(err);
