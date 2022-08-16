@@ -11,6 +11,7 @@ const toggleFiltering = require('./toggleFiltering.js');
 const updateCategoryOrder = require('./updateCategoryOrder.js');
 const updateDishOrder = require('./updateDishOrder.js');
 const updateMenu = require('./updateMenu.js');
+const updateMenuOrder = require('./updateMenuOrder.js');
 const uploadMenuCSV = require('./uploadMenuCSV.js');
 
 module.exports = {
@@ -27,5 +28,6 @@ module.exports = {
   updateCategoryOrder,
   updateDishOrder,
   updateMenu,
+  updateMenuOrder,
   uploadMenuCSV,
 };

@@ -8,6 +8,7 @@ const getMenuByIdAndRestaurantId = require('./getMenuByIdAndRestaurantId.js');
 const getMenuWithCategoryById = require('./getMenuWithCategoryById.js');
 const getMenuWithCategoryByIdOrdered = require('./getMenuWithCategoryByIdOrdered.js');
 const updateMenuById = require('./updateMenuById.js');
+const updateMenuOrder = require('./updateMenuOrder.js');
 
 module.exports = {
   createMenu,
@@ -19,4 +20,5 @@ module.exports = {
   getMenuWithCategoryById,
   getMenuWithCategoryByIdOrdered,
   updateMenuById,
+  updateMenuOrder,
 };
