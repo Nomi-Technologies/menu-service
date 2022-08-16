@@ -64,7 +64,7 @@ module.exports.publicMenuList = (req, res) => {
       { 
         model: Menu,
         where: { published: true },
-        // order: [['index', 'ASC']],
+        order: [['index', 'ASC']],
       },
     ],
   })

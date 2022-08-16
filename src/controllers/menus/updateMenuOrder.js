@@ -7,9 +7,7 @@ async function updateMenuOrder(req, res) {
   const t = await sequelize.transaction();
 
   try {
-    await Promise.all(orderedMenus.map(async (menu) => {
-      return menuLogic.updateMenuOrder(menu, t);
-    }));
+    await Promise.all(orderedMenus.map(async (menu) => menuLogic.updateMenuOrder(menu, t)));
     await t.commit();
     res.send({
       message: 'category updated successfully',
