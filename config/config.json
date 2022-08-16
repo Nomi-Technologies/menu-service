@@ -1,7 +1,5 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "postgres1620",
     "database": "nomi-dev",
     "host": "127.0.0.1",
     "dialect": "postgres",
