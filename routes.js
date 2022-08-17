@@ -90,6 +90,7 @@ module.exports = (app) => {
 
   router.post('/menus', menuController.createMenu);
   router.post('/menus/bulkCreate', menuController.bulkCreateDish);
+  router.put('/menus/update-menu-order', menuController.updateMenuOrder);
   router.get('/menus/:id/csv', menuController.getMenuAsCSV);
   router.put('/menus/:id/toggle-filtering', menuController.toggleFiltering);
   router.post('/menus/:id/uploadCSV', menuController.uploadMenuCSV);

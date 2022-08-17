@@ -5,6 +5,7 @@ async function getAllMenusByRestaurantId(userRestaurantId) {
     where: {
       restaurantId: userRestaurantId,
     },
+    order: [['index', 'ASC']],
   });
 }
 
