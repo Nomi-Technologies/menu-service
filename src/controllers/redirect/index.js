@@ -8,11 +8,11 @@ module.exports = {
       if (!url) {
         throw Error(`No url set for ${req.params.identifier}`);
       }
-      res.redirect(301, url);
+      res.redirect(307, url);
     }
     catch(error) {
       logger.error(error);
-      res.redirect(301, 'https://www.dinewithnomi.com/');
+      res.redirect(307, 'https://www.dinewithnomi.com/');
     }
   },
 };
