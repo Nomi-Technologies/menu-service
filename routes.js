@@ -125,6 +125,6 @@ module.exports = (app) => {
   app.use('/webApi', webApiRouter);
 
   const redirectRouter = express.Router();
-  redirectRouter.get('/:identifier', redirectController.redirect);
+  redirectRouter.get('/', redirectController.redirect);
   app.use('/redirect', redirectRouter);
 };
