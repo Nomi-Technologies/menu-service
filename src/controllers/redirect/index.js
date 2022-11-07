@@ -1,18 +1,17 @@
-const redirectLogic = require('../../logic/redirect');
 const logger = require('../../utils/logger');
+const restaurantLogic = require('../../logic/restaurants');
 
 module.exports = {
   async redirect(req, res) {
+    console.log(req.query);
+    let restaurant;
     try {
-      const url = await redirectLogic.getUrlById(req.params.identifier);
-      if (!url) {
-        throw Error(`No url set for ${req.params.identifier}`);
-      }
-      res.redirect(307, url);
+      restaurant = await restaurantLogic.getRestaurantById(req.query.restoId);
     }
-    catch(error) {
-      logger.error(error);
-      res.redirect(307, 'https://www.dinewithnomi.com/');
+    catch(e) {
+      logger.warn(`${req.query.restoId} not found in db`);
     }
+    const slug = restaurant?.uniqueName ?? '';
+    res.redirect(302, `https://nomi.menu/${slug}${restaurant ? `?menuId=${req.query.menuId}` : ''}`);
   },
 };
