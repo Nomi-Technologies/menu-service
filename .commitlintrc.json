@@ -1,6 +1,7 @@
 {
-  "extends": ["@commitlint/config-conventional"],
+  "extends": ["@commitlint/config-angular"],
   "rules": {
     "footer-max-line-length": [1, "always", 100]
   }
 }
+

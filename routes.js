@@ -8,6 +8,7 @@ const dishController = require('./src/controllers/dishes');
 const imagesController = require('./src/controllers/images');
 const menuController = require('./src/controllers/menus');
 const modificationController = require('./src/controllers/modifications');
+const redirectController = require('./src/controllers/redirect');
 const restaurantController = require('./src/controllers/restaurants');
 const tagController = require('./src/controllers/tags');
 const userController = require('./src/controllers/users');
@@ -122,4 +123,8 @@ module.exports = (app) => {
   webApiRouter.get('/:uniqueName/:menuId', controller.publicDishList);
   webApiRouter.get('/restaurants', controller.publicRestaurantList);
   app.use('/webApi', webApiRouter);
+
+  const redirectRouter = express.Router();
+  redirectRouter.get('/', redirectController.redirect);
+  app.use('/redirect', redirectRouter);
 };
