@@ -11,4 +11,5 @@ module.exports = {
   ACCESS_KEY_ID: process.env.AWS_S3_ACCESS_KEY_ID,
   SECRET_ACCESS_KEY: process.env.AWS_S3_SECRET_ACCESS_KEY,
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN,
+  SMART_MENU_URL: process.env.SMART_MENU_URL,
 };
