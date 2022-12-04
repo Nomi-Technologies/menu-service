@@ -23,19 +23,5 @@ $ npx sequelize db:seed:undo:all
 
 To start development server: 
 ```
-$ npm run develop
-```
-
-To run all tests: 
-```
-$ npm test
-```
-For running specific tests, see the `package.json` for `npm run test-custom`
-For more nuanced tests, you can run mocha test manually with whatever options you choose, see https://mochajs.org/#command-line-usage
-
-### dotenv
-If running locally, create a `.env` file with the following content:
-```
-JWT_SECRET=<any string>
-DB_NAME=<db name i.e "nomi-dev">
+$ npm start
 ```
