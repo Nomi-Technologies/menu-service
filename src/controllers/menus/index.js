@@ -7,6 +7,7 @@ const favoriteMenu = require('./favoriteMenu.js');
 const getAllMenus = require('./getAllMenus.js');
 const getMenu = require('./getMenu.js');
 const getMenuAsCSV = require('./getMenuAsCSV.js');
+const setPublished = require('./setPublished.js');
 const toggleFiltering = require('./toggleFiltering.js');
 const updateCategoryOrder = require('./updateCategoryOrder.js');
 const updateDishOrder = require('./updateDishOrder.js');
@@ -24,6 +25,7 @@ module.exports = {
   getAllMenus,
   getMenu,
   getMenuAsCSV,
+  setPublished,
   toggleFiltering,
   updateCategoryOrder,
   updateDishOrder,
