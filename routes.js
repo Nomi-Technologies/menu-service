@@ -100,6 +100,7 @@ module.exports = (app) => {
   router.get('/menus/:id', menuController.getMenu);
   router.post('/menus/:id', menuController.duplicateMenu);
   router.put('/menus/:id', menuController.updateMenu);
+  router.put('/menus/:id/set-published', menuController.setPublished);
   router.put('/menus/:id/update-category-order', menuController.updateCategoryOrder);
   router.put('/menus/:id/update-dish-order', menuController.updateDishOrder);
   router.delete('/menus/:id/dishes/bulkDelete', menuController.bulkDeleteDish);
