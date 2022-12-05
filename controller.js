@@ -64,8 +64,10 @@ module.exports.publicMenuList = (req, res) => {
       { 
         model: Menu,
         where: { published: true },
-        order: [['index', 'ASC']],
       },
+    ],
+    order: [
+      [Menu, 'index', 'ASC'],
     ],
   })
   .then((restaurant) => res.send(restaurant))
